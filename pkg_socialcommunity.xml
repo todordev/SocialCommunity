@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extension type="package" version="2.5" method="upgrade">
+	<name>Social Community Packages</name>
+	<packagename>socialcommunity</packagename>
+	<author>Todor Iliev</author>
+	<authorEmail>todor@itprism.com</authorEmail>
+	<authorUrl>http://itprism.com</authorUrl>
+	<copyright>Copyright (C) 2010 Todor Iliev ( ITPrism.com )</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html</license>
+	<url>http://www.itprism.com</url>
+	<packager>Todor Iliev</packager>
+	<packagerurl>http://www.itprism.com</packagerurl>
+	<version>1.0</version>
+	<creationDate>31 May, 2013</creationDate>
+	<description><![CDATA[
+	<p><a href="http://itprism.com/free-joomla-extensions/others/open-source-social-network" target="_blank">Social Community</a> is an extension that provides ability to create a social network on your website.</p>
+	<p>Invest in the extension and help for its improvement. You can <a href="http://itprism.com/sponsorship" title="Sponsoring" target="_blank">sponsor the extension via SMS, PayPal or Bitcoin</a>.</p>
+	<p><a href="http://itprism.com/" target="_blank">Subscribe for the newsletter</a> to receive <strong>gifts</strong>, <strong>discount codes</strong>, information about <strong>updates</strong> and information about <strong>new ITPrism extensions</strong>.</p>
+	<p>Please, <a href="#" target="_blank">vote for the extension</a> on Joomla! Extensions Directory</p>
+	]]></description>
+	<files folder="packages">
+		<file type="component" 	id="com_socialcommunity" >com_socialcommunity.zip</file>
+		<file type="library" 	id="lib_socialcommunity" >lib_socialcommunity.zip</file>
+		<file type="library"    id="lib_itprism" >lib_itprism.zip</file>
+		<file type="plugin" 	id="socialcommunitynewuser" group="user">plg_user_socialcommunitynewuser.zip</file>
+	</files>
+
+	<scriptfile>install.php</scriptfile>
+</extension>

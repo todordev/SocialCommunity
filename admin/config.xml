@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    
+    <fieldset name="images" label="COM_SOCIALCOMMUNITY_IMAGES_TITLE" description="COM_SOCIALCOMMUNITY_IMAGES_PARAMS">
+
+        <field name="images_directory" type="text" default="images/profiles" size="50" label="COM_SOCIALCOMMUNITY_IMAGES_DIRECTORY" description="COM_SOCIALCOMMUNITY_IMAGES_DIRECTORY_DESC" />
+            
+        <field name="image_width" type="text" default="200" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_WIDTH_DESC" />
+        <field name="image_height" type="text" default="200" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_HEIGHT_DESC" />
+        
+        <field name="image_small_width" type="text" default="100" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_SMALL_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_SMALL_WIDTH_DESC" />
+        <field name="image_small_height" type="text" default="100" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_SMALL_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_SMALL_HEIGHT_DESC" />
+        
+        <field name="image_icon_width" type="text" default="24" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_ICON_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_ICON_WIDTH_DESC" />
+        <field name="image_icon_height" type="text" default="24" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_ICON_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_ICON_HEIGHT_DESC" />
+        
+        <field name="image_square_width" type="text" default="50" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_SQUARE_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_SQUARE_WIDTH_DESC" />
+        <field name="image_square_height" type="text" default="50" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_SQUARE_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_SQUARE_HEIGHT_DESC" />
+        
+    </fieldset>
+    
+</config>

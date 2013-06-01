@@ -1,0 +1,10 @@
+@CHARSET "UTF-8";
+.about-bio {
+	min-height: 100px;
+}
+
+#itpsc-profile-form textarea {
+	width: 300px;
+}
+
+

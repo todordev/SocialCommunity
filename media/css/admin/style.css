@@ -1,0 +1,9 @@
+@CHARSET "UTF-8";
+
+.icon-48-itp-dashboard 	{ background-image: url(../../images/dashboard_48.png); }
+.icon-32-itp-dashboard-back { background-image: url(../../images/dashboard_back_32.png); }
+.icon-48-itp-profiles 	    { background-image: url(../../images/profiles_48.png); }
+.icon-48-itp-profile-edit	{ background-image: url(../../images/profiles_edit_48.png); }
+
+.icon-32-itp-profile-create	{ background-image: url(../../images/profile_create_32.png); }
+

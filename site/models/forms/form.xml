@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset name="profile" addfieldpath="/administrator/components/com_socialcommunity/models/fields">
+
+        <field name="name" type="text" class="inputbox"
+            label="COM_SOCIALCOMMUNITY_NAME"
+            description="COM_SOCIALCOMMUNITY_FIELD_NAME_DESC"
+            size="60"   
+            filter="trim" 
+            required="true" 
+        />
+        
+        <field name="bio" type="textarea"
+            label="COM_SOCIALCOMMUNITY_BIO" 
+            description="COM_SOCIALCOMMUNITY_FIELD_BIO_DESC"
+            rows="5" 
+            cols="45"
+        />
+        
+        <field
+            name="photo"
+            type="file"
+            label="COM_SOCIALCOMMUNITY_IMAGE"
+            description="COM_SOCIALCOMMUNITY_FIELD_IMAGE_DESC"
+            class="inputbox"
+            size="40"
+            />
+            
+	</fieldset>
+</form>
