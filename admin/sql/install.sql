@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS `#__itpsc_activities` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`)
+  KEY `idx_itpsc_activities_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__itpsc_notifications` (
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `#__itpsc_notifications` (
   `read` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`)
+  KEY `idx_itpsc_notifications_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__itpsc_profiles` (
