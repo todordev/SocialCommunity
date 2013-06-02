@@ -81,7 +81,7 @@ class pkg_socialCommunityInstallerScript {
                 
                 // Create images folder
                 if(!is_dir($this->imagesPath)){
-                    SocialCommunityInstallHelper::createImagesFolder($this->imagesPath);
+                    SocialCommunityInstallHelper::createFolder($this->imagesPath);
                 }
                 
                 // Start table with the information
