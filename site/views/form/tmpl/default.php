@@ -24,7 +24,21 @@ defined('_JEXEC') or die;?>
             <?php echo $this->form->getInput('bio'); ?>
             
             <?php echo $this->form->getLabel('photo'); ?>
-            <?php echo $this->form->getInput('photo'); ?>
+            <div class="fileupload fileupload-new" data-provides="fileupload">
+                <div class="input-append">
+                    <div class="uneditable-input span3">
+                        <i class="icon-file fileupload-exists"></i> 
+                        <span class="fileupload-preview"></span>
+                    </div>
+                    <span class="btn btn-file">
+                        <span class="fileupload-new"><?php echo JText::_("COM_SOCIALCOMMUNITY_SELECT_FILE");?></span>
+                        <span class="fileupload-exists"><?php echo JText::_("COM_SOCIALCOMMUNITY_CHANGE");?></span>
+                        <?php echo $this->form->getInput('photo'); ?>
+                    </span>
+                    <a href="#" class="btn fileupload-exists" data-dismiss="fileupload"><?php echo JText::_("COM_SOCIALCOMMUNITY_REMOVE");?></a>
+                </div>
+            </div>
+            
             
             <input type="hidden" name="task" value="form.save" />
             <?php echo JHtml::_('form.token'); ?>
@@ -39,7 +53,7 @@ defined('_JEXEC') or die;?>
     <div class="span6">
     	<img src="<?php echo $this->imagesFolder.$this->item["image"];?>" class="img-polaroid" />
     	<div class="clearfix">&nbsp;</div>
-    	<a href="<?php echo JRoute::_("index.php?option=com_socialcommunity&task=form.removeImage");?>" class="btn btn-mini"><i class="icon-trash"></i> <?php echo JText::_("COM_SOCIALCOMMUNITY_REMOVE_IMAGE");?></a>
+    	<a href="<?php echo JRoute::_("index.php?option=com_socialcommunity&task=form.removeImage&".JSession::getFormToken()."=1");?>" class="btn btn-mini"><i class="icon-trash"></i> <?php echo JText::_("COM_SOCIALCOMMUNITY_REMOVE_IMAGE");?></a>
     </div>
     <?php }?>
 

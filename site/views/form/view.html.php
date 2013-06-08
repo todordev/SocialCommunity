@@ -47,6 +47,12 @@ class SocialCommunityViewForm extends JView {
         $this->imagesFolder = $this->params->get("images_directory", "images/profiles")."/";
         $this->item         = $this->get("Item");
         
+        if(!$this->item) {
+            $app->enqueueMessage(JText::_("COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN"), "notice");
+            $app->redirect(JRoute::_('index.php?option=com_users&view=login', false));
+            return;
+        }
+        
         $this->prepareDocument();
         
         parent::display($tpl);
@@ -89,7 +95,14 @@ class SocialCommunityViewForm extends JView {
         
         // Head styles
         $this->document->addStyleSheet('media/'.$this->option.'/css/site/bootstrap.min.css');
+        $this->document->addStyleSheet('media/'.$this->option.'/css/bootstrap-fileupload.min.css');
         $this->document->addStyleSheet('media/'.$this->option.'/css/site/style.css');
+        
+        // Script
+        $this->document->addScript('media/'.$this->option.'/js/bootstrap.min.js');
+        $this->document->addScript('media/'.$this->option.'/js/bootstrap-maxlength.min.js');
+        $this->document->addScript('media/'.$this->option.'/js/bootstrap-fileupload.min.js');
+        $this->document->addScript('media/'.$this->option.'/js/site/form.js');
         
     }
 

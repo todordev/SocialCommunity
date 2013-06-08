@@ -36,6 +36,11 @@ class SocialCommunityHelper {
 			$vName == 'profiles'
 		);
 		
+		JSubMenuHelper::addEntry(
+    		JText::_('COM_SOCIALCOMMUNITY_PLUGINS'),
+    		'index.php?option=com_plugins&view=plugins&filter_search='.rawurlencode("social community"),
+    		$vName == 'plugins'
+        );
 	}
 	
 }

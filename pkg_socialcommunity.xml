@@ -21,7 +21,6 @@
 	<files folder="packages">
 		<file type="component" 	id="com_socialcommunity" >com_socialcommunity.zip</file>
 		<file type="library" 	id="lib_socialcommunity" >lib_socialcommunity.zip</file>
-		<file type="library"    id="lib_itprism" >lib_itprism.zip</file>
 		<file type="plugin" 	id="socialcommunitynewuser" group="user">plg_user_socialcommunitynewuser.zip</file>
 	</files>
 

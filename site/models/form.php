@@ -44,7 +44,7 @@ class SocialCommunityModelForm extends JModelAdmin {
         /** @var $app JSite **/
         
         // Get the primary key of the record 
-		$value = JFactory::getUser()->get("id");
+		$value = JFactory::getUser()->id;
 		$this->setState($this->option.'.profile.user_id', $value);
 
 		// Load the parameters.

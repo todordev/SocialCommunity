@@ -65,6 +65,9 @@
 			<exclude name="**/install.php" />
 		</fileset>
 	</copy>
+	
+	<!-- copy install helper of the componet -->
+	<copy file="${cfg.adminSourceDir}/${cfg.comName}/helpers/install.php" todir="${cfg.adminDestDir}/helpers/" />
 
 	<!-- copy site files of the componet -->
 	<copy todir="${cfg.siteDestDir}">

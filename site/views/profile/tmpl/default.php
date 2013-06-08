@@ -13,12 +13,12 @@
 
 // no direct access
 defined('_JEXEC') or die;?>
-<div class="row-fluid">
+<div class="row-fluid" itemscope itemtype="http://schema.org/Person">
 	<div class="span3">
 		<?php if(!$this->item["image"]){?>
 		<img src="media/com_socialcommunity/images/no-profile.png" />
 		<?php }else{?>
-		<img src="<?php echo $this->imagesFolder.$this->item["image"];?>" alt="<?php echo $this->item["name"];?>" />
+		<img src="<?php echo $this->imagesFolder.$this->item["image"];?>" alt="<?php echo $this->item["name"];?>" itemprop="image" />
 		<?php }?>
 		<?php if($this->isOwner){?>
 		<div class="clearfix">&nbsp;</div>
@@ -26,7 +26,7 @@ defined('_JEXEC') or die;?>
 		<?php }?>
 	</div>
 	<div class="span9">
-		<h3><?php echo $this->item["name"];?></h3>
+		<h3 itemprop="name"><?php echo $this->item["name"];?></h3>
 		<p class="about-bio"><?php echo $this->escape($this->item["bio"]);?></p>
 	</div>
 </div>

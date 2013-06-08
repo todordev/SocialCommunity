@@ -38,7 +38,7 @@ class SocialCommunityControllerForm extends ITPrismControllerFormFrontend {
         $userId  = JFactory::getUser()->id;
         if(!$userId) {
             $redirectData = array(
-                "force_direction"     => "login_form"
+                "force_direction" => "index.php?option=com_users&view=login"
             );
             
             $this->displayNotice(JText::_("COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN"), $redirectData);
@@ -107,15 +107,17 @@ class SocialCommunityControllerForm extends ITPrismControllerFormFrontend {
      */
     public function removeImage() {
         
+        // Check for request forgeries.
+        JSession::checkToken("get") or jexit(JText::_('JINVALID_TOKEN'));
+        
         $app = JFactory::getApplication();
         /** @var $app JSite **/
         
         // Check for registered user
         $userId  = JFactory::getUser()->id;
         if(!$userId) {
-            
             $redirectData = array(
-                "force_direction"     => "login_form"
+                "force_direction"     => "index.php?option=com_users&view=login"
             );
             
             $this->displayNotice(JText::_("COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN"), $redirectData);

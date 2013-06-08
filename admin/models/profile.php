@@ -125,10 +125,9 @@ class SocialCommunityModelProfile extends JModelAdmin {
     
         // If does not exist alias, I will generate the new one from the title
         if(!$table->alias) {
-            $table->alias = $table->title;
+            $table->alias = $table->name;
         }
         $table->alias = JApplication::stringURLSafe($table->alias);
-    
     }
     
     
