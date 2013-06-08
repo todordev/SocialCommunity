@@ -202,6 +202,13 @@ class SocialCommunityModelForm extends JModelAdmin {
             $table->set("image_square", $data["image_square"]);
         }
         
+        
+        // If an alias does not exist, I will generate the new one from the user name.
+        if(!$table->alias) {
+            $table->alias = $table->name;
+        }
+        $table->alias = JApplication::stringURLSafe($table->alias);
+        
 	}
     
     /**

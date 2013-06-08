@@ -123,7 +123,7 @@ class SocialCommunityModelProfile extends JModelAdmin {
             $table->bio     = stripcslashes($table->bio);
         }
     
-        // If does not exist alias, I will generate the new one from the title
+        // If an alias does not exist, I will generate the new one from the user name.
         if(!$table->alias) {
             $table->alias = $table->name;
         }
