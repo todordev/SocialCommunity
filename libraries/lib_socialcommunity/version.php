@@ -26,7 +26,7 @@ class SocialCommunityVersion {
      * 
      * @var string
      */
-    public $product    = 'Social Community';
+    public $product    = 'SocialCommunity';
     
     /**
      * Main Release Level
@@ -40,7 +40,7 @@ class SocialCommunityVersion {
      * 
      * @var integer
      */
-    public $devLevel  = '0';
+    public $devLevel  = '1';
     
     /**
      * Release Type
@@ -61,7 +61,7 @@ class SocialCommunityVersion {
      * 
      * @var string
      */
-    public $releaseDate= '31-May-2013';
+    public $releaseDate= '25-August-2013';
     
     /**
      * License

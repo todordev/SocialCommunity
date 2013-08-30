@@ -40,7 +40,7 @@ class SocialCommunityModelProfile extends JModelItem {
 		$this->setState($this->option.'.visitor.id', $visitorId);
 		
 		// If there is no ID in the URI, load profile of the visitor
-		$userId      = $app->input->get->getInt("id");
+		$userId      = $app->input->getInt("id");
 		if(!$userId) {
 		    $userId  = $visitorId;
 		}

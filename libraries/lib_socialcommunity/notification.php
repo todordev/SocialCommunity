@@ -29,13 +29,19 @@ class SocialCommunityNotification {
     public $user_id;
     
     /**
-     * Driver of the database
+     * Database driver
      * @var JDatabaseMySQLi
      */
     protected $db;
     
-	public function __construct($db) {
-        $this->db = $db;
+	public function __construct($id = 0) {
+        $this->db = JFactory::getDbo();
+        
+        if(!empty($id)) {
+            $this->load($id);
+        } else {
+            $this->init();
+        }
     }
     
     /**
@@ -43,10 +49,6 @@ class SocialCommunityNotification {
      * @param integer $id
      */
     public function load($id) {
-        
-        if(!is_array($id))  {
-            return;
-        }
         
         // Create a new query object.
         $query  = $this->db->getQuery(true);
@@ -125,12 +127,18 @@ class SocialCommunityNotification {
         $query
             ->insert($this->db->quoteName("#__itpsc_notifications"))
             ->set($this->db->quoteName("note")    ." = " . $this->db->quote($this->note) )
-            ->set($this->db->quoteName("image")   ." = " . $this->db->quote($this->image) )
-            ->set($this->db->quoteName("url")     ." = " . $this->db->quote($this->url) )
             ->set($this->db->quoteName("created") ." = " . $this->db->quote($unixTimestamp) )
             ->set($this->db->quoteName("read")    ." = " . (int)$this->read)
             ->set($this->db->quoteName("user_id") ." = " . (int)$this->user_id);
             
+        if(!empty($this->image)) {
+            $query->set($this->db->quoteName("image")   ." = " . $this->db->quote($this->image) );
+        }
+        
+        if(!empty($this->image)) {
+            $query->set($this->db->quoteName("url")     ." = " . $this->db->quote($this->url) );
+        }
+        
         $this->db->setQuery($query);
         $this->db->query();
         
@@ -147,13 +155,33 @@ class SocialCommunityNotification {
         }
     }
     
+    
+    public function remove() {
+        
+        if(!$this->id) {
+            throw new Exception(JText::_("Invalid notification."), ITPrismErrors::CODE_WARNING);
+        }
+        
+        // Create a new query object.
+        $query  = $this->db->getQuery(true);
+        $query
+            ->delete($this->db->quoteName("#__itpsc_notifications"))
+            ->where($this->db->quoteName("id") ." = " . (int)$this->id);
+        
+        $this->db->setQuery($query);
+        $this->db->query();
+        
+        $this->init();
+        
+    }
+    
     /**
      * 
      * Initialize main variables, create a new notification 
      * and send it to user.
      * 
      * @param string $note
-     * @param integer $userId
+     * @param integer $userId    This is the receiver of the message.
      */
     public function send($note = null, $userId = null) {
         
@@ -164,10 +192,14 @@ class SocialCommunityNotification {
             $this->user_id = (int)$userId;
         }
         
-        // Initialize read, id, create properties
+        // Initialize the properties read, id, created. 
         $this->init();
         
         $this->store();
+    }
+    
+    public function setUserId($userId) {
+        $this->user_id = $userId;
     }
     
 }

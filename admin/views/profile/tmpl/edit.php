@@ -14,31 +14,32 @@
 // no direct access
 defined('_JEXEC') or die;
 ?>
-<form enctype="multipart/form-data"  action="<?php echo JRoute::_('index.php?option=com_socialcommunity&layout=edit'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" >
-    <div class="width-40 fltlft">
-        <fieldset class="adminform">
-            <legend><?php echo JText::_("COM_SOCIALCOMMUNITY_EDIT_PROFILE_LEGEND"); ?></legend>
-            
-            <ul class="adminformlist">
-                <li><?php echo $this->form->getLabel('name'); ?>
-                <?php echo $this->form->getInput('name'); ?></li>
+<div class="row-fluid">
+	<div class="span6 form-horizontal">
+        <form  action="<?php echo JRoute::_('index.php?option=com_socialcommunity&layout=edit'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" >
+            <fieldset>
                 
-                <li><?php echo $this->form->getLabel('alias'); ?>
-                <?php echo $this->form->getInput('alias'); ?></li>
+                <div class="control-group">
+                    <div class="control-label"><?php echo $this->form->getLabel('name'); ?></div>
+    				<div class="controls"><?php echo $this->form->getInput('name'); ?></div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label"><?php echo $this->form->getLabel('alias'); ?></div>
+    				<div class="controls"><?php echo $this->form->getInput('alias'); ?></div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label"><?php echo $this->form->getLabel('id'); ?></div>
+    				<div class="controls"><?php echo $this->form->getInput('id'); ?></div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label"><?php echo $this->form->getLabel('bio'); ?></div>
+    				<div class="controls"><?php echo $this->form->getInput('bio'); ?></div>
+                </div>
                 
-                <li><?php echo $this->form->getLabel('id'); ?>
-                <?php echo $this->form->getInput('id'); ?></li>
-            </ul>
-            
-            <div class="clr"></div>
-            <?php echo $this->form->getLabel('bio'); ?>
-            <div class="clr"></div>
-            <?php echo $this->form->getInput('bio'); ?>
-            <div class="clr"></div>
-            
-        </fieldset>
+            </fieldset>
+        
+            <input type="hidden" name="task" value="" />
+            <?php echo JHtml::_('form.token'); ?>
+        </form>
     </div>
-
-    <input type="hidden" name="task" value="" />
-    <?php echo JHtml::_('form.token'); ?>
-</form>
+</div>

@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
-class SocialCommunityViewForm extends JView {
+class SocialCommunityViewForm extends JViewLegacy {
     
     protected $form       = null;
     protected $state      = null;
@@ -44,7 +44,7 @@ class SocialCommunityViewForm extends JView {
         $this->form       = $this->get('Form');
         $this->params     = $this->state->get("params");
             
-        $this->imagesFolder = $this->params->get("images_directory", "images/profiles")."/";
+        $this->imagesFolder = $this->params->get("images_directory", "images/profiles");
         $this->item         = $this->get("Item");
         
         if(!$this->item) {
@@ -52,6 +52,9 @@ class SocialCommunityViewForm extends JView {
             $app->redirect(JRoute::_('index.php?option=com_users&view=login', false));
             return;
         }
+        
+        // HTML Helpers
+        JHtml::addIncludePath(ITPRISM_PATH_LIBRARY.'/ui/helpers');
         
         $this->prepareDocument();
         
@@ -94,14 +97,14 @@ class SocialCommunityViewForm extends JView {
         $pathway->addItem(JText::_("COM_SOCIALCOMMUNITY_EDIT_PROFILE"));
         
         // Head styles
-        $this->document->addStyleSheet('media/'.$this->option.'/css/site/bootstrap.min.css');
-        $this->document->addStyleSheet('media/'.$this->option.'/css/bootstrap-fileupload.min.css');
         $this->document->addStyleSheet('media/'.$this->option.'/css/site/style.css');
         
         // Script
-        $this->document->addScript('media/'.$this->option.'/js/bootstrap.min.js');
-        $this->document->addScript('media/'.$this->option.'/js/bootstrap-maxlength.min.js');
-        $this->document->addScript('media/'.$this->option.'/js/bootstrap-fileupload.min.js');
+        JHtml::_("bootstrap.framework");
+        
+        JHtml::_("itprism.ui.bootstrap_maxlength");
+        JHtml::_("itprism.ui.bootstrap_fileupload");
+        
         $this->document->addScript('media/'.$this->option.'/js/site/form.js');
         
     }

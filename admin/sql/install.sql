@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `#__itpsc_activities` (
   `user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_itpsc_activities_user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__itpsc_notifications` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `#__itpsc_notifications` (
   `user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_itpsc_notifications_user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__itpsc_profiles` (
   `id` int(10) unsigned NOT NULL,
@@ -33,4 +33,3 @@ CREATE TABLE IF NOT EXISTS `#__itpsc_profiles` (
   PRIMARY KEY (`id`),
   KEY `idx_itpsc_profiles_name` (`name`(16))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-

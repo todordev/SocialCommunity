@@ -47,7 +47,7 @@ class SocialCommunityControllerProfile extends ITPrismControllerFormBackend {
         $data = $app->input->post->get('jform', array(), 'array');
         $itemId = JArrayHelper::getValue($data, "id");
         
-        $redirectData = array(
+        $redirectOptions = array(
             "task" => $this->getTask(), 
             "id"   => $itemId
         );
@@ -67,7 +67,7 @@ class SocialCommunityControllerProfile extends ITPrismControllerFormBackend {
         
         // Check for validation errors.
         if ($validData === false) {
-            $this->displayNotice($form->getErrors(), $redirectData);
+            $this->displayNotice($form->getErrors(), $redirectOptions);
             return;
         }
         
@@ -79,6 +79,6 @@ class SocialCommunityControllerProfile extends ITPrismControllerFormBackend {
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
         
-        $this->displayMessage(JText::_('COM_SOCIALCOMMUNITY_PROFILE_SAVED'), $redirectData);
+        $this->displayMessage(JText::_('COM_SOCIALCOMMUNITY_PROFILE_SAVED'), $redirectOptions);
     }
 }

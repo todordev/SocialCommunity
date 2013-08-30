@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
-class SocialCommunityViewProfile extends JView {
+class SocialCommunityViewProfile extends JViewLegacy {
     
     protected $state;
     protected $item;
@@ -41,7 +41,7 @@ class SocialCommunityViewProfile extends JView {
 		$this->state	    = $this->get('State');
 		$this->item		    = $this->get("Item");
 		$this->params	    = $this->state->get("params");
-		$this->imagesFolder = $this->params->get("images_directory", "images/profiles")."/";
+		$this->imagesFolder = $this->params->get("images_directory", "images/profiles");
 
 		// If I am not logged in, and I try to load profile page without user ID as a parameter, 
 		// I must be redirected to login form
@@ -110,7 +110,6 @@ class SocialCommunityViewProfile extends JView {
 		$pathway->addItem($name);
 		
 		// Add styles
-		$this->document->addStyleSheet(JURI::root() . 'media/'.$this->option.'/css/site/bootstrap.min.css');
 		$this->document->addStyleSheet(JURI::root() . 'media/'.$this->option.'/css/site/style.css');
 		
     }

@@ -39,23 +39,71 @@ class plgUserSocialCommunityNewUser extends JPlugin {
 	    
 		if ($isnew) {
 		    
-			jimport('socialcommunity.profile');
-			
-			$name = JArrayHelper::getValue($user, 'name');
-			
-			$data = array(
-			    'id'       => JArrayHelper::getValue($user, 'id'),
-			    'name'	   => $name,
-			    'alias'	   => JApplication::stringURLSafe($name)
-			);
-    		
-			$profile = new SocialCommunityProfile();
-			$profile->bind($data);
-			
-			$profile->create();
+		    if(!JComponentHelper::isEnabled("com_socialcommunity")) {
+		        return;
+		    }
+		    
+		    $userId = JArrayHelper::getValue($user, "id");
+		    $name   = JArrayHelper::getValue($user, "name");
+		    $this->createProfile($userId, $name);
 			
 		}
 		
 	}
+	
+	/**
+	 * This method should handle any login logic and report back to the subject
+	 *
+	 * @param   array  $user        Holds the user data
+	 * @param   array  $options     Array holding options (remember, autoregister, group)
+	 *
+	 * @return  boolean  True on success
+	 * @since   1.5
+	 */
+	public function onUserLogin($user, $options) {
+	    
+	    if(!JComponentHelper::isEnabled("com_socialcommunity")) {
+	        return true;
+	    }
+	    
+	    $db    = JFactory::getDbo();
+	    $query = $db->getQuery(true);
+	    
+	    $query
+	       ->select("a.id, b.id AS profile_id")
+	       ->from($db->quoteName("#__users") . " AS a")
+	       ->leftJoin($db->quoteName("#__itpsc_profiles") ." AS b ON a.id = b.id")
+	       ->where("a.username = " .$db->quote($user["username"]));
+	    
+	    
+	    $db->setQuery($query, 0, 1);
+	    $result = $db->loadAssoc();
+	    
+	    // Create profile
+	    if(empty($result["profile_id"])) {
+	        $userId = JArrayHelper::getValue($result, "id");
+	        $name   = JArrayHelper::getValue($user, "fullname");
+	        $this->createProfile($userId, $name);
+	    }
+	    	    
+	    return true;
+	    
+	}
 
+	private function createProfile($userId, $name) {
+	    
+	    jimport('socialcommunity.profile');
+	    	
+	    $data = array(
+            'id'       => (int)$userId,
+            'name'	   => $name,
+            'alias'	   => JApplication::stringURLSafe($name)
+	    );
+	    
+	    $profile = new SocialCommunityProfile();
+	    $profile->bind($data);
+	    	
+	    $profile->create();
+	    
+	}
 }

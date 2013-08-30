@@ -36,16 +36,17 @@ class SocialCommunityTableProfile extends JTable {
      */
     public function create() {
     
+        $db     = $this->getDbo();
         // Create a new query object.
-        $query  = $this->_db->getQuery(true);
+        $query  = $db->getQuery(true);
         $query
-            ->insert($this->_db->quoteName("#__itpsc_profiles"))
-            ->set($this->_db->quoteName("id")   ." = " . (int)$this->id)
-            ->set($this->_db->quoteName("name") ." = " . $this->_db->quote($this->name))
-            ->set($this->_db->quoteName("alias")." = " . $this->_db->quote($this->alias));
+            ->insert($db->quoteName("#__itpsc_profiles"))
+            ->set($db->quoteName("id")   ." = " . (int)$this->id)
+            ->set($db->quoteName("name") ." = " . $db->quote($this->name))
+            ->set($db->quoteName("alias")." = " . $db->quote($this->alias));
     
-        $this->_db->setQuery($query);
-        $this->_db->query();
+        $db->setQuery($query);
+        $db->query();
     
     }
     
@@ -57,7 +58,7 @@ class SocialCommunityTableProfile extends JTable {
     }
     
     /**
-     * @param field_type $slug
+     * @param string $slug
      */
     public function setSlug($slug) {
         $this->slug = $slug;

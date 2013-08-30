@@ -46,7 +46,6 @@ class SocialCommunityControllerForm extends ITPrismControllerFormFrontend {
         }
         
         $data    = $app->input->post->get('jform', array(), 'array');
-        
         $redirectData = array (
             "view"    => "form",
         );

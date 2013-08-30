@@ -20,7 +20,7 @@ jimport('socialcommunity.init');
 jimport('joomla.application.component.controller');
 
 // Get an instance of the controller prefixed by HelloWorld
-$controller = JController::getInstance("SocialCommunity");
+$controller = JControllerLegacy::getInstance("SocialCommunity");
 
 // Perform the Request task
 $controller->execute(JFactory::getApplication()->input->getCmd('task'));

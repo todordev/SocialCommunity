@@ -23,35 +23,5 @@ defined('_JEXEC') or die;
  */
 abstract class JHtmlSocialCommunity {
     
-    /**
-     * 
-     * Display an icon that show a state of profile.
-     * If profile exists the profile ID will have value.
-     * @param integer $profileId
-     * @param integer $userId
-     * @param array $options
-     */
-    public static function profileexists($i, $task, $profileId, $options) {
-        
-        $html  = array();
-        $class = "";
-        if(!empty($options["tooltip"])) {
-            JHtml::_('behavior.tooltip');
-            $class = 'class="hasTip"';
-        }
-        
-        if(!empty($profileId)) {
-            $title  = addslashes(htmlspecialchars(JText::_("COM_SOCIALCOMMUNITY_PROFILE_EXISTS"), ENT_COMPAT, 'UTF-8'));
-            $html[] = '<img src="../media/com_socialcommunity/images/profile_24.png" alt="'.$title.'" title="'.$title.'" '.$class.'/>';
-        } else {
-            $title  = addslashes(htmlspecialchars(JText::_("COM_SOCIALCOMMUNITY_CREATE_PROFILE"), ENT_COMPAT, 'UTF-8'));
-            $html[] = '<a href="javascript:void(0);" onclick="return listItemTask(\'cb' . $i . '\',\'' . $task . '\');">';
-            $html[] = '<img src="../media/com_socialcommunity/images/profile_add_24.png" alt="'.$title.'" title="'.$title.'" '.$class.'/>';
-            $html[] = '</a>';
-        }
-        
-        return implode("\n", $html);
-        
-    }
     
 }

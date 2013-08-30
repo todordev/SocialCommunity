@@ -24,21 +24,21 @@ class SocialCommunityHelper {
 	 */
 	public static function addSubmenu($vName = 'dashboard') {
 	    
-	    JSubMenuHelper::addEntry(
+	    JHtmlSidebar::addEntry(
 			JText::_('COM_SOCIALCOMMUNITY_DASHBOARD'),
 			'index.php?option=com_socialcommunity&view=dashboard',
 			$vName == 'dashboard'
 		);
 		
-		JSubMenuHelper::addEntry(
+		JHtmlSidebar::addEntry(
 			JText::_('COM_SOCIALCOMMUNITY_PROFILES'),
 			'index.php?option=com_socialcommunity&view=profiles',
 			$vName == 'profiles'
 		);
 		
-		JSubMenuHelper::addEntry(
+		JHtmlSidebar::addEntry(
     		JText::_('COM_SOCIALCOMMUNITY_PLUGINS'),
-    		'index.php?option=com_plugins&view=plugins&filter_search='.rawurlencode("social community"),
+    		'index.php?option=com_plugins&view=plugins&filter_search=socialcommunity',
     		$vName == 'plugins'
         );
 	}

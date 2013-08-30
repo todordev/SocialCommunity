@@ -44,7 +44,7 @@ class SocialCommunityControllerProfiles extends ITPrismControllerAdmin {
         $model = $this->getModel("Profile", "SocialCommunityModel");
         /** @var $model SocialCommunityModelProfile **/
         
-        $redirectData = array(
+        $redirectOptions = array(
             "view" => $this->view_list
         );
         
@@ -52,7 +52,7 @@ class SocialCommunityControllerProfiles extends ITPrismControllerAdmin {
         
         // Check for validation errors.
         if (empty($pks)) {
-            $this->displayWarning(JText::_("COM_SOCIALCOMMUNITY_INVALID_ITEM"), $redirectData);
+            $this->displayWarning(JText::_("COM_SOCIALCOMMUNITY_INVALID_ITEM"), $redirectOptions);
             return;
         }
         
@@ -61,7 +61,7 @@ class SocialCommunityControllerProfiles extends ITPrismControllerAdmin {
             $pks = $model->filterProfiles($pks);
             
             if (!$pks) {
-                $this->displayWarning(JText::_("COM_SOCIALCOMMUNITY_INVALID_ITEM"), $redirectData);
+                $this->displayWarning(JText::_("COM_SOCIALCOMMUNITY_INVALID_ITEM"), $redirectOptions);
                 return;
             }
             
@@ -72,6 +72,6 @@ class SocialCommunityControllerProfiles extends ITPrismControllerAdmin {
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
         
-        $this->displayMessage(JText::plural('COM_SOCIALCOMMUNITY_N_PROFILES_CREATED', count(pks)), $redirectData);
+        $this->displayMessage(JText::plural('COM_SOCIALCOMMUNITY_N_PROFILES_CREATED', count(pks)), $redirectOptions);
     }
 }

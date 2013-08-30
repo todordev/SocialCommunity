@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
-class SocialCommunityViewProfile extends JView {
+class SocialCommunityViewProfile extends JViewLegacy {
     
     protected $state;
     protected $item;

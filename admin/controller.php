@@ -14,7 +14,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-jimport( 'joomla.application.component.controller' );
+jimport('joomla.application.component.controller');
 
 /**
  * Default Controller
@@ -22,7 +22,7 @@ jimport( 'joomla.application.component.controller' );
  * @package		 SocialCommunity
  * @subpackage   Components
   */
-class SocialCommunityController extends JController {
+class SocialCommunityController extends JControllerLegacy {
     
 	public function display( ) {
 

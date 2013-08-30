@@ -5,3 +5,7 @@ Social Community for Joomla!
 
 Changelog
 ---------
+
+###v1.1
+
+* Improved 

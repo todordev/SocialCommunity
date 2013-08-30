@@ -14,8 +14,6 @@
 // no direct access
 defined('_JEXEC') or die;
 
-jimport('joomla.utilities.arrayhelper');
-
 if(!defined("SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR")) {
     define("SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR", JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR. "components" . DIRECTORY_SEPARATOR ."com_socialcommunity");
 }
@@ -27,6 +25,12 @@ if(!defined("SOCIALCOMMUNITY_PATH_COMPONENT_SITE")) {
 if(!defined("SOCIALCOMMUNITY_PATH_LIBRARY")) {
     define("SOCIALCOMMUNITY_PATH_LIBRARY", JPATH_LIBRARIES . DIRECTORY_SEPARATOR. "socialcommunity");
 }
+
+if(!defined("ITPRISM_PATH_LIBRARY")) {
+    define("ITPRISM_PATH_LIBRARY", JPATH_LIBRARIES . DIRECTORY_SEPARATOR. "itprism");
+}
+
+jimport('joomla.utilities.arrayhelper');
 
 // Register Component libraries
 JLoader::register("SocialCommunityVersion", SOCIALCOMMUNITY_PATH_LIBRARY . DIRECTORY_SEPARATOR . "version.php");

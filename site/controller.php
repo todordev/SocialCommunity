@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.controller');
 
-class SocialCommunityController extends JController {
+class SocialCommunityController extends JControllerLegacy {
     
     /**
      * Method to display a view.
@@ -29,6 +29,8 @@ class SocialCommunityController extends JController {
      */
     public function display($cachable = false, $urlparams = false) {
 
+        $cachable   = true;
+        
         $app = JFactory::getApplication();
         /** @var $app JSite **/
         
@@ -47,12 +49,6 @@ class SocialCommunityController extends JController {
             'catid'             => 'INT',
         );
 
-        
-        if("campaign" !== $viewName) {
-            // Initialise variables.
-            $cachable   = true; // Huh? Why not just put that in the constructor?
-        }
-        
         return parent::display($cachable, $safeurlparams);
         
     }

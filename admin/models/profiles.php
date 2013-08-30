@@ -38,7 +38,7 @@ class SocialCommunityModelProfiles extends JModelList {
                 'id', 'a.id',
                 'name', 'a.name',
                 'user_id', 'a.user_id',
-                'registerDate', 'b.registerDate'
+                'registerDate', 'b.registerDate',
             );
         }
 
@@ -54,11 +54,11 @@ class SocialCommunityModelProfiles extends JModelList {
     protected function populateState($ordering = null, $direction = null) {
         
         // Load the filter state.
-        $search = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
-        $this->setState('filter.search', $search);
+        $value = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
+        $this->setState('filter.search', $value);
 
-        $state = $this->getUserStateFromRequest($this->context.'.filter.state', 'filter_state', '', 'string');
-        $this->setState('filter.state', $state);
+        $value = $this->getUserStateFromRequest($this->context.'.filter.profile', 'filter_profile', '', 'string');
+        $this->setState('filter.profile', $value);
 
         // Load the component parameters.
         $params = JComponentHelper::getParams($this->option);
@@ -108,20 +108,21 @@ class SocialCommunityModelProfiles extends JModelList {
             $this->getState(
                 'list.select',
                 'a.id as profile_id, a.image_icon, '.
-                'b.id, b.name, b.block, b.registerDate'
+                'b.id, b.name, b.registerDate'
             )
         );
         $query->from($db->quoteName('#__itpsc_profiles') .' AS a');
-        $query->join("RIGHT", $db->quoteName('#__users') .' AS b ON b.id = a.id');
+        $query->rightJoin($db->quoteName('#__users') .' AS b ON b.id = a.id');
 
-        // Filter by state
-        $state = $this->getState('filter.state');
-        if (is_numeric($state)) {
-            $query->where('b.block = '.(int) $state);
-        } else if ($state === '') {
-            $query->where('(b.block IN (0, 1))');
+        $profile = $this->getState('filter.profile');
+        if(is_numeric($profile)) {
+            if($profile == 1) {
+                $query->where('a.id > 0');
+            } else {
+                $query->where('a.id IS NULL');
+            }
         }
-
+        
         // Filter by search in title
         $search = $this->getState('filter.search');
         if (!empty($search)) {

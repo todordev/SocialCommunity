@@ -18,6 +18,6 @@ jimport('socialcommunity.init');
 
 jimport('joomla.application.component.controller');
 
-$controller = JController::getInstance('SocialCommunity');
+$controller = JControllerLegacy::getInstance('SocialCommunity');
 $controller->execute(JFactory::getApplication()->input->getCmd('task'));
 $controller->redirect();

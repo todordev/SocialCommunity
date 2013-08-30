@@ -39,7 +39,7 @@ class SocialCommunityModelDetails extends JModelItem {
 		$visitorId   = (int)JFactory::getUser()->get("id");
 		$this->setState($this->option.'.visitor.id', $visitorId);
 		
-		$userId      = $app->input->get->getInt("id");
+		$userId      = $app->input->getInt("id");
 		if(!$userId) {
 		    $userId = (int)JFactory::getUser()->get("id");
 		}

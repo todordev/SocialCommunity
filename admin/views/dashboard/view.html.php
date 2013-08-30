@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
-class SocialCommunityViewDashboard extends JView {
+class SocialCommunityViewDashboard extends JViewLegacy {
     
     protected $option;
     
@@ -42,9 +42,17 @@ class SocialCommunityViewDashboard extends JView {
         SocialCommunityHelper::addSubmenu($this->getName());
         
         $this->addToolbar();
+        $this->addSidebar();
         $this->setDocument();
         
         parent::display($tpl);
+    }
+    
+    /**
+     * Add a menu on the sidebar of page
+     */
+    protected function addSidebar() {
+        $this->sidebar = JHtmlSidebar::render();
     }
     
     /**
@@ -53,7 +61,7 @@ class SocialCommunityViewDashboard extends JView {
      * @since   1.6
      */
     protected function addToolbar(){
-        JToolBarHelper::title(JText::_("COM_SOCIALCOMMUNITY_DASHBOARD"), 'itp-dashboard');
+        JToolBarHelper::title(JText::_("COM_SOCIALCOMMUNITY_DASHBOARD"));
         
         JToolBarHelper::preferences('com_socialcommunity');
         JToolBarHelper::divider();
@@ -72,9 +80,6 @@ class SocialCommunityViewDashboard extends JView {
 	protected function setDocument() {
 	    
 		$this->document->setTitle(JText::_('COM_SOCIALCOMMUNITY_DASHBOARD_META_TITLE'));
-		
-		// Styles
-		$this->document->addStyleSheet('../media/'.$this->option.'/css/admin/bootstrap.min.css');
 		
 	}
 	

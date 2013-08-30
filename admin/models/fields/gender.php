@@ -45,8 +45,8 @@ class JFormFieldGender extends JFormFieldList {
         // Initialize variables.
         $options = array();
         
-        $options[] = JHTML::_('select.option', 'none', " --- ".JText::_("COM_SOCIALCOMMUNITY_SELECT")." --- ", 'value', 'text');
-		$options[] = JHTML::_('select.option', 'male', JText::_("COM_SOCIALCOMMUNITY_GENDER_MALE"), 'value', 'text');
+        $options[] = JHTML::_('select.option', '',       JText::_("COM_SOCIALCOMMUNITY_SELECT_GENDER"), 'value', 'text');
+		$options[] = JHTML::_('select.option', 'male',   JText::_("COM_SOCIALCOMMUNITY_GENDER_MALE"), 'value', 'text');
 		$options[] = JHTML::_('select.option', 'female', JText::_("COM_SOCIALCOMMUNITY_GENDER_FEMALE"), 'value', 'text');
 		
         // Merge any additional options in the XML definition.

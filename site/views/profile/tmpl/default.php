@@ -18,11 +18,14 @@ defined('_JEXEC') or die;?>
 		<?php if(!$this->item["image"]){?>
 		<img src="media/com_socialcommunity/images/no-profile.png" />
 		<?php }else{?>
-		<img src="<?php echo $this->imagesFolder.$this->item["image"];?>" alt="<?php echo $this->item["name"];?>" itemprop="image" />
+		<img src="<?php echo $this->imagesFolder."/".$this->item["image"];?>" alt="<?php echo $this->item["name"];?>" itemprop="image" />
 		<?php }?>
 		<?php if($this->isOwner){?>
 		<div class="clearfix">&nbsp;</div>
-		<a href="<?php echo JRoute::_("index.php?option=com_socialcommunity&view=form");?>" class="btn"><?php echo JText::_("COM_SOCIALCOMMUNITY_EDIT_PROFILE");?></a>
+		<a href="<?php echo JRoute::_("index.php?option=com_socialcommunity&view=form");?>" class="btn">
+		    <i class="icon-edit" ></i>
+		    <?php echo JText::_("COM_SOCIALCOMMUNITY_EDIT_PROFILE");?>
+	    </a>
 		<?php }?>
 	</div>
 	<div class="span9">
