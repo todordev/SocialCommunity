@@ -3,12 +3,8 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 // no direct access
@@ -24,9 +20,15 @@ class SocialCommunityViewForm extends JViewLegacy {
     
     protected $option     = null;
     
-    public function __construct($config){
+    protected $layoutsBasePath;
+    
+    public function __construct($config) {
+    
         parent::__construct($config);
-        $this->option = JFactory::getApplication()->input->getCmd("option");
+        
+        $this->option = JFactory::getApplication()->input->get("option");
+        $this->layoutsBasePath = JPath::clean(JPATH_COMPONENT_ADMINISTRATOR .DIRECTORY_SEPARATOR. "layouts");
+    
     }
     
     /**
@@ -39,19 +41,33 @@ class SocialCommunityViewForm extends JViewLegacy {
         $app = JFactory::getApplication();
         /** @var $app JSite **/
         
-        // Initialise variables
-        $this->state      = $this->get('State');
-        $this->form       = $this->get('Form');
-        $this->params     = $this->state->get("params");
-            
-        $this->imagesFolder = $this->params->get("images_directory", "images/profiles");
-        $this->item         = $this->get("Item");
+        $this->layout = $this->getLayout();
         
-        if(!$this->item) {
+        switch($this->layout) {
+        
+            case "contact":
+                $this->prepareContact();
+                break;
+        
+            case "social":
+                $this->prepareSocialProfiles();
+                break;
+        
+            default: // Basic data for the profile.
+                $this->prepareBasic();
+                break;
+        }
+        
+        $userId = JFactory::getUser()->id;
+        if(!$userId) {
             $app->enqueueMessage(JText::_("COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN"), "notice");
             $app->redirect(JRoute::_('index.php?option=com_users&view=login', false));
             return;
         }
+        
+        // Prepare layout data.
+        $this->layoutData = new JData();
+        $this->layoutData->layout = $this->layout;
         
         // HTML Helpers
         JHtml::addIncludePath(ITPRISM_PATH_LIBRARY.'/ui/helpers');
@@ -59,6 +75,43 @@ class SocialCommunityViewForm extends JViewLegacy {
         $this->prepareDocument();
         
         parent::display($tpl);
+    }
+    
+    protected function prepareBasic() {
+        
+        $model              = JModelLegacy::getInstance("Basic", "SocialCommunityModel", $config = array('ignore_request' => false));
+        
+        $this->state        = $model->getState();
+        $this->form         = $model->getForm();
+        $this->params       = $this->state->get("params");
+        
+        $this->imagesFolder = $this->params->get("images_directory", "images/profiles");
+        $this->item         = $model->getItem();
+        
+    }
+    
+    protected function prepareContact() {
+    
+        $model              = JModelLegacy::getInstance("Contact", "SocialCommunityModel", $config = array('ignore_request' => false));
+        
+        $this->state        = $model->getState();
+        $this->form         = $model->getForm();
+        $this->params       = $this->state->get("params");
+        
+        $this->item         = $model->getItem();
+    
+    }
+    
+    protected function prepareSocialProfiles() {
+    
+        $model              = JModelLegacy::getInstance("Social", "SocialCommunityModel", $config = array('ignore_request' => false));
+    
+        $this->state        = $model->getState();
+        $this->form         = $model->getForm();
+        $this->params       = $this->state->get("params");
+    
+        $this->items        = $model->getItems();
+    
     }
     
     /**
@@ -100,12 +153,29 @@ class SocialCommunityViewForm extends JViewLegacy {
         $this->document->addStyleSheet('media/'.$this->option.'/css/site/style.css');
         
         // Script
-        JHtml::_("bootstrap.framework");
+        JHtml::_("bootstrap.tooltip");
         
         JHtml::_("itprism.ui.bootstrap_maxlength");
-        JHtml::_("itprism.ui.bootstrap_fileupload");
+        JHtml::_("itprism.ui.bootstrap_fileuploadstyle");
         
-        $this->document->addScript('media/'.$this->option.'/js/site/form.js');
+        switch($this->layout) {
+        
+            case "contact":
+                JHtml::_('itprism.ui.bootstrap_typeahead');
+                JHtml::_('formbehavior.chosen', '#jform_country_id');
+                
+                $this->document->addScript('media/'.$this->option.'/js/site/form_contact.js');
+                break;
+        
+            case "social":
+                $this->prepareSocialProfiles();
+                break;
+        
+            default: // Load scripts used on layout "Basic".
+                $this->document->addScript('media/'.$this->option.'/js/site/form_basic.js');
+                break;
+                
+        }
         
     }
 

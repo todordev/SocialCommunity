@@ -3,12 +3,8 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 // no direct access
@@ -41,6 +37,7 @@ class SocialCommunityViewProfile extends JViewLegacy {
 		$this->state	    = $this->get('State');
 		$this->item		    = $this->get("Item");
 		$this->params	    = $this->state->get("params");
+		
 		$this->imagesFolder = $this->params->get("images_directory", "images/profiles");
 
 		// If I am not logged in, and I try to load profile page without user ID as a parameter, 
@@ -68,11 +65,44 @@ class SocialCommunityViewProfile extends JViewLegacy {
 		$this->isOwner   = $this->state->get($this->option.'.visitor.is_owner');
 		$this->objectId  = $this->state->get($this->option.'.profile.user_id');
 		
+		// Get social profiles
+		jimport("socialcommunity.socialprofiles");
+		$this->socialProfiles = new SocialCommunitySocialProfiles(JFactory::getDbo());
+		$this->socialProfiles->load($this->objectId);
+		
+		$this->prepareBasicInformation();
+		$this->prepareContactInformation();
+		    
 		$this->version   = new SocialCommunityVersion();
 
 		$this->prepareDocument();
 		
 		parent::display($tpl);
+    }
+    
+    protected function prepareBasicInformation() {
+        
+        $this->item->bio  = JString::trim($this->item->bio);
+        
+    }
+    
+    protected function prepareContactInformation() {
+        
+        $this->item->address  = JString::trim($this->item->address);
+        $this->item->phone    = JString::trim($this->item->phone);
+        $this->item->country  = JString::trim($this->item->country);
+        $this->item->location = JString::trim($this->item->location);
+        
+        $this->displayContactInformation = false;
+        if(!empty($this->item->address) OR !empty($this->item->phone) OR !empty($this->item->country) OR !empty($this->item->location)){
+            $this->displayContactInformation = true;
+        }
+        
+        $this->displayAddress = false;
+        if(!empty($this->item->address) OR !empty($this->item->country) OR !empty($this->item->location)) {
+            $this->displayAddress = true;
+        }
+        
     }
     
     /**
@@ -106,11 +136,7 @@ class SocialCommunityViewProfile extends JViewLegacy {
 		
 		// Breadcrumb
 		$pathway = $app->getPathWay();
-		$name    = JArrayHelper::getValue($this->item, "name");
-		$pathway->addItem($name);
-		
-		// Add styles
-		$this->document->addStyleSheet(JURI::root() . 'media/'.$this->option.'/css/site/style.css');
+		$pathway->addItem($this->item->name);
 		
     }
 	
@@ -128,7 +154,7 @@ class SocialCommunityViewProfile extends JViewLegacy {
         if($menu){
             $this->params->def('page_heading', $this->params->get('page_title', $menu->title));
         }else{
-            $this->params->def('page_heading', JArrayHelper::getValue($this->item, "name"));
+            $this->params->def('page_heading', $this->item->name);
         }
 		
     }
@@ -144,7 +170,7 @@ class SocialCommunityViewProfile extends JViewLegacy {
 		$menu     = $menus->getActive();
         
 		// Prepare page title
-        $title    = JArrayHelper::getValue($this->item, "name");
+        $title    = $this->item->name;
         
         // Add title before or after Site Name
         if(!$title){

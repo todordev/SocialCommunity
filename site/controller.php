@@ -3,12 +3,8 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 // No direct access
@@ -17,6 +13,14 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controller');
 
 class SocialCommunityController extends JControllerLegacy {
+    
+    protected $cacheableViews = array("profile");
+    protected $option;
+    
+    public function __construct($config){
+        parent::__construct($config);
+        $this->option = JFactory::getApplication()->input->get("option");
+    }
     
     /**
      * Method to display a view.
@@ -29,17 +33,6 @@ class SocialCommunityController extends JControllerLegacy {
      */
     public function display($cachable = false, $urlparams = false) {
 
-        $cachable   = true;
-        
-        $app = JFactory::getApplication();
-        /** @var $app JSite **/
-        
-        // Set the default view name and format from the Request.
-        // Note we are using catid to avoid collisions with the router and the return page.
-        // Frontend is a bit messier than the backend.
-        $viewName  = $app->input->getCmd('view', 'profile');
-        $app->input->set('view', $viewName);
-
         $safeurlparams = array(
             'id'                => 'INT',
             'limit'             => 'INT',
@@ -48,7 +41,22 @@ class SocialCommunityController extends JControllerLegacy {
             'filter_order_dir'  => 'CMD',
             'catid'             => 'INT',
         );
+        
+        // Load component styles
+        $doc = JFactory::getDocument();
+        $doc->addStyleSheet("media/".$this->option.'/css/site/style.css');
+        
+        // Set the default view name and format from the Request.
+        // Note we are using catid to avoid collisions with the router and the return page.
+        // Frontend is a bit messier than the backend.
+        $viewName  = $this->input->getCmd('view', 'profile');
+        $this->input->set('view', $viewName);
 
+        // Cache some views.
+        if(in_array($viewName, $this->cacheableViews)) {
+            $cachable   = true;
+        }
+        
         return parent::display($cachable, $safeurlparams);
         
     }

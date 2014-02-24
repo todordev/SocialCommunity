@@ -3,12 +3,8 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 // no direct access
@@ -39,12 +35,19 @@ class SocialCommunityViewProfile extends JViewLegacy {
         $this->item = $this->get('Item');
         $this->form = $this->get('Form');
         
+        $this->params       = $this->state->get("params");
+        
         if(empty($this->item->id)) {
             $app = JFactory::getApplication();
             $app->enqueueMessage(JText::_("COM_SOCIALCOMMUNITY_NO_PROFILE"), "notice");
             $app->redirect( JRoute::_('index.php?option=com_socialcommunity&view=profiles', false) );
             return;
         }
+        
+        $model = $this->getModel();
+        
+        $this->imagesFolder = "../".$this->params->get("images_directory", "images/profiles");
+        $this->item         = $model->getItem();
         
         // Prepare actions, behaviors, scritps and document
         $this->addToolbar();
@@ -93,6 +96,8 @@ class SocialCommunityViewProfile extends JViewLegacy {
 	    // Add behaviors
         JHtml::_('behavior.tooltip');
         JHtml::_('behavior.formvalidation');
+        
+        JHtml::_('formbehavior.chosen', '#jform_country_id');
         
 		$this->document->setTitle($this->documentTitle);
         

@@ -1,28 +1,28 @@
 <?php
 /**
- * @package      Social Community
+ * @package      SocialCommunity
  * @subpackage   Libraries
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity Library is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 defined('JPATH_PLATFORM') or die;
 
 class SocialCommunityNotification {
 
+    const ARCHIVED      = 1;
+    const NOT_ARCHIVED  = 0;
+    
     /**
      * Notification ID
+     * 
      * @var integer
      */
     public $id;
     
-    public $note     = "";
-    public $read     = 0;
+    public $content;
+    public $status   = 0;
     public $image;
     public $url;
     public $created;
@@ -34,18 +34,13 @@ class SocialCommunityNotification {
      */
     protected $db;
     
-	public function __construct($id = 0) {
-        $this->db = JFactory::getDbo();
-        
-        if(!empty($id)) {
-            $this->load($id);
-        } else {
-            $this->init();
-        }
+	public function __construct($db) {
+        $this->db = $db;
     }
     
     /**
-     * Load user notification using.
+     * Load notification record from database.
+     * 
      * @param integer $id
      */
     public function load($id) {
@@ -55,43 +50,45 @@ class SocialCommunityNotification {
         
         $query
             ->select("a.*")
-            ->from($this->db->quoteName("#__itpsc_notifications") . ' AS a' )
-            ->where("a.id   = ". (int)$id);
+            ->from($this->db->quoteName("#__itpsc_notifications", "a"))
+            ->where("a.id = ". (int)$id);
             
         $this->db->setQuery($query);
         $result = $this->db->loadAssoc();
         
-        if(!empty($result)) { // Set values to variables
+        if(!empty($result)) { 
             $this->bind($result);
-        } else {
-            $this->init();
         }
         
     }
     
-    public function init() {
+    public function reset() {
         
-        $date          = new JDate();
-        $this->created = $date->format("Y-m-d H:i:s");
-        $this->read    = 0;
-        $this->id      = null;
+        $parameters = get_object_vars($this);
+        
+        foreach($parameters as $key) {
+            
+            if(strcmp("db", $key)) {
+                continue;
+            }
+            
+            $this->$key = null;
+        }
+        
+        $this->status  = 0;
         
     }
     
-    public function bind($data) {
+    public function bind($data, $exclude = array()) {
         
         foreach($data as $key => $value) {
+            if(in_array($key, $exclude)) {
+                continue;
+            }
+            
             $this->$key = $value;
         }
         
-    }
-    
-    public function setRead() {
-        $this->read = 1;
-    }
-    
-    public function setNotRead() {
-        $this->read = 0;
     }
     
     protected function updateObject() {
@@ -101,34 +98,36 @@ class SocialCommunityNotification {
         
         $query
             ->update($this->db->quoteName("#__itpsc_notifications"))
-            ->set($this->db->quoteName("note")    ." = " . $this->db->quote($this->note) )
-            ->set($this->db->quoteName("image")   ." = " . $this->db->quote($this->image) )
-            ->set($this->db->quoteName("url")     ." = " . $this->db->quote($this->url) )
-            ->set($this->db->quoteName("read")    ." = " . (int)$this->read)
-            ->set($this->db->quoteName("user_id") ." = " . (int)$this->user_id)
-            ->where($this->db->quoteName("id")    ." = " . (int)$this->id);
+            ->set($this->db->quoteName("content") ."=". $this->db->quote($this->content) )
+            ->set($this->db->quoteName("image")   ."=". $this->db->quote($this->image) )
+            ->set($this->db->quoteName("url")     ."=". $this->db->quote($this->url) )
+            ->set($this->db->quoteName("status")  ."=". (int)$this->status)
+            ->set($this->db->quoteName("user_id") ."=". (int)$this->user_id)
+            ->where($this->db->quoteName("id")    ."=". (int)$this->id);
             
         $this->db->setQuery($query);
-        $this->query();
+        $this->execute();
     }
     
     protected function insertObject() {
         
         if(!$this->user_id) {
-            throw new Exception("Invalid user id", 500);
+            throw new RuntimeException(JText::_("LIB_SOCIALCOMMUNITY_INVALID_USER_ID"));
         }
         
         // Create a new query object.
         $query  = $this->db->getQuery(true);
         
-        $date = new JDate($this->created);
-        $unixTimestamp = $date->toSql();
+        if(!$this->created) {
+            $date = new JDate();
+            $this->created = $date->toSql();
+        }
         
         $query
             ->insert($this->db->quoteName("#__itpsc_notifications"))
             ->set($this->db->quoteName("note")    ." = " . $this->db->quote($this->note) )
-            ->set($this->db->quoteName("created") ." = " . $this->db->quote($unixTimestamp) )
-            ->set($this->db->quoteName("read")    ." = " . (int)$this->read)
+            ->set($this->db->quoteName("created") ." = " . $this->db->quote($this->created) )
+            ->set($this->db->quoteName("status")  ." = " . (int)$this->status)
             ->set($this->db->quoteName("user_id") ." = " . (int)$this->user_id);
             
         if(!empty($this->image)) {
@@ -140,13 +139,13 @@ class SocialCommunityNotification {
         }
         
         $this->db->setQuery($query);
-        $this->db->query();
+        $this->db->execute();
         
         return $this->db->insertid();
         
     }
     
-    public function store() {
+    protected function store() {
         
         if(!$this->id) {
             $this->id = $this->insertObject();
@@ -159,42 +158,30 @@ class SocialCommunityNotification {
     public function remove() {
         
         if(!$this->id) {
-            throw new Exception(JText::_("Invalid notification."), ITPrismErrors::CODE_WARNING);
+            throw new RuntimeException(JText::_("LIB_SOCIALCOMMUNITY_INVALID_NOTIFICATION_ID"));
         }
         
         // Create a new query object.
         $query  = $this->db->getQuery(true);
         $query
             ->delete($this->db->quoteName("#__itpsc_notifications"))
-            ->where($this->db->quoteName("id") ." = " . (int)$this->id);
+            ->where($this->db->quoteName("id") ."=". (int)$this->id);
         
         $this->db->setQuery($query);
-        $this->db->query();
+        $this->db->execute();
         
-        $this->init();
+        $this->reset();
         
     }
     
     /**
-     * 
      * Initialize main variables, create a new notification 
      * and send it to user.
      * 
-     * @param string $note
+     * @param string  $note
      * @param integer $userId    This is the receiver of the message.
      */
-    public function send($note = null, $userId = null) {
-        
-        if(!empty($note)) {
-            $this->note = $note;
-        }
-        if(!empty($userId)) {
-            $this->user_id = (int)$userId;
-        }
-        
-        // Initialize the properties read, id, created. 
-        $this->init();
-        
+    public function send() {
         $this->store();
     }
     
@@ -202,5 +189,37 @@ class SocialCommunityNotification {
         $this->user_id = $userId;
     }
     
-}
+    public function setContent($content) {
+        $this->content = $content;
+    }
+    
+    public function isArchived() {
+        return (!$this->status) ? false : true;
+    }
+    
+	/**
+     * @param field_type $image
+     */
+    public function setImage($image) {
+        $this->image = $image;
+    }
 
+	/**
+     * @param field_type $url
+     */
+    public function setUrl($url) {
+        $this->url = $url;
+    }
+
+	/**
+     * @param Ambigous <string, mixed> $created
+     */
+    public function setCreated($created) {
+        $this->created = $created;
+    }
+
+    public function setStatus($status) {
+        $this->status = (int)$status;
+    }
+    
+}

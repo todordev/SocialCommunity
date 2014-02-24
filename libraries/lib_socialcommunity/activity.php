@@ -1,14 +1,10 @@
 <?php
 /**
- * @package      Social Community
+ * @package      SocialCommunity
  * @subpackage   Libraries
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity Library is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 defined('JPATH_PLATFORM') or die;
@@ -16,12 +12,12 @@ defined('JPATH_PLATFORM') or die;
 class SocialCommunityActivity {
 
     /**
-     * Activity ID
+     * Activity ID.
      * @var integer
      */
     public $id;
     
-    public $info;
+    public $content;
     public $image;
     public $url;
     public $created;
@@ -33,18 +29,13 @@ class SocialCommunityActivity {
      */
     protected $db;
     
-	public function __construct($id = 0) {
-        $this->db = JFactory::getDbo();
-        
-        if(!empty($id)) {
-            $this->load($id);
-        } else {
-            $this->init();
-        }
+	public function __construct(JDatabase $db) {
+        $this->db = $db;
     }
     
     /**
-     * Load user notification using.
+     * Load activity record.
+     * 
      * @param integer $id
      */
     public function load($id) {
@@ -53,26 +44,16 @@ class SocialCommunityActivity {
         $query  = $this->db->getQuery(true);
         
         $query
-            ->select("a.*")
-            ->from($this->db->quoteName("#__itpsc_activities") . ' AS a' )
-            ->where("a.id   = ". (int)$id);
+            ->select("a.id, a.content, a.image, a.url, a.created, a.user_id")
+            ->from($this->db->quoteName("#__itpsc_activities", "a"))
+            ->where("a.id = ". (int)$id);
             
         $this->db->setQuery($query);
         $result = $this->db->loadAssoc();
         
-        if(!empty($result)) { // Set values to variables
+        if(!empty($result)) {
             $this->bind($result);
-        } else {
-            $this->init();
         }
-        
-    }
-    
-    public function init() {
-        
-        $date          = new JDate();
-        $this->created = $date->format("Y-m-d H:i:s");
-        $this->id      = null;
         
     }
     
@@ -91,44 +72,46 @@ class SocialCommunityActivity {
         
         $query
             ->update("#__itpsc_activities")
-            ->set($this->db->quoteName("info")    ."  = " . $this->db->quote($this->info) )
-            ->set($this->db->quoteName("image")   ."  = " . $this->db->quote($this->image) )
-            ->set($this->db->quoteName("url")     ."  = " . $this->db->quote($this->url) )
-            ->set($this->db->quoteName("user_id") ."  = " . (int)$this->user_id)
-            ->where($this->db->quoteName("id")    ."  = " . (int)$this->id);
+            ->set($this->db->quoteName("content") ."=". $this->db->quote($this->content) )
+            ->set($this->db->quoteName("image")   ."=". $this->db->quote($this->image) )
+            ->set($this->db->quoteName("url")     ."=". $this->db->quote($this->url) )
+            ->set($this->db->quoteName("user_id") ."=". (int)$this->user_id)
+            ->where($this->db->quoteName("id")    ."=". (int)$this->id);
             
         $this->db->setQuery($query);
-        $this->query();
+        $this->execute();
     }
     
     protected function insertObject() {
         
         if(!$this->user_id) {
-            throw new Exception("Invalid user id", 500);
+            throw new RuntimeException(JText::_("LIB_SOCIALCOMMUNITY_INVALID_USER_ID"));
         }
         
         // Create a new query object.
         $query  = $this->db->getQuery(true);
         
-        $date = new JDate($this->created);
-        $unixTimestamp = $date->toSql();
+        if(!$this->created) {
+            $date = new JDate();
+            $this->created = $date->toSql();
+        }
         
         $query
             ->insert("#__itpsc_activities")
-            ->set($this->db->quoteName("info")    ." = " . $this->db->quote($this->info) )
-            ->set($this->db->quoteName("created") ." = " . $this->db->quote($unixTimestamp) )
-            ->set($this->db->quoteName("user_id") ." = " . (int)$this->user_id);
+            ->set($this->db->quoteName("content") ."=". $this->db->quote($this->content) )
+            ->set($this->db->quoteName("created") ."=". $this->db->quote($this->created) )
+            ->set($this->db->quoteName("user_id") ."=". (int)$this->user_id);
             
         if(!empty($this->image)) {
-            $query->set($this->db->quoteName("image")   ." = " . $this->db->quote($this->image) );
+            $query->set($this->db->quoteName("image")   ."=". $this->db->quote($this->image) );
         }
         
         if(!empty($this->image)) {
-            $query->set($this->db->quoteName("url")     ." = " . $this->db->quote($this->url) );
+            $query->set($this->db->quoteName("url")     ."=". $this->db->quote($this->url) );
         }
         
         $this->db->setQuery($query);
-        $this->db->query();
+        $this->db->execute();
         
         return $this->db->insertid();
         

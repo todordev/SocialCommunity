@@ -3,16 +3,12 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 // no direct access
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 /**
  * Install script file of the component
@@ -59,11 +55,11 @@ class pkg_socialCommunityInstallerScript {
         public function postflight($type, $parent) {
 
             if(!defined("SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR")) {
-                define("SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR", JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . "components" . DIRECTORY_SEPARATOR ."com_socialcommunity");
+                define("SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR", JPATH_ADMINISTRATOR .DIRECTORY_SEPARATOR. "components" .DIRECTORY_SEPARATOR."com_socialcommunity");
             }
             
             // Register Install Helper
-            JLoader::register("SocialCommunityInstallHelper", SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR . DIRECTORY_SEPARATOR . "helpers" . DIRECTORY_SEPARATOR ."install.php");
+            JLoader::register("SocialCommunityInstallHelper", SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR .DIRECTORY_SEPARATOR. "helpers" .DIRECTORY_SEPARATOR. "install.php");
             
             jimport('joomla.filesystem.path');
             jimport('joomla.filesystem.folder');
@@ -71,7 +67,7 @@ class pkg_socialCommunityInstallerScript {
             
             $params             = JComponentHelper::getParams("com_socialcommunity");
             $this->imagesFolder = JFolder::makeSafe($params->get("images_directory", "images/profiles"));
-            $this->imagesPath   = JPath::clean( JPATH_SITE.DIRECTORY_SEPARATOR.$this->imagesFolder );
+            $this->imagesPath   = JPath::clean(JPATH_SITE .DIRECTORY_SEPARATOR. $this->imagesFolder);
             
             // Create images folder
             if(!is_dir($this->imagesPath)){
@@ -136,6 +132,27 @@ class pkg_socialCommunityInstallerScript {
             }
             SocialCommunityInstallHelper::addRow($title, $result, $info);
             
+            // Display result about verification FileInfo
+            $title  = JText::_("COM_SOCIALCOMMUNITY_FILEINFO");
+            $info   = "";
+            if( !function_exists('finfo_open') ) {
+                $info   = JText::_("COM_SOCIALCOMMUNITY_FILEINFO_INFO");
+                $result = array("type" => "important", "text" => JText::_("JOFF"));
+            } else {
+                $result = array("type" => "success", "text" => JText::_("JON"));
+            }
+            SocialCommunityInstallHelper::addRow($title, $result, $info);
+            
+            // Display result about verification FileInfo
+            $title  = JText::_("COM_SOCIALCOMMUNITY_PHP_VERSION");
+            $info   = "";
+            if (version_compare(PHP_VERSION, '5.3.0') < 0) {
+                $result = array("type" => "important", "text" => JText::_("COM_SOCIALCOMMUNITY_WARNING"));
+            } else {
+                $result = array("type" => "success", "text" => JText::_("JYES"));
+            }
+            SocialCommunityInstallHelper::addRow($title, $result, $info);
+            
             // Display result about verification of installed ITPrism Library
             jimport("itprism.version");
             $title  = JText::_("COM_SOCIALCOMMUNITY_ITPRISM_LIBRARY");
@@ -164,7 +181,6 @@ class pkg_socialCommunityInstallerScript {
             SocialCommunityInstallHelper::endTable();
                 
             echo JText::sprintf("COM_SOCIALCOMMUNITY_MESSAGE_REVIEW_SAVE_SETTINGS", JRoute::_("index.php?option=com_socialcommunity"));
-            
             
         }
 }

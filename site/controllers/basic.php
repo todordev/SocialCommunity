@@ -3,12 +3,8 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 // No direct access
@@ -22,7 +18,7 @@ jimport('itprism.controller.form.frontend');
  * @package     SocialCommunity
  * @subpackage  Components
  */
-class SocialCommunityControllerForm extends ITPrismControllerFormFrontend {
+class SocialCommunityControllerBasic extends ITPrismControllerFormFrontend {
     
     /**
      * Save an item
@@ -37,22 +33,18 @@ class SocialCommunityControllerForm extends ITPrismControllerFormFrontend {
         // Check for registered user
         $userId  = JFactory::getUser()->id;
         if(!$userId) {
-            $redirectData = array(
+            $redirectOptions = array(
                 "force_direction" => "index.php?option=com_users&view=login"
             );
             
-            $this->displayNotice(JText::_("COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN"), $redirectData);
+            $this->displayNotice(JText::_("COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN"), $redirectOptions);
             return;
         }
         
         $data    = $app->input->post->get('jform', array(), 'array');
-        $redirectData = array (
+        $redirectOptions = array (
             "view"    => "form",
         );
-        
-        // Get image
-        $image   = $app->input->files->get('jform', array(), 'array');
-        $image   = JArrayHelper::getValue($image, "photo");
         
         $model   = $this->getModel();
         /** @var $model SocialCommunityModelForm **/
@@ -69,26 +61,24 @@ class SocialCommunityControllerForm extends ITPrismControllerFormFrontend {
         
         // Check for errors.
         if($validData === false){
-            $this->displayNotice($form->getErrors(), $redirectData);
+            $this->displayNotice($form->getErrors(), $redirectOptions);
             return;
         }
             
         try {
             
+            // Get image
+            $image   = $app->input->files->get('jform', array(), 'array');
+            $image   = JArrayHelper::getValue($image, "photo");
+            
             // Upload image
             if(!empty($image['name'])) {
-                
-                jimport('joomla.filesystem.folder');
-                jimport('joomla.filesystem.file');
-                jimport('joomla.filesystem.path');
-                jimport('joomla.image.image');
-                jimport('itprism.file.upload.image');
-                
+            
                 $imageNames    = $model->uploadImage($image);
                 if(!empty($imageNames["image"])) {
                     $validData = array_merge($validData, $imageNames);
                 }
-                
+            
             }
             
             $model->save($validData);
@@ -97,7 +87,7 @@ class SocialCommunityControllerForm extends ITPrismControllerFormFrontend {
             throw new Exception( JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'), 500);
         }
         
-        $this->displayMessage(JText::_('COM_SOCIALCOMMUNITY_PROFILE_SAVED'), $redirectData);
+        $this->displayMessage(JText::_('COM_SOCIALCOMMUNITY_PROFILE_SAVED'), $redirectOptions);
     
     }
     
@@ -115,15 +105,15 @@ class SocialCommunityControllerForm extends ITPrismControllerFormFrontend {
         // Check for registered user
         $userId  = JFactory::getUser()->id;
         if(!$userId) {
-            $redirectData = array(
+            $redirectOptions = array(
                 "force_direction"     => "index.php?option=com_users&view=login"
             );
             
-            $this->displayNotice(JText::_("COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN"), $redirectData);
+            $this->displayNotice(JText::_("COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN"), $redirectOptions);
             return;
         }
         
-        $redirectData = array (
+        $redirectOptions = array (
             "view"     => "form",
         );
         
@@ -137,7 +127,7 @@ class SocialCommunityControllerForm extends ITPrismControllerFormFrontend {
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
         
-        $this->displayMessage(JText::_('COM_SOCIALCOMMUNITY_IMAGE_DELETED'), $redirectData);
+        $this->displayMessage(JText::_('COM_SOCIALCOMMUNITY_IMAGE_DELETED'), $redirectOptions);
         
     }
     

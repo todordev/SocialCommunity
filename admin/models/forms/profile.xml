@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-	<fieldset>
+	<fieldset name="basic" addfieldpath="/administrator/components/com_socialcommunity/models/fields">
 
 		<field name="name" type="text"  
 			label="COM_SOCIALCOMMUNITY_NAME"
@@ -28,5 +28,76 @@
             rows="10" 
         />
             
+        <field name="birthday" type="scbirthday"  
+            label="COM_SOCIALCOMMUNITY_BIRTHDAY"
+            description="COM_SOCIALCOMMUNITY_FIELD_BIRTHDAY_DESC"
+        />
+        
+        <field name="gender" type="list" default="male"
+            label="COM_SOCIALCOMMUNITY_GENDER"
+            description="COM_SOCIALCOMMUNITY_FIELD_GENDER_DESC"
+            filter="trim" 
+        >
+            <option value="male">COM_SOCIALCOMMUNITY_MALE</option>
+            <option value="female">COM_SOCIALCOMMUNITY_FEMALE</option>
+        </field>
+        
+        <field
+            name="photo"
+            type="file"
+            label="COM_SOCIALCOMMUNITY_IMAGE"
+            description="COM_SOCIALCOMMUNITY_FIELD_IMAGE_DESC"
+        />
+        
 	</fieldset>
+    
+    <fieldset name="contact">
+        
+        <field name="phone" type="text" 
+            label="COM_SOCIALCOMMUNITY_PHONE"
+            description="COM_SOCIALCOMMUNITY_FIELD_PHONE_DESC"
+            filter="trim" 
+        />
+        
+        <field name="address" type="textarea" class="input-xxlarge"
+            label="COM_SOCIALCOMMUNITY_ADDRESS" 
+            description="COM_SOCIALCOMMUNITY_FIELD_ADDRESS_DESC"
+            rows="5" 
+        />
+       
+        <field name="country_id" type="sccountries"
+            label="COM_SOCIALCOMMUNITY_COUNTRY" 
+            description="COM_SOCIALCOMMUNITY_FIELD_COUNTRY_DESC"
+            filter="int"
+        />
+       
+        <field name="website" type="url" class="input-xxlarge"
+            label="COM_SOCIALCOMMUNITY_WEBSITE"
+            description="COM_SOCIALCOMMUNITY_FIELD_WEBSITE_DESC"
+            filter="trim" 
+        />
+        
+    </fieldset>
+    
+    <fieldset name="social">
+    
+        <field name="facebook" type="text" 
+            label="COM_SOCIALCOMMUNITY_FACEBOOK"
+            description="COM_SOCIALCOMMUNITY_FIELD_FACEBOOK_DESC"
+            filter="trim" 
+        />
+        
+        <field name="twitter" type="text"
+            label="COM_SOCIALCOMMUNITY_TWITTER" 
+            description="COM_SOCIALCOMMUNITY_FIELD_TWITTER_DESC"
+            filter="trim"
+        />
+        
+        <field name="linkedin" type="text"
+            label="COM_SOCIALCOMMUNITY_LINKEDIN" 
+            description="COM_SOCIALCOMMUNITY_FIELD_LINKEDIN_DESC"
+            filter="trim"
+        />
+        
+    </fieldset>
 </form>

@@ -1,14 +1,10 @@
 <?php
 /**
  * @package      SocialCommunity
- * @subpackage   Plugin
+ * @subpackage   Plugins
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 // No direct access
@@ -18,12 +14,11 @@ defined('_JEXEC') or die;
  * This plugin creating a Social Community profile.
  *
  * @package		SocialCommunity
- * @subpackage	Plugin
+ * @subpackage	Plugins
  */
 class plgUserSocialCommunityNewUser extends JPlugin {
 	
 	/**
-	 *
 	 * Method is called after user data is stored in the database
 	 *
 	 * @param	array		$user		Holds the new user data.
@@ -33,11 +28,10 @@ class plgUserSocialCommunityNewUser extends JPlugin {
 	 *
 	 * @return	void
 	 * @since	1.6
-	 * @throws	Exception on error.
 	 */
-	public function onUserAfterSave($user, $isnew, $success, $msg) {
+	public function onUserAfterSave($user, $isNew, $success, $msg) {
 	    
-		if ($isnew) {
+		if ($isNew) {
 		    
 		    if(!JComponentHelper::isEnabled("com_socialcommunity")) {
 		        return;
@@ -71,10 +65,9 @@ class plgUserSocialCommunityNewUser extends JPlugin {
 	    
 	    $query
 	       ->select("a.id, b.id AS profile_id")
-	       ->from($db->quoteName("#__users") . " AS a")
-	       ->leftJoin($db->quoteName("#__itpsc_profiles") ." AS b ON a.id = b.id")
+	       ->from($db->quoteName("#__users", "a"))
+	       ->leftJoin($db->quoteName("#__itpsc_profiles", "b") ." ON a.id = b.id")
 	       ->where("a.username = " .$db->quote($user["username"]));
-	    
 	    
 	    $db->setQuery($query, 0, 1);
 	    $result = $db->loadAssoc();
@@ -92,18 +85,17 @@ class plgUserSocialCommunityNewUser extends JPlugin {
 
 	private function createProfile($userId, $name) {
 	    
-	    jimport('socialcommunity.profile');
-	    	
-	    $data = array(
-            'id'       => (int)$userId,
-            'name'	   => $name,
-            'alias'	   => JApplication::stringURLSafe($name)
-	    );
+	    $db     = JFactory::getDbo();
+	    $query  = $db->getQuery(true);
 	    
-	    $profile = new SocialCommunityProfile();
-	    $profile->bind($data);
-	    	
-	    $profile->create();
+	    $query
+    	    ->insert($db->quoteName("#__itpsc_profiles"))
+    	    ->set($db->quoteName("id")    ."=". (int)$userId)
+    	    ->set($db->quoteName("name")  ."=". $db->quote($name))
+    	    ->set($db->quoteName("alias") ."=". $db->quote(JApplication::stringURLSafe($name)));
+	    
+	    $db->setQuery($query);
+	    $db->execute();
 	    
 	}
 }

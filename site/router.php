@@ -3,18 +3,15 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 defined('_JEXEC') or die;
 
 /**
- * Method to build Route
+ * Method to build Route.
+ * 
  * @param array $query
  */
 function SocialCommunityBuildRoute(&$query){
@@ -32,18 +29,20 @@ function SocialCommunityBuildRoute(&$query){
         $menuItem = $menu->getItem($query['Itemid']);
     }
 
+    $mOption	= (empty($menuItem->query['option'])) ? null : $menuItem->query['option'];
     $mView	    = (empty($menuItem->query['view']))   ? null : $menuItem->query['view'];
+	$mCatid	    = (empty($menuItem->query['catid']))  ? null : $menuItem->query['catid'];
 	$mId	    = (empty($menuItem->query['id']))     ? null : $menuItem->query['id'];
 
 	// If is set view and Itemid missing, we have to put the view to the segments
 	if (isset($query['view'])) {
-		$view = $query['view'];
+	$view = $query['view'];
 		
-		if (empty($query['Itemid'])) {
+		if (empty($query['Itemid']) OR ($mOption !== "com_socialcommunity")) {
 			$segments[] = $query['view'];
 		}
-		
-	    // We need to keep the view for forms since they never have their own menu item
+
+		// We need to keep the view for forms since they never have their own menu item
 		if ($view != 'form') {
 			unset($query['view']);
 		}
@@ -75,19 +74,17 @@ function SocialCommunityBuildRoute(&$query){
 	}
 	
     // Layout
-    if(isset($query['layout'])){
-        
-        // Does the menu layout match with the query layout 
-        if(!empty($query['Itemid']) AND isset($menuItem->query['layout'])){
-            if($query['layout'] != $menuItem->query['layout']){
-                $segments[] = $query['layout'];
-            }
-        } else {
-            $segments[] = $query['layout'];
-        }
-        
-        unset($query['layout']);
-    }
+    if (isset($query['layout'])) {
+		if (!empty($query['Itemid']) && isset($menuItem->query['layout'])) {
+			if ($query['layout'] == $menuItem->query['layout']) {
+				unset($query['layout']);
+			}
+		} else {
+			if ($query['layout'] == 'default') {
+				unset($query['layout']);
+			}
+		}
+	};
     
     return $segments;
 }

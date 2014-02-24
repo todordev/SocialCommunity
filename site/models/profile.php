@@ -3,12 +3,8 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 // no direct access
@@ -69,12 +65,17 @@ class SocialCommunityModelProfile extends JModelItem {
 		    $db     = JFactory::getDbo();
 		    $query  = $db->getQuery(true);
 		    $query
-		        ->select("*")
-		        ->from($db->quoteName("#__itpsc_profiles"))
-		        ->where("id = " . (int)$id);
+		        ->select(
+	                "a.name, a.image, a.bio, a.address, a.phone, a.website, ".
+	                "b.name as location," .
+	                "c.name as country")
+		        ->from($db->quoteName("#__itpsc_profiles",  "a"))
+		        ->leftJoin($db->quoteName("#__itpsc_locations", "b") . " ON a.location_id = b.id")
+		        ->leftJoin($db->quoteName("#__itpsc_countries", "c") . " ON a.country_id  = c.id")
+		        ->where("a.id = " . (int)$id);
 
 		    $db->setQuery($query, 0, 1);
-		    $result = $db->loadAssoc();
+		    $result = $db->loadObject();
             
 			// Check published state.
 			if (empty($result)){

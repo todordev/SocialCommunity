@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset name="contact" addfieldpath="/administrator/components/com_socialcommunity/models/fields">
+
+        <field name="phone" type="text" 
+            label="COM_SOCIALCOMMUNITY_PHONE"
+            description="COM_SOCIALCOMMUNITY_FIELD_PHONE_DESC"
+            filter="trim" 
+        />
+        
+        <field name="address" type="textarea" class="input-xxlarge"
+            label="COM_SOCIALCOMMUNITY_ADDRESS" 
+            description="COM_SOCIALCOMMUNITY_FIELD_ADDRESS_DESC"
+            rows="5" 
+        />
+        
+        <field name="location_preview" type="text"
+            label="COM_SOCIALCOMMUNITY_LOCATION" 
+            description="COM_SOCIALCOMMUNITY_FIELD_LOCATION_DESC"
+            filter="trim"
+        />
+       
+        <field name="country_id" type="sccountries"
+            label="COM_SOCIALCOMMUNITY_COUNTRY" 
+            description="COM_SOCIALCOMMUNITY_FIELD_COUNTRY_DESC"
+            filter="int"
+        />
+       
+        <field name="website" type="url" class="input-xxlarge"
+            label="COM_SOCIALCOMMUNITY_WEBSITE"
+            description="COM_SOCIALCOMMUNITY_FIELD_WEBSITE_DESC"
+            filter="trim" 
+        />
+        
+        <field name="location_id" type="hidden" filter="int" />
+        
+	</fieldset>
+    
+</form>

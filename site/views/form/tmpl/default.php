@@ -3,25 +3,37 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 // no direct access
 defined('_JEXEC') or die;?>
+
 <div class="row-fluid">
-	<div class="span6">
-        <form enctype="multipart/form-data"  action="<?php echo JRoute::_('index.php?option=com_socialcommunity'); ?>" method="post" id="itpsc-profile-form">
+	<div class="span12">
+		<?php 
+    		$layout      = new JLayoutFile('profile_wizard', $this->layoutsBasePath);
+    	    echo $layout->render($this->layoutData);
+		?>	
+	</div>
+</div>
+
+<div class="row-fluid">
+	<div class="span8">
+        <form action="<?php echo JRoute::_('index.php?option=com_socialcommunity'); ?>" method="post" id="itpsc-form-basic" enctype="multipart/form-data">
             
             <?php echo $this->form->getLabel('name'); ?>
             <?php echo $this->form->getInput('name'); ?>
             
             <?php echo $this->form->getLabel('bio'); ?>
             <?php echo $this->form->getInput('bio'); ?>
+            
+            <?php echo $this->form->getLabel('birthday'); ?>
+            <?php echo $this->form->getInput('birthday'); ?>
+            
+            <?php echo $this->form->getLabel('gender'); ?>
+            <?php echo $this->form->getInput('gender'); ?>
             
             <?php echo $this->form->getLabel('photo'); ?>
             
@@ -36,7 +48,7 @@ defined('_JEXEC') or die;?>
                 <a href="javascript: void(0);" class="close fileupload-exists" data-dismiss="fileupload" style="float: none">×</a>
             </div>
             
-            <input type="hidden" name="task" value="form.save" />
+            <input type="hidden" name="task" value="basic.save" />
             <?php echo JHtml::_('form.token'); ?>
                 
             <div class="clearfix"></div>
@@ -48,15 +60,17 @@ defined('_JEXEC') or die;?>
         </form>
     </div>
     
+    <div class="span4">
     <?php if(!empty($this->item["image"])) {?>
-    <div class="span6">
     	<img src="<?php echo $this->imagesFolder."/".$this->item["image"];?>" class="img-polaroid" />
-    	<div class="clearfix">&nbsp;</div>
-    	<a href="<?php echo JRoute::_("index.php?option=com_socialcommunity&task=form.removeImage&".JSession::getFormToken()."=1");?>" class="btn btn-mini btn-danger">
+    	<div class="clearfix"></div>
+    	<a href="<?php echo JRoute::_("index.php?option=com_socialcommunity&task=basic.removeImage&".JSession::getFormToken()."=1");?>" class="btn btn-mini btn-danger">
     	   <i class="icon-trash"></i> 
     	   <?php echo JText::_("COM_SOCIALCOMMUNITY_REMOVE_IMAGE");?>
 	    </a>
-    </div>
+    <?php } else {?>
+        <img src="media/com_socialcommunity/images/no_profile_200x200.png" class="img-polaroid" />
     <?php }?>
+    </div>
 
 </div>

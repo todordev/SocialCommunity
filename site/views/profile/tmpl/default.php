@@ -3,23 +3,27 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 // no direct access
 defined('_JEXEC') or die;?>
 <div class="row-fluid" itemscope itemtype="http://schema.org/Person">
-	<div class="span3">
-		<?php if(!$this->item["image"]){?>
-		<img src="media/com_socialcommunity/images/no-profile.png" />
+	<div class="span4">
+		<?php if(!$this->item->image){?>
+		<img src="media/com_socialcommunity/images/no_profile_200x200.png" />
 		<?php }else{?>
-		<img src="<?php echo $this->imagesFolder."/".$this->item["image"];?>" alt="<?php echo $this->item["name"];?>" itemprop="image" />
+		<img src="<?php echo $this->imagesFolder."/".$this->item->image;?>" alt="<?php echo $this->item->name;?>" itemprop="image" />
 		<?php }?>
+		
+		<?php if(0 < count($this->socialProfiles)) {?>
+		<div class="clearfix">&nbsp;</div>
+		<div class="sc-social-profiles">
+		  <?php echo JHtml::_("socialcommunity.socialprofiles", $this->socialProfiles, $this->item)?>
+		</div>
+		<?php }?>
+		
 		<?php if($this->isOwner){?>
 		<div class="clearfix">&nbsp;</div>
 		<a href="<?php echo JRoute::_("index.php?option=com_socialcommunity&view=form");?>" class="btn">
@@ -28,9 +32,25 @@ defined('_JEXEC') or die;?>
 	    </a>
 		<?php }?>
 	</div>
-	<div class="span9">
-		<h3 itemprop="name"><?php echo $this->item["name"];?></h3>
-		<p class="about-bio"><?php echo $this->escape($this->item["bio"]);?></p>
+	<div class="span8">
+		<h3 itemprop="name"><?php echo $this->item->name;?></h3>
+		<?php if(!empty($this->item->bio)) {?>
+		<p class="about-bio"><?php echo $this->escape($this->item->bio);?></p>
+		<?php }?>
+		
+		<?php if(!empty($this->displayContactInformation)) {?>
+		<h4><?php echo JText::_("COM_SOCIALCOMMUNITY_CONTACT_INFORMATION");?></h4>
+		
+		<?php if(!empty($this->displayAddress)){?>
+		<div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+            <span itemprop="streetAddress" class="contact-info">
+              <?php echo $this->escape($this->item->address);?>,
+            </span>
+            <span itemprop="addressLocality" class="contact-info"><?php echo $this->escape($this->item->location);?></span>
+        </div>
+        <?php } ?>
+        <?php echo JText::_("COM_SOCIALCOMMUNITY_PHONE");?>: <span itemprop="telephone"><?php echo $this->escape($this->item->phone);?></span>
+        <?php }?>
 	</div>
 </div>
 <div class="clearfix">&nbsp;</div>

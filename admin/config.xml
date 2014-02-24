@@ -11,11 +11,11 @@
         <field name="image_small_width" type="text" default="100" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_SMALL_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_SMALL_WIDTH_DESC" />
         <field name="image_small_height" type="text" default="100" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_SMALL_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_SMALL_HEIGHT_DESC" />
         
-        <field name="image_icon_width" type="text" default="24" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_ICON_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_ICON_WIDTH_DESC" />
-        <field name="image_icon_height" type="text" default="24" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_ICON_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_ICON_HEIGHT_DESC" />
-        
         <field name="image_square_width" type="text" default="50" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_SQUARE_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_SQUARE_WIDTH_DESC" />
         <field name="image_square_height" type="text" default="50" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_SQUARE_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_SQUARE_HEIGHT_DESC" />
+        
+        <field name="image_icon_width" type="text" default="24" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_ICON_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_ICON_WIDTH_DESC" />
+        <field name="image_icon_height" type="text" default="24" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_ICON_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_ICON_HEIGHT_DESC" />
         
     </fieldset>
     

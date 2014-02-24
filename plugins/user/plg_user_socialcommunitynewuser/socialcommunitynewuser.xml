@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.1" type="plugin" group="user" method="upgrade">
+<extension version="3.2" type="plugin" group="user" method="upgrade">
     <name>PLG_USER_SOCIALCOMMUNITYNEWUSER</name>
     <author>Todor Iliev</author>
-    <copyright>Copyright (C) 2010 Todor Iliev ( ITPrism.com ). All rights reserved.</copyright>
+    <copyright>Copyright (C) 2014 Todor Iliev ( ITPrism.com ). All rights reserved.</copyright>
     <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
     <authorEmail>todor@itprism.com</authorEmail>
     <authorUrl>http://itprism.com</authorUrl>
-    <version>1.1</version>
-    <creationDate>25 August, 2013</creationDate>
+    <version>1.2</version>
+    <creationDate>22 Februrary, 2014</creationDate>
     <description>PLG_USER_SOCIALCOMMUNITYNEWUSER_DESC</description>
-    
-    <languages folder="language">
-        <language tag="en-GB">en-GB/en-GB.plg_user_socialcommunitynewuser.ini</language>
-        <language tag="en-GB">en-GB/en-GB.plg_user_socialcommunitynewuser.sys.ini</language>
-    </languages> 
     
     <files>
         <filename plugin="socialcommunitynewuser">socialcommunitynewuser.php</filename>
         <filename>index.html</filename>
+        
+        <folder>language</folder>
     </files>
     
 </extension>

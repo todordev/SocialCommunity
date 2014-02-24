@@ -3,12 +3,8 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 // no direct access
@@ -16,6 +12,8 @@ defined('_JEXEC') or die;
 
 class SocialCommunityHelper {
 	
+    static $extension  = "com_socialcommunity";
+    
 	/**
 	 * Configure the Linkbar.
 	 *
@@ -26,15 +24,27 @@ class SocialCommunityHelper {
 	    
 	    JHtmlSidebar::addEntry(
 			JText::_('COM_SOCIALCOMMUNITY_DASHBOARD'),
-			'index.php?option=com_socialcommunity&view=dashboard',
+			'index.php?option='.self::$extension.'&view=dashboard',
 			$vName == 'dashboard'
 		);
 		
 		JHtmlSidebar::addEntry(
 			JText::_('COM_SOCIALCOMMUNITY_PROFILES'),
-			'index.php?option=com_socialcommunity&view=profiles',
+			'index.php?option='.self::$extension.'&view=profiles',
 			$vName == 'profiles'
 		);
+		
+		JHtmlSidebar::addEntry(
+    		JText::_('COM_SOCIALCOMMUNITY_LOCATIONS'),
+    		'index.php?option='.self::$extension.'&view=locations',
+    		$vName == 'locations'
+        );
+		
+		JHtmlSidebar::addEntry(
+        	JText::_('COM_SOCIALCOMMUNITY_COUNTRIES'),
+        	'index.php?option='.self::$extension.'&view=countries',
+        	$vName == 'countries'
+        );
 		
 		JHtmlSidebar::addEntry(
     		JText::_('COM_SOCIALCOMMUNITY_PLUGINS'),

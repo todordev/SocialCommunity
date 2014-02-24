@@ -3,12 +3,8 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2010 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SocialCommunity is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
  */
 
 // no direct access
@@ -41,9 +37,6 @@ class SocialCommunityViewProfiles extends JViewLegacy {
         // Load the component parameters.
         $params              = JComponentHelper::getParams($this->option);
         $this->imagesFolder  = $params->get("images_directory", "images/profiles");
-        
-        // Include HTML helper
-        JHtml::addIncludePath(JPATH_COMPONENT_SITE.'/helpers/html');
         
         // Add submenu
         SocialCommunityHelper::addSubmenu($this->getName());
