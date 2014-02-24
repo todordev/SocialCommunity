@@ -8,7 +8,13 @@
     <authorUrl>http://itprism.com</authorUrl>
     <version>1.2</version>
     <creationDate>22 Februrary, 2014</creationDate>
-    <description>PLG_USER_SOCIALCOMMUNITYNEWUSER_DESC</description>
+    <description><![CDATA[
+    <p><a href="http://itprism.com/free-joomla-extensions/others/open-source-social-network" target="_blank">User - SocialCommunity - New User</a> is an extension that creates user profiles in Social Community.</p>
+    <p><a href='http://itprism.com/help/86-social-community-documentation' target='_blank'>Read documentation</a> that will help you to setup the extensions.</p>
+    <p>Invest in the extension improvement. You can <a href="http://itprism.com/sponsorship"  target="_blank">sponsor the extension via SMS, PayPal or Bitcoin</a>.</p>
+    <p><a href="http://itprism.com/" target="_blank">Subscribe for the newsletter</a> to receive information about updates and new ITPrism extensions.</p>
+    <p>Please, <a href="http://extensions.joomla.org/extensions/clients-a-communities/communities/24556" target="_blank">vote for the extension</a> on Joomla! Extensions Directory</p>
+    ]]></description>
     
     <files>
         <filename plugin="socialcommunitynewuser">socialcommunitynewuser.php</filename>
