@@ -9,8 +9,13 @@
 
 defined('_JEXEC') or die;
 
-class SocialCommunityTableProfile extends JTable {
-	public function __construct($db) {
+class SocialCommunityTableProfile extends JTable
+{
+    /**
+     * @param JDatabaseDriver $db
+     */
+    public function __construct(JDatabaseDriver $db)
+    {
         parent::__construct('#__itpsc_profiles', 'id', $db);
     }
 }

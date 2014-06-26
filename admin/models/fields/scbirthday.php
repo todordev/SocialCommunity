@@ -19,10 +19,10 @@ JFormHelper::loadFieldClass('list');
  *
  * @package      SocialCommunity
  * @subpackage   Components
- * @since       1.6
+ * @since        1.6
  */
-class JFormFieldScBirthday extends JFormField {
-    
+class JFormFieldScBirthday extends JFormField
+{
     /**
      * The form field type.
      *
@@ -30,39 +30,39 @@ class JFormFieldScBirthday extends JFormField {
      * @since   1.6
      */
     protected $type = 'scbirthday';
-    
-    protected function getInput(){
-        
-        $class        = !empty($this->class) ? $this->class : '';
-        $required     = $this->required ? ' required aria-required="true"' : '';
-        
+
+    protected function getInput()
+    {
+        $class    = !empty($this->class) ? $this->class : '';
+        $required = $this->required ? ' required aria-required="true"' : '';
+
         // Prepare birthday
-        if(!empty($this->value)) {
-            jimport("socialcommunity.date");
-            $date = new SocialCommunityDate($this->value);
-        
-            if(!$date->isValid()) {
-                $birthdayDay = "";
+        if (!empty($this->value)) {
+            jimport("itprism.validator.date");
+            $date = new ITPrismValidatorDate($this->value);
+
+            if (!$date->isValid()) {
+                $birthdayDay   = "";
                 $birthdayMonth = "";
-                $birthdayYear = "";
+                $birthdayYear  = "";
             } else {
+                $date = new JDate($this->value);
+
                 $birthdayDay   = $date->format("d");
                 $birthdayMonth = $date->format("m");
                 $birthdayYear  = $date->format("Y");
             }
-        
+
         }
-        
-        
+
         $html = array();
-        
-        $html[] = '<div class="controls controls-row '.$class.'">';
-        $html[] = '    <input name="'.$this->name.'[day]"   value="'.$birthdayDay.'" id="birthday_day"   class="span3" type="text" placeholder="'.JText::_("COM_SOCIALCOMMUNITY_DAY").'" '.$required.'>';
-        $html[] = '    <input name="'.$this->name.'[month]" value="'.$birthdayMonth.'" id="birthday_month" class="span3" type="text" placeholder="'.JText::_("COM_SOCIALCOMMUNITY_MONTH").'" '.$required.'>';
-        $html[] = '    <input name="'.$this->name.'[year]"  value="'.$birthdayYear.'" id="birthday_year"  class="span4" type="text" placeholder="'.JText::_("COM_SOCIALCOMMUNITY_YEAR").'" '.$required.'>';
+
+        $html[] = '<div class="controls controls-row ' . $class . '">';
+        $html[] = '    <input name="' . $this->name . '[day]"   value="' . $birthdayDay . '" id="birthday_day"   class="span3" type="text" placeholder="' . JText::_("COM_SOCIALCOMMUNITY_DAY") . '" ' . $required . '>';
+        $html[] = '    <input name="' . $this->name . '[month]" value="' . $birthdayMonth . '" id="birthday_month" class="span3" type="text" placeholder="' . JText::_("COM_SOCIALCOMMUNITY_MONTH") . '" ' . $required . '>';
+        $html[] = '    <input name="' . $this->name . '[year]"  value="' . $birthdayYear . '" id="birthday_year"  class="span4" type="text" placeholder="' . JText::_("COM_SOCIALCOMMUNITY_YEAR") . '" ' . $required . '>';
         $html[] = '</div>';
-        
+
         return implode($html);
-        
     }
 }

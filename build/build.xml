@@ -45,11 +45,11 @@
 		<mkdir dir="${cfg.pkgDir}/plugins" />
 		
 		<!-- plugins -->
-		<mkdir dir="${cfg.pkgDir}/plugins/user/plg_user_socialcommunitynewuser" />
+		<mkdir dir="${cfg.pkgDir}/plugins/user/plg_user_socialcommunityuser" />
 		
 	</target>
 
-	<!-- copy administration files of the componet -->
+	<!-- copy administration files of the component -->
 	<copy todir="${cfg.adminDestDir}">
 		<fileset dir="${cfg.adminSourceDir}/${cfg.comName}">
 			<exclude name="**/${cfg.pkgName}.xml" />
@@ -59,30 +59,30 @@
 		</fileset>
 	</copy>
 	
-	<!-- copy install helper of the componet -->
+	<!-- copy install helper of the component -->
 	<copy file="${cfg.adminSourceDir}/${cfg.comName}/helpers/install.php" todir="${cfg.adminDestDir}/helpers/" />
 
-	<!-- copy site files of the componet -->
+	<!-- copy site files of the component -->
 	<copy todir="${cfg.siteDestDir}">
 		<fileset dir="${cfg.siteSourceDir}/${cfg.comName}">
 			<include name="**/*" />
 		</fileset>
 	</copy>
 
-	<!-- copy media files of the componet -->
+	<!-- copy media files of the component -->
 	<copy todir="${cfg.mediaDestDir}">
 		<fileset dir="${cfg.mediaSourceDir}/${cfg.comName}">
 			<include name="**/*" />
 		</fileset>
 	</copy>
 
-	<!-- copy main files of the componet -->
+	<!-- copy main files of the component -->
     <copy file="${cfg.adminSourceDir}/${cfg.comName}/install.php" todir="${cfg.pkgDir}" />
     <copy file="${cfg.adminSourceDir}/${cfg.comName}/README.md" todir="${cfg.pkgDir}" />
     <copy file="${cfg.adminSourceDir}/${cfg.comName}/${cfg.pkgName}.xml" todir="${cfg.pkgDir}" />
     <copy file="${cfg.adminSourceDir}/${cfg.comName}/${cfg.name}.xml" todir="${cfg.pkgDir}" />
 
-	<!-- copy library files of the componet -->
+	<!-- copy library files of the component -->
     <copy todir="${cfg.librariesDestDir}/lib_${cfg.name}">
         <fileset dir="${cfg.librariesSourceDir}/${cfg.name}">
             <include name="**/*" />
@@ -91,18 +91,18 @@
 
 	<!-- COPY PLUGINS -->
 	
-	<!-- USER/SOCIALCOMMUNITYNEWUSER -->
+	<!-- USER/SOCIALCOMMUNITYUSER -->
 	
-	<!-- copy plugin files of user/socialcommunitynewuser -->
-    <copy todir="${cfg.pluginsDestDir}/user/plg_user_socialcommunitynewuser">
-        <fileset dir="${cfg.pluginsSourceDir}/user/socialcommunitynewuser">
+	<!-- copy plugin files of user/socialcommunityuser -->
+    <copy todir="${cfg.pluginsDestDir}/user/plg_user_socialcommunityuser">
+        <fileset dir="${cfg.pluginsSourceDir}/user/socialcommunityuser">
             <include name="**/*" />
         </fileset>
     </copy>
 	
 	<!-- END COPY PLUGINS -->
 	
-	<target name="build_component" depends="init" description="packages the finaly component file">
+	<target name="build_component" depends="init" description="packages the finally component file">
 		
 		<!-- build component -->
 		<zip destfile="${cfg.pkgDir}/packages/${cfg.comName}.zip" basedir="${cfg.pkgDir}" 
@@ -112,7 +112,7 @@
 		<zip destfile="${cfg.pkgDir}/packages/lib_${cfg.name}.zip" basedir="${cfg.librariesDestDir}/lib_${cfg.name}" />
 		
 		<!-- build plugins -->
-		<zip destfile="${cfg.pkgDir}/packages/plg_user_socialcommunitynewuser.zip" basedir="${cfg.pluginsDestDir}/user/plg_user_socialcommunitynewuser" />
+		<zip destfile="${cfg.pkgDir}/packages/plg_user_socialcommunityuser.zip" basedir="${cfg.pluginsDestDir}/user/plg_user_socialcommunityuser" />
 		
 		<!-- build package -->
 		<zip destfile="${cfg.pkgDir}/${cfg.pkgName}_${cfg.version}-${cfg.joomlaVersion}.zip" basedir="${cfg.pkgDir}" 

@@ -21,7 +21,7 @@ defined('_JEXEC') or die;?>
 
 <div class="row-fluid">
 	<div class="span12">
-        <form action="<?php echo JRoute::_('index.php?option=com_socialcommunity'); ?>" method="post" id="itpsc-form-contact" enctype="multipart/form-data">
+        <form action="<?php echo JRoute::_('index.php?option=com_socialcommunity'); ?>" method="post" id="itpsc-form-contact">
             
             <?php echo $this->form->getLabel('phone'); ?>
             <?php echo $this->form->getInput('phone'); ?>
@@ -39,6 +39,7 @@ defined('_JEXEC') or die;?>
             <?php echo $this->form->getInput('website'); ?>
             
             <?php echo $this->form->getInput('location_id'); ?>
+
             <input type="hidden" name="task" value="contact.save" />
             <?php echo JHtml::_('form.token'); ?>
                 

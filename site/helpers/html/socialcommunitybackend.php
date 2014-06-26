@@ -13,64 +13,67 @@ defined('_JEXEC') or die;
 /**
  * SocialCommunity HTML Backend Helper
  *
- * @package		SocialCommunity
- * @subpackage	Components
- * @since		1.6
+ * @package        SocialCommunity
+ * @subpackage     Components
+ * @since          1.6
  */
-abstract class JHtmlSocialCommunityBackend {
-    
+abstract class JHtmlSocialCommunityBackend
+{
+
     /**
-     * 
+     *
      * Display an icon that show a state of profile.
      * If profile exists the profile ID will have value.
-     * 
+     *
      * @param integer $profileId
      * @param integer $userId
-     * @param array $options
+     * @param array   $options
      */
-    public static function profileExists($i, $task, $profileId, $options) {
-        
+    public static function profileExists($i, $task, $profileId, $options)
+    {
+
         $html  = array();
         $class = "";
-        if(!empty($options["tooltip"])) {
+        if (!empty($options["tooltip"])) {
             JHtml::_('behavior.tooltip');
             $class = 'class="hasTooltip"';
         }
-        
-        if(!empty($profileId)) {
+
+        if (!empty($profileId)) {
             $title  = addslashes(htmlspecialchars(JText::_("COM_SOCIALCOMMUNITY_PROFILE_EXISTS"), ENT_COMPAT, 'UTF-8'));
-            $html[] = '<img src="../media/com_socialcommunity/images/profile_24.png" alt="'.$title.'" title="'.$title.'" '.$class.'/>';
+            $html[] = '<img src="../media/com_socialcommunity/images/profile_24.png" alt="' . $title . '" title="' . $title . '" ' . $class . '/>';
         } else {
             $title  = addslashes(htmlspecialchars(JText::_("COM_SOCIALCOMMUNITY_CREATE_PROFILE"), ENT_COMPAT, 'UTF-8'));
             $html[] = '<a href="javascript:void(0);" onclick="return listItemTask(\'cb' . $i . '\',\'' . $task . '\');">';
-            $html[] = '<img src="../media/com_socialcommunity/images/profile_add_24.png" alt="'.$title.'" title="'.$title.'" '.$class.'/>';
+            $html[] = '<img src="../media/com_socialcommunity/images/profile_add_24.png" alt="' . $title . '" title="' . $title . '" ' . $class . '/>';
             $html[] = '</a>';
         }
-        
+
         return implode("\n", $html);
-        
+
     }
-    
-    
-    public static function boolean($value, $title = "") {
-         
+
+
+    public static function boolean($value, $title = "")
+    {
+
         $title = addslashes(htmlspecialchars(JString::trim($title), ENT_COMPAT, 'UTF-8'));
-    
-        if(!$value) { // unpublished
-            $class  = "unpublish";
+
+        if (!$value) { // unpublished
+            $class = "unpublish";
         } else {
-            $class  = "ok";
+            $class = "ok";
         }
-         
-        if(!empty($title)) {
-            $title  = ' title="'.$title.'"';
+
+        if (!empty($title)) {
+            $title = ' title="' . $title . '"';
         }
-    
+
         $html[] = '<a class="btn btn-micro" rel="tooltip" ';
-        $html[] = ' href="javascript:void(0);" ' . $title. '">';
+        $html[] = ' href="javascript:void(0);" ' . $title . '">';
         $html[] = '<i class="icon-' . $class . '"></i>';
         $html[] = '</a>';
-    
+
         return implode($html);
     }
 }

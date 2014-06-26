@@ -17,57 +17,61 @@ jimport('itprism.controller.admin');
  *
  * @package     SocialCommunity
  * @subpackage  Components
-  */
-class SocialCommunityControllerProfiles extends ITPrismControllerAdmin {
-
+ */
+class SocialCommunityControllerProfiles extends ITPrismControllerAdmin
+{
     /**
      * Proxy for getModel.
      * @since   1.6
      */
-    public function getModel($name = 'Profile', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true)) {
+    public function getModel($name = 'Profile', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
+    {
         $model = parent::getModel($name, $prefix, $config);
+
         return $model;
     }
 
-    public function create() {
+    public function create()
+    {
         JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
-        
+
         $app = JFactory::getApplication();
-        /** @var $app JAdministrator **/
-        
-        // Get form data 
-        $pks = $app->input->post->get('cid', array(), 'array');
+        /** @var $app JApplicationAdministrator */
+
+        // Get form data
+        $pks   = $app->input->post->get('cid', array(), 'array');
         $model = $this->getModel("Profile", "SocialCommunityModel");
-        /** @var $model SocialCommunityModelProfile **/
-        
+        /** @var $model SocialCommunityModelProfile */
+
         $redirectOptions = array(
             "view" => $this->view_list
         );
-        
+
         JArrayHelper::toInteger($pks);
-        
+
         // Check for validation errors.
         if (empty($pks)) {
             $this->displayWarning(JText::_("COM_SOCIALCOMMUNITY_INVALID_ITEM"), $redirectOptions);
             return;
         }
-        
+
         try {
-            
+
             $pks = $model->filterProfiles($pks);
-            
+
             if (!$pks) {
                 $this->displayWarning(JText::_("COM_SOCIALCOMMUNITY_INVALID_ITEM"), $redirectOptions);
                 return;
             }
-            
+
             $model->create($pks);
-            
+
         } catch (Exception $e) {
             JLog::add($e->getMessage());
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
-        
-        $this->displayMessage(JText::plural('COM_SOCIALCOMMUNITY_N_PROFILES_CREATED', count(pks)), $redirectOptions);
+
+        $this->displayMessage(JText::plural('COM_SOCIALCOMMUNITY_N_PROFILES_CREATED', count($pks)), $redirectOptions);
     }
+
 }

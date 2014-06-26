@@ -21,7 +21,7 @@ defined('_JEXEC') or die;?>
 
 <div class="row-fluid">
 	<div class="span12">
-        <form action="<?php echo JRoute::_('index.php?option=com_socialcommunity'); ?>" method="post" id="itpsc-form-social" enctype="multipart/form-data">
+        <form action="<?php echo JRoute::_('index.php?option=com_socialcommunity'); ?>" method="post" id="itpsc-form-social">
             
             <?php echo $this->form->getLabel('facebook'); ?>
             <?php echo $this->form->getInput('facebook'); ?>

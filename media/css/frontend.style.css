@@ -31,3 +31,8 @@
 	background-repeat: no-repeat;
 	padding-left: 25px;
 }
+
+.sc-profile-link {
+	background: url(../images/link_20x20.png) left no-repeat;
+	padding-left: 25px;
+}

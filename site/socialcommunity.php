@@ -13,8 +13,6 @@ defined('_JEXEC') or die;
 jimport('itprism.init');
 jimport('socialcommunity.init');
 
-jimport('joomla.application.component.controller');
-
 $controller = JControllerLegacy::getInstance('SocialCommunity');
 $controller->execute(JFactory::getApplication()->input->getCmd('task'));
 $controller->redirect();

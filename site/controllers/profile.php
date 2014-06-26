@@ -10,30 +10,28 @@
 // No direct access
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controllerform');
-
 /**
  * SocialCommunity profile controller
  *
  * @package     SocialCommunity
  * @subpackage  Components
  */
-class SocialCommunityControllerProfile extends JControllerForm {
-    
-	/**
+class SocialCommunityControllerProfile extends JControllerForm
+{
+    /**
      * Method to get a model object, loading it if required.
      *
-     * @param	string	$name	The model name. Optional.
-     * @param	string	$prefix	The class prefix. Optional.
-     * @param	array	$config	Configuration array for model. Optional.
+     * @param    string $name   The model name. Optional.
+     * @param    string $prefix The class prefix. Optional.
+     * @param    array  $config Configuration array for model. Optional.
      *
-     * @return	object	The model.
-     * @since	1.5
+     * @return    object    The model.
+     * @since    1.5
      */
-    public function getModel($name = 'Profile', $prefix = '', $config = array('ignore_request' => true)) {
+    public function getModel($name = 'Profile', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
+    {
         $model = parent::getModel($name, $prefix, $config);
-        
+
         return $model;
     }
-    
 }

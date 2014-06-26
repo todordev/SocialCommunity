@@ -15,19 +15,20 @@ jimport('itprism.controller.admin');
 /**
  * SocialCommunity countries controller class.
  *
- * @package		SocialCommunity
- * @subpackage	Components 
- * @since		1.6
+ * @package        SocialCommunity
+ * @subpackage     Components
+ * @since          1.6
  */
-class SocialCommunityControllerCountries extends ITPrismControllerAdmin {
-    
+class SocialCommunityControllerCountries extends ITPrismControllerAdmin
+{
     /**
      * Proxy for getModel.
      * @since   1.6
      */
-    public function getModel($name = 'Country', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true)) {
+    public function getModel($name = 'Country', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
+    {
         $model = parent::getModel($name, $prefix, $config);
+
         return $model;
     }
-    
 }

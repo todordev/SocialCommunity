@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-	<fieldset name="basic" addfieldpath="/administrator/components/com_socialcommunity/models/fields">
+    <fieldset name="basic" addfieldpath="/administrator/components/com_socialcommunity/models/fields">
 
         <field name="name" type="text" class="input-large"
-            label="COM_SOCIALCOMMUNITY_NAME"
-            description="COM_SOCIALCOMMUNITY_FIELD_NAME_DESC"
-            filter="trim" 
-            required="true" 
-        />
-        
+               label="COM_SOCIALCOMMUNITY_NAME"
+               description="COM_SOCIALCOMMUNITY_FIELD_NAME_DESC"
+               filter="trim"
+               required="true"
+                />
+
         <field name="bio" type="textarea" class="span12"
-            label="COM_SOCIALCOMMUNITY_BIO" 
-            description="COM_SOCIALCOMMUNITY_FIELD_BIO_DESC"
-            rows="5" 
-        />
-        
-        <field name="birthday" type="scbirthday"  
-            label="COM_SOCIALCOMMUNITY_BIRTHDAY"
-            description="COM_SOCIALCOMMUNITY_FIELD_BIRTHDAY_DESC"
-        />
-        
+               label="COM_SOCIALCOMMUNITY_BIO"
+               description="COM_SOCIALCOMMUNITY_FIELD_BIO_DESC"
+               rows="5"
+                />
+
+        <field name="birthday" type="scbirthday"
+               label="COM_SOCIALCOMMUNITY_BIRTHDAY"
+               description="COM_SOCIALCOMMUNITY_FIELD_BIRTHDAY_DESC"
+                />
+
         <field name="gender" type="list" default="male"
-            label="COM_SOCIALCOMMUNITY_GENDER"
-            description="COM_SOCIALCOMMUNITY_FIELD_GENDER_DESC"
-            filter="trim" 
-        >
+               label="COM_SOCIALCOMMUNITY_GENDER"
+               description="COM_SOCIALCOMMUNITY_FIELD_GENDER_DESC"
+               filter="trim"
+                >
             <option value="male">COM_SOCIALCOMMUNITY_MALE</option>
             <option value="female">COM_SOCIALCOMMUNITY_FEMALE</option>
         </field>
-        
+
         <field
-            name="photo"
-            type="file"
-            label="COM_SOCIALCOMMUNITY_IMAGE"
-            description="COM_SOCIALCOMMUNITY_FIELD_IMAGE_DESC"
-        />
-            
-	</fieldset>
-    
+                name="photo"
+                type="file"
+                label="COM_SOCIALCOMMUNITY_IMAGE"
+                description="COM_SOCIALCOMMUNITY_FIELD_IMAGE_DESC"
+                />
+
+    </fieldset>
+
 </form>

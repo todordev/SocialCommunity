@@ -8,10 +8,14 @@
  */
 
 defined('_JEXEC') or die;
-class SocialCommunityTableLocation extends JTable {
-    
-    public function __construct( $db ) {
-        parent::__construct( '#__itpsc_locations', 'id', $db );
+
+class SocialCommunityTableLocation extends JTable
+{
+    /**
+     * @param JDatabaseDriver $db
+     */
+    public function __construct(JDatabaseDriver $db)
+    {
+        parent::__construct('#__itpsc_locations', 'id', $db);
     }
-    
 }

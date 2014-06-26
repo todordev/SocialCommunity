@@ -15,14 +15,15 @@ jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
 /**
- * Form field class that loads countries as options, 
+ * Form field class that loads countries as options,
  * using code with 4 letters for ID.
  *
  * @package      SocialCommunity
  * @subpackage   Components
- * @since       1.6
+ * @since        1.6
  */
-class JFormFieldScCountries extends JFormFieldList {
+class JFormFieldScCountries extends JFormFieldList
+{
     /**
      * The form field type.
      *
@@ -30,33 +31,31 @@ class JFormFieldScCountries extends JFormFieldList {
      * @since   1.6
      */
     protected $type = 'sccountries';
-    
+
     /**
      * Method to get the field options.
      *
      * @return  array   The field option objects.
      * @since   1.6
      */
-    protected function getOptions(){
-        
-        // Initialize variables.
-        $options = array();
-        
-        $db     = JFactory::getDbo();
-        $query  = $db->getQuery(true);
-        
+    protected function getOptions()
+    {
+
+        $db    = JFactory::getDbo();
+        $query = $db->getQuery(true);
+
         $query
             ->select('a.id AS value, a.name AS text')
             ->from($db->quoteName('#__itpsc_countries', 'a'))
             ->order("a.name ASC");
-        
+
         // Get the options.
         $db->setQuery($query);
         $options = $db->loadObjectList();
-        
+
         // Merge any additional options in the XML definition.
         $options = array_merge(parent::getOptions(), $options);
-        
+
         return $options;
     }
 }

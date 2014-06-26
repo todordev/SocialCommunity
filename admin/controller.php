@@ -10,34 +10,34 @@
 // no direct access
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
-
 /**
  * Default Controller
  *
- * @package		 SocialCommunity
- * @subpackage   Components
-  */
-class SocialCommunityController extends JControllerLegacy {
-    
-	public function display( ) {
-
-		$app = JFactory::getApplication();
-        /** @var $app JAdministrator **/
-        
-        $option   = $app->input->getCmd("option");
-        
-        $document = JFactory::getDocument();
-		/** @var $document JDocumentHtml **/
-        
-        // Add component style
-        $document->addStyleSheet('../media/'.$option.'/css/admin/style.css');
-        
-        $viewName      = $app->input->getCmd('view', 'dashboard');
-        $app->input->set("view", $viewName);
+ * @package         SocialCommunity
+ * @subpackage      Components
+ */
+class SocialCommunityController extends JControllerLegacy
+{
+    /**
+     * Typical view method for MVC based architecture
+     *
+     * This function is provide as a default implementation, in most cases
+     * you will need to override it in your own controllers.
+     *
+     * @param   boolean $cachable  If true, the view output will be cached
+     * @param   array   $urlparams An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
+     *
+     * @return  JControllerLegacy  A JControllerLegacy object to support chaining.
+     *
+     * @since   12.2
+     */
+    public function display($cachable = false, $urlparams = array())
+    {
+        $viewName = $this->input->getCmd('view', 'dashboard');
+        $this->input->set("view", $viewName);
 
         parent::display();
-        return $this;
-	}
 
+        return $this;
+    }
 }

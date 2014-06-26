@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-	<fieldset>
+    <fieldset>
 
-		<field name="data" type="file" class="inputbox" 
-			size="40"  
-			label="COM_SOCIALCOMMUNITY_FILE" 
-			description="COM_SOCIALCOMMUNITY_FILE_DESC"
-			required="true" />
+        <field name="data" type="file" class="inputbox"
+               size="40"
+               label="COM_SOCIALCOMMUNITY_FILE"
+               description="COM_SOCIALCOMMUNITY_FILE_DESC"
+               required="true"/>
 
         <field name="reset_id" type="checkbox"
-            value="1" 
-            class="inputbox" 
-            label="COM_SOCIALCOMMUNITY_RESET_ID"
-            description="COM_SOCIALCOMMUNITY_RESET_ID_DESC"  
-            filter="int" 
-        />
-        
+               value="1"
+               class="inputbox"
+               label="COM_SOCIALCOMMUNITY_RESET_ID"
+               description="COM_SOCIALCOMMUNITY_RESET_ID_DESC"
+               filter="int"
+                />
+
         <field name="remove_old" type="checkbox"
-            value="1" 
-            class="inputbox" 
-            label="COM_SOCIALCOMMUNITY_REMOVE_OLD"
-            description="COM_SOCIALCOMMUNITY_REMOVE_OLD_DESC"  
-            filter="int" 
-        />
-        
-	</fieldset>
+               value="1"
+               class="inputbox"
+               label="COM_SOCIALCOMMUNITY_REMOVE_OLD"
+               description="COM_SOCIALCOMMUNITY_REMOVE_OLD_DESC"
+               filter="int"
+                />
+
+        <field name="minimum_population" type="text"
+               label="COM_SOCIALCOMMUNITY_MINIMUM_POPULATION"
+               description="COM_SOCIALCOMMUNITY_MINIMUM_POPULATION_DESC"
+               filter="int"
+               default="0"
+               />
+
+    </fieldset>
 </form>
