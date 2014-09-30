@@ -168,4 +168,188 @@ class SocialCommunityActivity
 
         $this->id = $this->db->insertid();
     }
+
+    /**
+     * Set a content of an activity.
+     *
+     * <code>
+     * $content = "...";
+     *
+     * $activity   = new SocialCommunityActivity(JFactory::getDbo());
+     * $activity->setContent($content);
+     * </code>
+     *
+     * @param string $content
+     *
+     * @return self
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * Return an activity content.
+     *
+     * <code>
+     * $activityId = 1;
+     *
+     * $activity   = new SocialCommunityActivity(JFactory::getDbo());
+     * $activity->load($activityId);
+     *
+     * $content = $activity->getContent();
+     * </code>
+     *
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
+     * Set a date when the activity has been created.
+     *
+     * <code>
+     * $created = "2014-02-02";
+     *
+     * $activity   = new SocialCommunityActivity(JFactory::getDbo());
+     * $activity->setContent($created);
+     * </code>
+     *
+     * @param string $created
+     *
+     * @return self
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Return a date when the activity has been performed.
+     *
+     * <code>
+     * $activity   = new SocialCommunityActivity(JFactory::getDbo());
+     * $date = $activity->getCreated();
+     * </code>
+     *
+     * @return mixed
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set a link to an image.
+     *
+     * <code>
+     * $image = "...";
+     *
+     * $activity   = new SocialCommunityActivity(JFactory::getDbo());
+     * $activity->setImage($image);
+     * </code>
+     *
+     * @param string $image
+     *
+     * @return self
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * Return the image which is part of the activity.
+     *
+     * <code>
+     * $activity   = new SocialCommunityActivity(JFactory::getDbo());
+     * $image = $activity->getImage();
+     * </code>
+     *
+     * @return string
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * Set a link to a page, which is part of the activity.
+     *
+     * <code>
+     * $url = "...";
+     *
+     * $activity   = new SocialCommunityActivity(JFactory::getDbo());
+     * $activity->setUrl($url);
+     * </code>
+     *
+     * @param string $url
+     *
+     * @return self
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    /**
+     * Return the URL which is part of the activity.
+     *
+     * <code>
+     * $activity   = new SocialCommunityActivity(JFactory::getDbo());
+     * $url = $activity->getUrl();
+     * </code>
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * Set a user ID which has performed the activity.
+     *
+     * <code>
+     * $userId = 1;
+     *
+     * $activity   = new SocialCommunityActivity(JFactory::getDbo());
+     * $activity->setUrl($userId);
+     * </code>
+     *
+     * @param int $userId
+     *
+     * @return self
+     */
+    public function setUserId($userId)
+    {
+        $this->user_id = $userId;
+
+        return $this;
+    }
+
+    /**
+     * Return an ID of an user which has performed the activity.
+     *
+     * <code>
+     * $activity   = new SocialCommunityActivity(JFactory::getDbo());
+     * $userId     = $activity->getUserId();
+     * </code>
+     *
+     * @return int
+     */
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
 }

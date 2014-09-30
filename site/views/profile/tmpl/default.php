@@ -26,7 +26,7 @@ defined('_JEXEC') or die;?>
 
         <?php if (!empty($this->item->website)) {?>
             <div class="clearfix">&nbsp;</div>
-            <a href="<?php echo $this->escape($this->item->website); ?>" class="sc-profile-link">
+            <a href="<?php echo $this->escape($this->item->website); ?>" class="sc-profile-link" target="_blank">
                 <?php echo JHtmlString::truncate($this->item->website, 32, true, false); ?>
             </a>
         <?php }?>

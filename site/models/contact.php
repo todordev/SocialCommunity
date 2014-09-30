@@ -90,7 +90,12 @@ class SocialCommunityModelContact extends JModelAdmin
             $data = $this->getItem();
 
             if (!empty($data["location_id"])) {
-                $locationName = $this->getLocationName($data["location_id"], true);
+
+                $location = new SocialCommunityLocation(JFactory::getDbo());
+                $location->load($data["location_id"]);
+
+                $locationName = $location->getName(SocialCommunityConstants::INCLUDE_COUNTRY_CODE);
+
                 if (!empty($locationName)) {
                     $data["location_preview"] = $locationName;
                 }

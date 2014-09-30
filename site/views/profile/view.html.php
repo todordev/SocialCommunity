@@ -69,7 +69,7 @@ class SocialCommunityViewProfile extends JViewLegacy
         $params = $this->state->get("params");
         $this->params = $params;
 
-        $this->imagesFolder = $this->params->get("images_directory", "images/profiles");
+        $this->imagesFolder = $this->params->get("images_directory", "/images/profiles");
 
         // If I am not logged in, and I try to load profile page without user ID as a parameter,
         // I must be redirected to login form

@@ -43,7 +43,7 @@ class SocialCommunityLocations implements Iterator, Countable, ArrayAccess
     }
 
     /**
-     * Load currencies data by ID from database.
+     * Load locations data by ID from database.
      *
      * <code>
      * $ids = array(1,2,3,4,5);
@@ -63,12 +63,7 @@ class SocialCommunityLocations implements Iterator, Countable, ArrayAccess
     {
         JArrayHelper::toInteger($ids);
 
-        // Load project data
-        $query = $this->db->getQuery(true);
-
-        $query
-            ->select("a.id, a.name, a.latitude, a.longitude, a.country_code, a.state_code, a.timezone, a.published")
-            ->from($this->db->quoteName("#__itpsc_locations", "a"));
+        $query = $this->getQuery();
 
         if (!empty($ids)) {
             $query->where("a.id IN ( " . implode(",", $ids) . " )");
@@ -82,6 +77,55 @@ class SocialCommunityLocations implements Iterator, Countable, ArrayAccess
         }
 
         $this->items = $results;
+    }
+
+    /**
+     * Load locations data by string.
+     *
+     * <code>
+     * $query = "London";
+     *
+     * $locations   = new SocialCommunityLocations(JFactory::getDbo());
+     * $locations->loadByQuery($query);
+     *
+     * foreach($locations as $location) {
+     *   echo $location["name"];
+     *   echo $location["country_code"];
+     * }
+     * </code>
+     *
+     * @param string $search
+     */
+    public function loadByQuery($search)
+    {
+        JArrayHelper::toInteger($ids);
+
+        $query = $this->getQuery();
+
+        $escaped = $this->db->escape($search, true);
+        $quoted  = $this->db->quote("%" . $escaped . "%", false);
+
+        $query->where('a.name LIKE ' . $quoted);
+
+        $this->db->setQuery($query);
+        $results = $this->db->loadAssocList();
+
+        if (!$results) {
+            $results = array();
+        }
+
+        $this->items = $results;
+    }
+
+    protected function getQuery()
+    {
+        $query = $this->db->getQuery(true);
+
+        $query
+            ->select("a.id, a.name, a.latitude, a.longitude, a.country_code, a.state_code, a.timezone, a.published")
+            ->from($this->db->quoteName("#__itpsc_locations", "a"));
+
+        return $query;
     }
 
     public function rewind()

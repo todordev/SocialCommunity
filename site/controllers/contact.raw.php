@@ -47,18 +47,18 @@ class SocialCommunityControllerContact extends JControllerLegacy
     public function loadLocation()
     {
         // Get the input
-        $app   = JFactory::getApplication();
-        $query = $app->input->get->get('query', "", 'string');
+        $query = $this->input->get->get('query', "", 'string');
 
         jimport('itprism.response.json');
         $response = new ITPrismResponseJson();
 
-        // Get the model
-        $model = $this->getModel();
-        /** @var $model SocialCommunityModelContact */
-
         try {
-            $locationData = $model->getLocations($query);
+
+            $locations = new SocialCommunityLocations(JFactory::getDbo());
+            $locations->loadByQuery($query);
+
+            $locationData = $locations->toOptions();
+
         } catch (Exception $e) {
             JLog::add($e->getMessage());
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));

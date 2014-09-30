@@ -1,24 +1,16 @@
 Social Community for Joomla! 
 ==========================
-( Version 1.3 )
+( Version 1.4)
 --------------------------
 
-Changelog
----------
+Social Community is an extension that adds social features to a website based on Joomla! CMS.
 
-###v1.3
-* Replaced the plugin "User - Social Community - New User" with "User - Social Community User".
-  * Added functionality the plugin to remove a profile when the administrator remove a user.
-* Improved code quality.
-* Improved Social Community library.
-* Fixed some issues.
+##Documentation
+You can find documentation on following pages.
 
-###1.2
-* Added contact information.
-* Added social profiles.
-* Improved the library.
-* Fixed some issues.
+[Documentation and FAQ] (http://itprism.com/help/86-social-community-documentation)
 
-###v1.1
+[API documentation] (http://cdn.itprism.com/api/socialcommunity/index.html)
 
-* Improved 
+##Download
+You can [download SocialCommunity package] (http://itprism.com/free-joomla-extensions/others/open-source-social-network) and additional extensions ( modules and plugins ) from the website of ITPrism.

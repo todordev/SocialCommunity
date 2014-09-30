@@ -55,7 +55,7 @@ class SocialCommunityControllerProfile extends JControllerLegacy
 
         try {
             $locations = new SocialCommunityLocations(JFactory::getDbo());
-            $locations->load();
+            $locations->loadByQuery($query);
 
             $locationData = $locations->toOptions();
         } catch (Exception $e) {

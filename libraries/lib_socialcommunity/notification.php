@@ -164,7 +164,7 @@ class SocialCommunityNotification
      * $notification->store();
      * </code>
      */
-    protected function store()
+    public function store()
     {
         if (!$this->id) {
             $this->insertObject();

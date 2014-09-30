@@ -55,6 +55,7 @@
 			<exclude name="**/${cfg.pkgName}.xml" />
 			<exclude name="**/${cfg.name}.xml" />
 			<exclude name="**/README.md" />
+			<exclude name="**/CHANGELOG.md" />
 			<exclude name="**/install.php" />
 		</fileset>
 	</copy>
@@ -79,6 +80,7 @@
 	<!-- copy main files of the component -->
     <copy file="${cfg.adminSourceDir}/${cfg.comName}/install.php" todir="${cfg.pkgDir}" />
     <copy file="${cfg.adminSourceDir}/${cfg.comName}/README.md" todir="${cfg.pkgDir}" />
+	<copy file="${cfg.adminSourceDir}/${cfg.comName}/CHANGELOG.md" todir="${cfg.pkgDir}" />
     <copy file="${cfg.adminSourceDir}/${cfg.comName}/${cfg.pkgName}.xml" todir="${cfg.pkgDir}" />
     <copy file="${cfg.adminSourceDir}/${cfg.comName}/${cfg.name}.xml" todir="${cfg.pkgDir}" />
 

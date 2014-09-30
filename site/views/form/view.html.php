@@ -107,7 +107,7 @@ class SocialCommunityViewForm extends JViewLegacy
         $this->form   = $model->getForm();
         $this->params = $this->state->get("params");
 
-        $this->imagesFolder = $this->params->get("images_directory", "images/profiles");
+        $this->imagesFolder = $this->params->get("images_directory", "/images/profiles");
         $this->item         = $model->getItem();
     }
 

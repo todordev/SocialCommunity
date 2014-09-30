@@ -355,12 +355,13 @@ class SocialCommunityModelProfile extends JModelAdmin
 
         $uploadedFile = JArrayHelper::getValue($image, 'tmp_name');
         $uploadedName = JArrayHelper::getValue($image, 'name');
+        $errorCode    = JArrayHelper::getValue($image, 'error');
 
         $tmpFolder = $app->get("tmp_path");
 
         /** @var  $params Joomla\Registry\Registry */
         $params     = JComponentHelper::getParams($this->option);
-        $destFolder = JPath::clean(JPATH_ROOT . DIRECTORY_SEPARATOR . $params->get("images_directory", "images/profiles"));
+        $destFolder = JPath::clean(JPATH_ROOT . $params->get("images_directory", "/images/profiles"));
 
         $options = array(
             "width"         => $params->get("image_width"),
@@ -381,6 +382,7 @@ class SocialCommunityModelProfile extends JModelAdmin
         jimport("itprism.file.uploader.local");
         jimport("itprism.file.validator.size");
         jimport("itprism.file.validator.image");
+        jimport("itprism.file.validator.server");
 
         $file = new ITPrismFile();
 
@@ -389,8 +391,11 @@ class SocialCommunityModelProfile extends JModelAdmin
         $fileSize      = (int)$app->input->server->get('CONTENT_LENGTH');
         $uploadMaxSize = $mediaParams->get("upload_maxsize") * $KB;
 
+        // Prepare file size validator
         $sizeValidator = new ITPrismFileValidatorSize($fileSize, $uploadMaxSize);
 
+        // Prepare server validator.
+        $serverValidator = new ITPrismFileValidatorServer($errorCode, array(UPLOAD_ERR_NO_FILE));
 
         // Prepare image validator.
         $imageValidator = new ITPrismFileValidatorImage($uploadedFile, $uploadedName);
@@ -405,10 +410,13 @@ class SocialCommunityModelProfile extends JModelAdmin
 
         $file
             ->addValidator($sizeValidator)
-            ->addValidator($imageValidator);
+            ->addValidator($imageValidator)
+            ->addValidator($serverValidator);
 
         // Validate the file
-        $file->validate();
+        if (!$file->isValid()) {
+            throw new RuntimeException($file->getError());
+        }
 
         // Generate temporary file name
         $ext = JFile::makeSafe(JFile::getExt($image['name']));
@@ -420,7 +428,7 @@ class SocialCommunityModelProfile extends JModelAdmin
         $tmpDestFile = $tmpFolder . DIRECTORY_SEPARATOR . $generatedName . "." . $ext;
 
         // Prepare uploader object.
-        $uploader = new ITPrismFileUploaderLocal($image);
+        $uploader = new ITPrismFileUploaderLocal($uploadedFile);
         $uploader->setDestination($tmpDestFile);
 
         // Upload temporary file
