@@ -36,7 +36,7 @@ class SocialCommunityVersion
      *
      * @var integer
      */
-    public $devLevel = '4';
+    public $devLevel = '4.1';
 
     /**
      * Release Type
@@ -57,7 +57,7 @@ class SocialCommunityVersion
      *
      * @var string
      */
-    public $releaseDate = '30 September, 2014';
+    public $releaseDate = '01 October, 2014';
 
     /**
      * License

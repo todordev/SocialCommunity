@@ -1,6 +1,9 @@
 Social Community Release Notes
 ---------
 
+###v1.4.1
+* Fixed a bug with the functionality for importing countries and locations.
+
 ###v1.4
 * Improved
 
