@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -41,9 +41,6 @@ class SocialCommunityViewProfile extends JViewLegacy
         $this->option = JFactory::getApplication()->input->get("option");
     }
 
-    /**
-     * Display the view
-     */
     public function display($tpl = null)
     {
         $this->state = $this->get('State');
@@ -116,7 +113,7 @@ class SocialCommunityViewProfile extends JViewLegacy
 
         JHtml::_('formbehavior.chosen', '#jform_country_id');
 
-        JHtml::_('itprism.ui.bootstrap_typeahead');
+        JHtml::_('prism.ui.bootstrap2Typeahead');
 
         // Add scripts
         $this->document->addScript('../media/' . $this->option . '/js/admin/' . strtolower($this->getName()) . '.js');

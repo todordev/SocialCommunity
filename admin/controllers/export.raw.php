@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -18,10 +18,6 @@ defined('_JEXEC') or die;
  */
 class SocialCommunityControllerExport extends JControllerLegacy
 {
-    /**
-     * Proxy for getModel.
-     * @since   1.6
-     */
     public function getModel($name = 'Export', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
     {
         $model = parent::getModel($name, $prefix, $config);
@@ -91,18 +87,18 @@ class SocialCommunityControllerExport extends JControllerLegacy
 
         $filesize = filesize($destination);
 
-        JResponse::setHeader('Content-Type', 'application/octet-stream', true);
-        JResponse::setHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0', true);
-        JResponse::setHeader('Content-Transfer-Encoding', 'binary', true);
-        JResponse::setHeader('Pragma', 'no-cache', true);
-        JResponse::setHeader('Expires', '0', true);
-        JResponse::setHeader('Content-Disposition', 'attachment; filename=' . $archiveFile, true);
-        JResponse::setHeader('Content-Length', $filesize, true);
+        JFactory::getApplication()->setHeader('Content-Type', 'application/octet-stream', true);
+        JFactory::getApplication()->setHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0', true);
+        JFactory::getApplication()->setHeader('Content-Transfer-Encoding', 'binary', true);
+        JFactory::getApplication()->setHeader('Pragma', 'no-cache', true);
+        JFactory::getApplication()->setHeader('Expires', '0', true);
+        JFactory::getApplication()->setHeader('Content-Disposition', 'attachment; filename=' . $archiveFile, true);
+        JFactory::getApplication()->setHeader('Content-Length', $filesize, true);
 
         $doc = JFactory::getDocument();
         $doc->setMimeEncoding('application/octet-stream');
 
-        JResponse::sendHeaders();
+        JFactory::getApplication()->sendHeaders();
 
         echo file_get_contents($destination);
         JFactory::getApplication()->close();

@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -72,6 +72,15 @@ function SocialCommunityBuildRoute(&$query)
 
                 break;
 
+            case "notification":
+                $segments[] = "notification";
+                unset($query["view"]);
+                break;
+
+            case "notifications":
+                unset($query["view"]);
+                break;
+
         }
 
     }
@@ -101,23 +110,31 @@ function SocialCommunityBuildRoute(&$query)
  */
 function SocialCommunityParseRoute($segments)
 {
-    $query = array();
+    $total = count($segments);
+    $vars = array();
+
+    for ($i = 0; $i < $total; $i++) {
+        $segments[$i] = preg_replace('/-/', ':', $segments[$i], 1);
+    }
 
     //Get the active menu item.
-    $app      = JFactory::getApplication();
-    $menu     = $app->getMenu();
+    $app  = JFactory::getApplication();
+    $menu = $app->getMenu();
     $menuItem = $menu->getActive();
 
+    // Count route segments
     $count = count($segments);
 
-    // Standard routing for entity.  If we don't pick up an Itemid then we get the view from the segments.
-    // The first segment is the view and the last segment is the id of the entity
+    // Standard routing for articles.  If we don't pick up an Itemid then we get the view from the segments
+    // the first segment is the view and the last segment is the id of the details, category or payment.
     if (!isset($menuItem)) {
-        $query['view'] = $segments[0];
-        $query['id']   = $segments[$count - 1];
+        $vars['view']  = $segments[0];
+        $vars['id']    = $segments[$count - 1];
 
-        return $query;
+        return $vars;
     }
+
+    // COUNT == 1
 
     if ($count == 1) {
 
@@ -127,13 +144,17 @@ function SocialCommunityParseRoute($segments)
 
             case "profile":
 
-                $query['view'] = $view;
-                $query['id']   = (int)$segments[0];
+                $vars['view'] = $view;
+                $vars['id']   = (int)$segments[0];
 
+                break;
+
+            case "notifications":
+                $vars['view'] = (strcmp("notification", $segments[0]) == 0) ? "notification" : "notifications";
                 break;
         }
 
     }
-
-    return $query;
+    
+    return $vars;
 }

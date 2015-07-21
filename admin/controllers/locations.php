@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -19,12 +19,8 @@ jimport('itprism.controller.admin');
  * @subpackage     SocialCommunity
  * @since          1.6
  */
-class SocialCommunityControllerLocations extends ITPrismControllerAdmin
+class SocialCommunityControllerLocations extends Prism\Controller\Admin
 {
-    /**
-     * Proxy for getModel.
-     * @since   1.6
-     */
     public function getModel($name = 'Location', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
     {
         $model = parent::getModel($name, $prefix, $config);

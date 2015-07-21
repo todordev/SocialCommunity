@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -18,7 +18,7 @@ jimport('itprism.controller.form.backend');
  * @package      SocialCommunity
  * @subpackage   Components
  */
-class SocialCommunityControllerImport extends ITPrismControllerFormBackend
+class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
 {
     /**
      * Proxy for getModel.
@@ -106,10 +106,10 @@ class SocialCommunityControllerImport extends ITPrismControllerFormBackend
         );
 
         $model = $this->getModel();
-        /** @var $model SocialCommunityModelImport * */
+        /** @var $model SocialCommunityModelImport */
 
         $form = $model->getForm($data, false);
-        /** @var $form JForm * */
+        /** @var $form JForm */
 
         if (!$form) {
             throw new Exception(JText::_("COM_SOCIALCOMMUNITY_ERROR_FORM_CANNOT_BE_LOADED"));

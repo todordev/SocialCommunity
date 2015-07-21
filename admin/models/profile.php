@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -81,10 +81,10 @@ class SocialCommunityModelProfile extends JModelAdmin
                 // Prepare locations
                 if (!empty($data->location_id)) {
                     
-                    $location = new SocialCommunityLocation(JFactory::getDbo());
+                    $location = new SocialCommunity\Location(JFactory::getDbo());
                     $location->load($data->location_id);
 
-                    $locationName = $location->getName(SocialCommunityConstants::INCLUDE_COUNTRY_CODE);
+                    $locationName = $location->getName(SocialCommunity\Constants::INCLUDE_COUNTRY_CODE);
 
                     if (!empty($locationName)) {
                         $data->location_preview = $locationName;
@@ -108,17 +108,17 @@ class SocialCommunityModelProfile extends JModelAdmin
      */
     public function save($data)
     {
-        $id    = JArrayHelper::getValue($data, "id");
-        $name  = JArrayHelper::getValue($data, "name");
-        $alias = JArrayHelper::getValue($data, "alias");
-        $bio   = JArrayHelper::getValue($data, "bio");
+        $id    = Joomla\Utilities\ArrayHelper::getValue($data, "id");
+        $name  = Joomla\Utilities\ArrayHelper::getValue($data, "name");
+        $alias = Joomla\Utilities\ArrayHelper::getValue($data, "alias");
+        $bio   = Joomla\Utilities\ArrayHelper::getValue($data, "bio");
         if (empty($bio)) {
             $bio = null;
         }
 
         // Prepare gender.
         $allowedGender = array("male", "female");
-        $gender        = JString::trim(JArrayHelper::getValue($data, "gender"));
+        $gender        = Joomla\String\String::trim(Joomla\Utilities\ArrayHelper::getValue($data, "gender"));
         if (!in_array($gender, $allowedGender)) {
             $gender = "male";
         }
@@ -163,17 +163,17 @@ class SocialCommunityModelProfile extends JModelAdmin
     {
         // Prepare profiles.
         $profiles = array(
-            "facebook" => JArrayHelper::getValue($data, "facebook"),
-            "twitter"  => JArrayHelper::getValue($data, "twitter"),
-            "linkedin" => JArrayHelper::getValue($data, "linkedin")
+            "facebook" => Joomla\Utilities\ArrayHelper::getValue($data, "facebook"),
+            "twitter"  => Joomla\Utilities\ArrayHelper::getValue($data, "twitter"),
+            "linkedin" => Joomla\Utilities\ArrayHelper::getValue($data, "linkedin")
         );
 
         $allowedTypes = array("facebook", "twitter", "linkedin");
 
         foreach ($profiles as $key => $alias) {
 
-            $type  = JString::trim($key);
-            $alias = JString::trim($alias);
+            $type  = Joomla\String\String::trim($key);
+            $alias = Joomla\String\String::trim($alias);
 
             if (!in_array($type, $allowedTypes)) {
                 continue;
@@ -214,9 +214,9 @@ class SocialCommunityModelProfile extends JModelAdmin
 
     protected function prepareBirthday($data)
     {
-        $birthdayDay   = JString::trim(JArrayHelper::getValue($data["birthday"], "day"));
-        $birthdayMonth = JString::trim(JArrayHelper::getValue($data["birthday"], "month"));
-        $birthdayYear  = JString::trim(JArrayHelper::getValue($data["birthday"], "year"));
+        $birthdayDay   = Joomla\String\String::trim(Joomla\Utilities\ArrayHelper::getValue($data["birthday"], "day"));
+        $birthdayMonth = Joomla\String\String::trim(Joomla\Utilities\ArrayHelper::getValue($data["birthday"], "month"));
+        $birthdayYear  = Joomla\String\String::trim(Joomla\Utilities\ArrayHelper::getValue($data["birthday"], "year"));
         if (!$birthdayDay) {
             $birthdayDay = "00";
         }
@@ -229,19 +229,14 @@ class SocialCommunityModelProfile extends JModelAdmin
 
         $birthday = $birthdayYear . "-" . $birthdayMonth . "-" . $birthdayDay;
 
-        jimport("itprism.validator.date");
-        $date = new ITPrismValidatorDate($birthday);
+        $date = new Prism\Validator\Date($birthday);
         if (!$date->isValid()) {
             $birthday = "0000-00-00";
         }
 
         return $birthday;
     }
-
-    /**
-     * Prepare and sanitise the table prior to saving.
-     * @since    1.6
-     */
+    
     protected function prepareTable($table)
     {
         // Fix magic quotes
@@ -353,9 +348,9 @@ class SocialCommunityModelProfile extends JModelAdmin
         $app = JFactory::getApplication();
         /** @var $app JApplicationAdministrator */
 
-        $uploadedFile = JArrayHelper::getValue($image, 'tmp_name');
-        $uploadedName = JArrayHelper::getValue($image, 'name');
-        $errorCode    = JArrayHelper::getValue($image, 'error');
+        $uploadedFile = Joomla\Utilities\ArrayHelper::getValue($image, 'tmp_name');
+        $uploadedName = Joomla\Utilities\ArrayHelper::getValue($image, 'name');
+        $errorCode    = Joomla\Utilities\ArrayHelper::getValue($image, 'error');
 
         $tmpFolder = $app->get("tmp_path");
 
@@ -384,7 +379,7 @@ class SocialCommunityModelProfile extends JModelAdmin
         jimport("itprism.file.validator.image");
         jimport("itprism.file.validator.server");
 
-        $file = new ITPrismFile();
+        $file = new Prism\File\File();
 
         // Prepare size validator.
         $KB            = 1024 * 1024;
@@ -392,13 +387,13 @@ class SocialCommunityModelProfile extends JModelAdmin
         $uploadMaxSize = $mediaParams->get("upload_maxsize") * $KB;
 
         // Prepare file size validator
-        $sizeValidator = new ITPrismFileValidatorSize($fileSize, $uploadMaxSize);
+        $sizeValidator = new Prism\File\Validator\Size($fileSize, $uploadMaxSize);
 
         // Prepare server validator.
-        $serverValidator = new ITPrismFileValidatorServer($errorCode, array(UPLOAD_ERR_NO_FILE));
+        $serverValidator = new Prism\File\Validator\Server($errorCode, array(UPLOAD_ERR_NO_FILE));
 
         // Prepare image validator.
-        $imageValidator = new ITPrismFileValidatorImage($uploadedFile, $uploadedName);
+        $imageValidator = new Prism\File\Validator\Image($uploadedFile, $uploadedName);
 
         // Get allowed mime types from media manager options
         $mimeTypes = explode(",", $mediaParams->get("upload_mime"));
@@ -421,14 +416,13 @@ class SocialCommunityModelProfile extends JModelAdmin
         // Generate temporary file name
         $ext = JFile::makeSafe(JFile::getExt($image['name']));
 
-        jimport("itprism.string");
-        $generatedName = new ITPrismString();
+        $generatedName = new Prism\String();
         $generatedName->generateRandomString(32);
 
         $tmpDestFile = $tmpFolder . DIRECTORY_SEPARATOR . $generatedName . "." . $ext;
 
         // Prepare uploader object.
-        $uploader = new ITPrismFileUploaderLocal($uploadedFile);
+        $uploader = new Prism\File\Uploader\Local($uploadedFile);
         $uploader->setDestination($tmpDestFile);
 
         // Upload temporary file
@@ -463,26 +457,26 @@ class SocialCommunityModelProfile extends JModelAdmin
         $iconFile   = $destFolder . DIRECTORY_SEPARATOR . $iconName;
 
         // Create profile picture
-        $width  = JArrayHelper::getValue($options, "image_width", 200);
-        $height = JArrayHelper::getValue($options, "image_height", 200);
+        $width  = Joomla\Utilities\ArrayHelper::getValue($options, "image_width", 200);
+        $height = Joomla\Utilities\ArrayHelper::getValue($options, "image_height", 200);
         $image->resize($width, $height, false);
         $image->toFile($imageFile, IMAGETYPE_PNG);
 
         // Create small profile picture
-        $width  = JArrayHelper::getValue($options, "small_width", 100);
-        $height = JArrayHelper::getValue($options, "small_height", 100);
+        $width  = Joomla\Utilities\ArrayHelper::getValue($options, "small_width", 100);
+        $height = Joomla\Utilities\ArrayHelper::getValue($options, "small_height", 100);
         $image->resize($width, $height, false);
         $image->toFile($smallFile, IMAGETYPE_PNG);
 
         // Create square picture
-        $width  = JArrayHelper::getValue($options, "square_width", 50);
-        $height = JArrayHelper::getValue($options, "square_height", 50);
+        $width  = Joomla\Utilities\ArrayHelper::getValue($options, "square_width", 50);
+        $height = Joomla\Utilities\ArrayHelper::getValue($options, "square_height", 50);
         $image->resize($width, $height, false);
         $image->toFile($squareFile, IMAGETYPE_PNG);
 
         // Create icon picture
-        $width  = JArrayHelper::getValue($options, "icon_width", 24);
-        $height = JArrayHelper::getValue($options, "icon_height", 24);
+        $width  = Joomla\Utilities\ArrayHelper::getValue($options, "icon_width", 24);
+        $height = Joomla\Utilities\ArrayHelper::getValue($options, "icon_height", 24);
         $image->resize($width, $height, false);
         $image->toFile($iconFile, IMAGETYPE_PNG);
 
@@ -547,13 +541,14 @@ class SocialCommunityModelProfile extends JModelAdmin
         $row->set("image_icon", null);
         $row->set("image_square", null);
         $row->store(true);
-
     }
 
     /**
-     *
      * This method updates the name of user in
      * the Joomla! users table.
+     * 
+     * @param int $id
+     * @param string $name
      */
     protected function updateName($id, $name)
     {

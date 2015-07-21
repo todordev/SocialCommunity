@@ -1,6 +1,12 @@
 Social Community Release Notes
 ---------
 
+###v2.0
+* Improved the library and code quality.
+* Added notifications views.
+* Changed the views to use Bootstrap 3 styles.
+* Fixed some issues.
+
 ###v1.4.1
 * Fixed a bug with the functionality for importing countries and locations.
 

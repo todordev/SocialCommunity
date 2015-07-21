@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -81,9 +81,8 @@ class pkg_socialCommunityInstallerScript
         // Register Install Helper
         JLoader::register("SocialCommunityInstallHelper", SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR . DIRECTORY_SEPARATOR . "helpers" . DIRECTORY_SEPARATOR . "install.php");
 
-        jimport('joomla.filesystem.path');
-        jimport('joomla.filesystem.folder');
-        jimport('joomla.filesystem.file');
+        jimport('Prism.init');
+        jimport('Crowdfunding.init');
 
         $params             = JComponentHelper::getParams("com_socialcommunity");
         /** @var  $params Joomla\Registry\Registry */
@@ -125,7 +124,7 @@ class pkg_socialCommunityInstallerScript
         // Display result about verification for GD library
         $title = JText::_("COM_SOCIALCOMMUNITY_GD_LIBRARY");
         $info  = "";
-        if (!extension_loaded('gd') AND function_exists('gd_info')) {
+        if (!extension_loaded('gd') and function_exists('gd_info')) {
             $result = array("type" => "important", "text" => JText::_("COM_SOCIALCOMMUNITY_WARNING"));
         } else {
             $result = array("type" => "success", "text" => JText::_("JON"));
@@ -165,7 +164,7 @@ class pkg_socialCommunityInstallerScript
         }
         SocialCommunityInstallHelper::addRow($title, $result, $info);
 
-        // Display result about verification FileInfo
+        // Display result about verification PHP Version.
         $title = JText::_("COM_SOCIALCOMMUNITY_PHP_VERSION");
         $info  = "";
         if (version_compare(PHP_VERSION, '5.3.0') < 0) {
@@ -175,12 +174,11 @@ class pkg_socialCommunityInstallerScript
         }
         SocialCommunityInstallHelper::addRow($title, $result, $info);
 
-        // Display result about verification of installed ITPrism Library
-        jimport("itprism.version");
-        $title = JText::_("COM_SOCIALCOMMUNITY_ITPRISM_LIBRARY");
+        // Display result about verification of installed Prism Library
+        $title = JText::_("COM_SOCIALCOMMUNITY_PRISM_LIBRARY");
         $info  = "";
-        if (!class_exists("ITPrismVersion")) {
-            $info   = JText::_("COM_SOCIALCOMMUNITY_ITPRISM_LIBRARY_DOWNLOAD");
+        if (!class_exists("Prism\\Version")) {
+            $info   = JText::_("COM_SOCIALCOMMUNITY_PRISM_LIBRARY_DOWNLOAD");
             $result = array("type" => "important", "text" => JText::_("JNO"));
         } else {
             $result = array("type" => "success", "text" => JText::_("JYES"));
@@ -203,5 +201,18 @@ class pkg_socialCommunityInstallerScript
         SocialCommunityInstallHelper::endTable();
 
         echo JText::sprintf("COM_SOCIALCOMMUNITY_MESSAGE_REVIEW_SAVE_SETTINGS", JRoute::_("index.php?option=com_socialcommunity"));
+
+        if (!class_exists("Prism\\Version")) {
+            echo JText::_("COM_SOCIALCOMMUNITY_MESSAGE_INSTALL_PRISM_LIBRARY");
+        } else {
+
+            if (class_exists("SocialCommunity\\Version")) {
+                $prismVersion     = new Prism\Version();
+                $componentVersion = new SocialCommunity\Version();
+                if (version_compare($prismVersion->getShortVersion(), $componentVersion->requiredPrismVersion)) {
+                    echo JText::_("COM_SOCIALCOMMUNITY_MESSAGE_INSTALL_PRISM_LIBRARY");
+                }
+            }
+        }
     }
 }

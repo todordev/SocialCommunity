@@ -10,7 +10,7 @@
 // No direct access
 defined('_JEXEC') or die;
 
-jimport("socialcommunity.init");
+jimport("SocialCommunity.init");
 
 /**
  * This plugin creates or deletes a Social Community profile.
@@ -46,7 +46,7 @@ class plgUserSocialCommunityUser extends JPlugin
                 return;
             }
 
-            $userId = JArrayHelper::getValue($user, "id");
+            $userId = JArrayHelper::getValue($user, "id", 0, "int");
             $name   = JArrayHelper::getValue($user, "name");
             $this->createProfile($userId, $name);
         }
@@ -74,7 +74,7 @@ class plgUserSocialCommunityUser extends JPlugin
         }
 
         // Remove profile images.
-        $profile = new SocialCommunityProfile($this->db);
+        $profile = new SocialCommunity\Profile($this->db);
         $profile->load($userId);
 
         if ($profile->getId()) {
@@ -145,7 +145,7 @@ class plgUserSocialCommunityUser extends JPlugin
             "alias" => JApplicationHelper::stringURLSafe($name),
         );
 
-        $profile = new SocialCommunityProfile($this->db);
+        $profile = new SocialCommunity\Profile($this->db);
         $profile->bind($data);
         $profile->create();
     }

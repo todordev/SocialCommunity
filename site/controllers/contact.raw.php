@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -31,7 +31,6 @@ class SocialCommunityControllerContact extends JControllerLegacy
     public function getModel($name = 'Contact', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
     {
         $model = parent::getModel($name, $prefix, $config);
-
         return $model;
     }
 
@@ -49,13 +48,12 @@ class SocialCommunityControllerContact extends JControllerLegacy
         // Get the input
         $query = $this->input->get->get('query', "", 'string');
 
-        jimport('itprism.response.json');
-        $response = new ITPrismResponseJson();
+        $response = new Prism\Response\Json();
 
         try {
 
-            $locations = new SocialCommunityLocations(JFactory::getDbo());
-            $locations->loadByQuery($query);
+            $locations = new SocialCommunity\Locations(JFactory::getDbo());
+            $locations->load(array("search" => $query));
 
             $locationData = $locations->toOptions();
 

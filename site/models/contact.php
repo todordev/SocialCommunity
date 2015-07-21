@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -91,10 +91,10 @@ class SocialCommunityModelContact extends JModelAdmin
 
             if (!empty($data["location_id"])) {
 
-                $location = new SocialCommunityLocation(JFactory::getDbo());
-                $location->load($data["location_id"]);
+                $location = new SocialCommunity\Location(JFactory::getDbo());
+                $location->load(array("id" => $data["location_id"]));
 
-                $locationName = $location->getName(SocialCommunityConstants::INCLUDE_COUNTRY_CODE);
+                $locationName = $location->getName(SocialCommunity\Constants::INCLUDE_COUNTRY_CODE);
 
                 if (!empty($locationName)) {
                     $data["location_preview"] = $locationName;

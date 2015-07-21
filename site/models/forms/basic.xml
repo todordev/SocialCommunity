@@ -2,20 +2,21 @@
 <form>
     <fieldset name="basic" addfieldpath="/administrator/components/com_socialcommunity/models/fields">
 
-        <field name="name" type="text" class="input-large"
+        <field name="name" type="text" class="form-control"
                label="COM_SOCIALCOMMUNITY_NAME"
                description="COM_SOCIALCOMMUNITY_FIELD_NAME_DESC"
                filter="trim"
                required="true"
                 />
 
-        <field name="bio" type="textarea" class="span12"
+        <field name="bio" type="textarea" class="form-control"
                label="COM_SOCIALCOMMUNITY_BIO"
                description="COM_SOCIALCOMMUNITY_FIELD_BIO_DESC"
                rows="5"
-                />
+               maxlength="512"
+               />
 
-        <field name="birthday" type="scbirthday"
+        <field name="birthday" type="scbirthdayb3" class="form-inline"
                label="COM_SOCIALCOMMUNITY_BIRTHDAY"
                description="COM_SOCIALCOMMUNITY_FIELD_BIRTHDAY_DESC"
                 />

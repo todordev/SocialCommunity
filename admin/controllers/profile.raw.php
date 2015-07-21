@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -50,12 +50,11 @@ class SocialCommunityControllerProfile extends JControllerLegacy
         $app   = JFactory::getApplication();
         $query = $app->input->get->get('query', "", 'string');
 
-        jimport('itprism.response.json');
-        $response = new ITPrismResponseJson();
+        $response = new Prism\Response\Json();
 
         try {
-            $locations = new SocialCommunityLocations(JFactory::getDbo());
-            $locations->loadByQuery($query);
+            $locations = new SocialCommunity\Locations(JFactory::getDbo());
+            $locations->load(array("search" => $query));
 
             $locationData = $locations->toOptions();
         } catch (Exception $e) {

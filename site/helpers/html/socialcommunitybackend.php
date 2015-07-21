@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -19,19 +19,19 @@ defined('_JEXEC') or die;
  */
 abstract class JHtmlSocialCommunityBackend
 {
-
     /**
-     *
      * Display an icon that show a state of profile.
      * If profile exists the profile ID will have value.
      *
-     * @param integer $profileId
-     * @param integer $userId
+     * @param integer $i
+     * @param string $task
+     * @param int   $profileId
      * @param array   $options
+     *
+     * @return string
      */
     public static function profileExists($i, $task, $profileId, $options)
     {
-
         $html  = array();
         $class = "";
         if (!empty($options["tooltip"])) {
@@ -50,13 +50,11 @@ abstract class JHtmlSocialCommunityBackend
         }
 
         return implode("\n", $html);
-
     }
 
 
     public static function boolean($value, $title = "")
     {
-
         $title = addslashes(htmlspecialchars(JString::trim($title), ENT_COMPAT, 'UTF-8'));
 
         if (!$value) { // unpublished
@@ -69,9 +67,8 @@ abstract class JHtmlSocialCommunityBackend
             $title = ' title="' . $title . '"';
         }
 
-        $html[] = '<a class="btn btn-micro" rel="tooltip" ';
-        $html[] = ' href="javascript:void(0);" ' . $title . '">';
-        $html[] = '<i class="icon-' . $class . '"></i>';
+        $html[] = '<a class="btn btn-micro" rel="tooltip" href="javascript:void(0);" ' . $title . '">';
+        $html[] = '<span class="glyphicon glyphicon-' . $class . '"></span>';
         $html[] = '</a>';
 
         return implode($html);

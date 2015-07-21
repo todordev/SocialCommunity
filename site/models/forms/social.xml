@@ -2,19 +2,19 @@
 <form>
     <fieldset name="social">
 
-        <field name="facebook" type="text"
+        <field name="facebook" type="text" class="form-control"
                label="COM_SOCIALCOMMUNITY_FACEBOOK"
                description="COM_SOCIALCOMMUNITY_FIELD_FACEBOOK_DESC"
                filter="trim"
                 />
 
-        <field name="twitter" type="text"
+        <field name="twitter" type="text" class="form-control"
                label="COM_SOCIALCOMMUNITY_TWITTER"
                description="COM_SOCIALCOMMUNITY_FIELD_TWITTER_DESC"
                filter="trim"
                 />
 
-        <field name="linkedin" type="text"
+        <field name="linkedin" type="text" class="form-control"
                label="COM_SOCIALCOMMUNITY_LINKEDIN"
                description="COM_SOCIALCOMMUNITY_FIELD_LINKEDIN_DESC"
                filter="trim"

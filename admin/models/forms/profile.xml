@@ -29,7 +29,7 @@
                rows="10"
                />
 
-        <field name="birthday" type="scbirthday"
+        <field name="birthday" type="scbirthdayb2"
                label="COM_SOCIALCOMMUNITY_BIRTHDAY"
                description="COM_SOCIALCOMMUNITY_FIELD_BIRTHDAY_DESC"
                />

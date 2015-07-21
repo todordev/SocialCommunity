@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -112,7 +112,7 @@ class SocialCommunityViewImport extends JViewLegacy
         JHtml::_('behavior.formvalidation');
 
         JHtml::_('bootstrap.tooltip');
-        JHtml::_('itprism.ui.bootstrap_fileuploadstyle');
+        JHtml::_('prism.ui.bootstrapFileUploadStyle');
 
         $this->document->addScript('../media/' . $this->option . '/js/admin/' . JString::strtolower($this->getName()) . '.js');
     }

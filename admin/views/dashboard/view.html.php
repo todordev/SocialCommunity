@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -30,7 +30,7 @@ class SocialCommunityViewDashboard extends JViewLegacy
     protected $option;
 
     protected $version;
-    protected $itprismVersion;
+    protected $prismVersion;
 
     protected $sidebar;
 
@@ -42,15 +42,14 @@ class SocialCommunityViewDashboard extends JViewLegacy
 
     public function display($tpl = null)
     {
-        $this->version = new SocialCommunityVersion();
+        $this->version = new SocialCommunity\Version();
 
-        // Load ITPrism library version
-        jimport("itprism.version");
-        if (!class_exists("ITPrismVersion")) {
-            $this->itprismVersion = JText::_("COM_VIRTUALCURRENCY_ITPRISM_LIBRARY_DOWNLOAD");
+        // Load Prism library version
+        if (!class_exists("Prism\\Version")) {
+            $this->itprismVersion = JText::_("COM_SOCIALCOMMUNITY_PRISM_LIBRARY_DOWNLOAD");
         } else {
-            $itprismVersion       = new ITPrismVersion();
-            $this->itprismVersion = $itprismVersion->getShortVersion();
+            $itprismVersion     = new Prism\Version();
+            $this->prismVersion = $itprismVersion->getShortVersion();
         }
 
         // Add submenu
@@ -86,7 +85,6 @@ class SocialCommunityViewDashboard extends JViewLegacy
         // Help button
         $bar = JToolBar::getInstance('toolbar');
         $bar->appendButton('Link', 'help', JText::_('JHELP'), JText::_('COM_SOCIALCOMMUNITY_HELP_URL'));
-
     }
 
     /**

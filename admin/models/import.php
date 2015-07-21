@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -98,7 +98,7 @@ class SocialCommunityModelImport extends JModelForm
 
         $destination = JPath::clean($app->get("tmp_path")) . DIRECTORY_SEPARATOR . JFile::makeSafe($uploadedName);
 
-        $file = new ITPrismFile();
+        $file = new Prism\File\File();
 
         // Prepare size validator.
         $KB       = 1024 * 1024;
@@ -110,10 +110,10 @@ class SocialCommunityModelImport extends JModelForm
         $uploadMaxSize = $mediaParams->get("upload_maxsize") * $KB;
 
         // Prepare size validator.
-        $sizeValidator = new ITPrismFileValidatorSize($fileSize, $uploadMaxSize);
+        $sizeValidator = new Prism\File\Validator\Size($fileSize, $uploadMaxSize);
 
         // Prepare server validator.
-        $serverValidator = new ITPrismFileValidatorServer($errorCode, array(UPLOAD_ERR_NO_FILE));
+        $serverValidator = new Prism\File\Validator\Server($errorCode, array(UPLOAD_ERR_NO_FILE));
 
         $file->addValidator($sizeValidator);
         $file->addValidator($serverValidator);
@@ -124,7 +124,7 @@ class SocialCommunityModelImport extends JModelForm
         }
 
         // Prepare uploader object.
-        $uploader = new ITPrismFileUploaderLocal($uploadedFile);
+        $uploader = new Prism\File\Uploader\Local($uploadedFile);
         $uploader->setDestination($destination);
 
         // Upload the file

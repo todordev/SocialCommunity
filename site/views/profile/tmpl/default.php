@@ -3,14 +3,14 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
 // no direct access
 defined('_JEXEC') or die;?>
-<div class="row-fluid" itemscope itemtype="http://schema.org/Person">
-	<div class="span4">
+<div class="row" itemscope itemtype="http://schema.org/Person">
+	<div class="col-md-4">
 		<?php if(!$this->item->image){?>
 		<img src="media/com_socialcommunity/images/no_profile_200x200.png" />
 		<?php } else {?>
@@ -33,13 +33,13 @@ defined('_JEXEC') or die;?>
 		
 		<?php if ($this->isOwner){?>
 		<div class="clearfix">&nbsp;</div>
-		<a href="<?php echo JRoute::_("index.php?option=com_socialcommunity&view=form");?>" class="btn">
-		    <i class="icon-edit" ></i>
+		<a href="<?php echo JRoute::_("index.php?option=com_socialcommunity&view=form");?>" class="btn btn-default">
+		    <span class="glyphicon glyphicon-edit" ></span>
 		    <?php echo JText::_("COM_SOCIALCOMMUNITY_EDIT_PROFILE");?>
 	    </a>
 		<?php }?>
 	</div>
-	<div class="span8">
+	<div class="col-md-8">
 		<h3 itemprop="name"><?php echo $this->item->name;?></h3>
 		<?php if (!empty($this->item->bio)) {?>
 		<p class="about-bio"><?php echo $this->escape($this->item->bio);?></p>

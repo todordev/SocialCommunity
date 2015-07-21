@@ -3,14 +3,14 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-JLoader::register("SocialCommunityModelProfile", SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR . DIRECTORY_SEPARATOR . "models" . DIRECTORY_SEPARATOR . "profile.php");
+JLoader::register("SocialCommunityModelProfile", SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR . "/models/profile.php");
 
 class SocialCommunityModelBasic extends SocialCommunityModelProfile
 {

@@ -2,31 +2,31 @@
 <form>
     <fieldset name="contact" addfieldpath="/administrator/components/com_socialcommunity/models/fields">
 
-        <field name="phone" type="text"
+        <field name="phone" type="text" class="form-control"
                label="COM_SOCIALCOMMUNITY_PHONE"
                description="COM_SOCIALCOMMUNITY_FIELD_PHONE_DESC"
                filter="trim"
                 />
 
-        <field name="address" type="textarea" class="input-xxlarge"
+        <field name="address" type="textarea" class="form-control"
                label="COM_SOCIALCOMMUNITY_ADDRESS"
                description="COM_SOCIALCOMMUNITY_FIELD_ADDRESS_DESC"
                rows="5"
                 />
 
-        <field name="location_preview" type="text"
+        <field name="location_preview" type="text" class="form-control"
                label="COM_SOCIALCOMMUNITY_LOCATION"
                description="COM_SOCIALCOMMUNITY_FIELD_LOCATION_DESC"
                filter="trim"
                 />
 
-        <field name="country_id" type="sccountries"
+        <field name="country_id" type="sccountries" class="form-control"
                label="COM_SOCIALCOMMUNITY_COUNTRY"
                description="COM_SOCIALCOMMUNITY_FIELD_COUNTRY_DESC"
                filter="int"
                 />
 
-        <field name="website" type="url" class="input-xxlarge"
+        <field name="website" type="url" class="form-control"
                label="COM_SOCIALCOMMUNITY_WEBSITE"
                description="COM_SOCIALCOMMUNITY_FIELD_WEBSITE_DESC"
                filter="trim"

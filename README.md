@@ -1,6 +1,6 @@
 Social Community for Joomla! 
 ==========================
-( Version 1.4)
+( Version 2.0)
 --------------------------
 
 Social Community is an extension that adds social features to a website based on Joomla! CMS.

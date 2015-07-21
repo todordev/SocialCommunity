@@ -3,14 +3,12 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
 // no direct access
 defined('_JEXEC') or die;
-
-jimport('joomla.application.component.view');
 
 class SocialCommunityViewProfile extends JViewLegacy
 {
@@ -99,14 +97,13 @@ class SocialCommunityViewProfile extends JViewLegacy
         $this->objectId  = $this->state->get($this->option . '.profile.user_id');
 
         // Get social profiles
-        jimport("socialcommunity.socialprofiles");
-        $this->socialProfiles = new SocialCommunitySocialProfiles(JFactory::getDbo());
-        $this->socialProfiles->load($this->objectId);
+        $this->socialProfiles = new SocialCommunity\SocialProfiles(JFactory::getDbo());
+        $this->socialProfiles->load(array("id" => $this->objectId));
 
         $this->prepareBasicInformation();
         $this->prepareContactInformation();
 
-        $this->version = new SocialCommunityVersion();
+        $this->version = new SocialCommunity\Version();
 
         $this->prepareDocument();
 

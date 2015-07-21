@@ -3,14 +3,12 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
 // No direct access
 defined('_JEXEC') or die;
-
-jimport('itprism.controller.form.frontend');
 
 /**
  * Form controller class.
@@ -18,11 +16,8 @@ jimport('itprism.controller.form.frontend');
  * @package     SocialCommunity
  * @subpackage  Components
  */
-class SocialCommunityControllerBasic extends ITPrismControllerFormFrontend
+class SocialCommunityControllerBasic extends Prism\Controller\Form\Frontend
 {
-    /**
-     * Save an item
-     */
     public function save($key = null, $urlVar = null)
     {
         JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
@@ -62,7 +57,6 @@ class SocialCommunityControllerBasic extends ITPrismControllerFormFrontend
         // Check for errors.
         if ($validData === false) {
             $this->displayNotice($form->getErrors(), $redirectOptions);
-
             return;
         }
 

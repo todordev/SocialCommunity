@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<extension type="package" version="3.3" method="upgrade">
+<extension type="package" version="3.4" method="upgrade">
 	<name>Social Community Packages</name>
 	<packagename>socialcommunity</packagename>
 	<author>Todor Iliev</author>
 	<authorEmail>todor@itprism.com</authorEmail>
 	<authorUrl>http://itprism.com</authorUrl>
-	<copyright>Copyright (C) 2014 Todor Iliev ( ITPrism.com )</copyright>
+	<copyright>Copyright (C) 2015 Todor Iliev ( ITPrism.com )</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html</license>
 	<url>http://itprism.com</url>
 	<packager>Todor Iliev</packager>
 	<packagerurl>http://itprism.com</packagerurl>
-	<version>1.4.1</version>
-	<creationDate>01 October, 2014</creationDate>
+	<version>2.0</version>
+	<creationDate>20 July, 2015</creationDate>
 	<description><![CDATA[
 	<p><a href="http://itprism.com/free-joomla-extensions/others/open-source-social-network" target="_blank">Social Community</a> is an extension that provides ability to create a social network on your website.</p>
 	<p>Invest in the extension and help for its improvement. You can <a href="http://itprism.com/sponsorship" target="_blank">sponsor the extension via SMS, PayPal or Bitcoin</a>.</p>

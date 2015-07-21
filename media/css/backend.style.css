@@ -1,0 +1,21 @@
+@CHARSET "UTF-8";
+#jform_facebook-lbl {
+	background-image: url(../images/facebook_20x20.png);
+	background-position: left;
+	background-repeat: no-repeat;
+	padding-left: 25px;
+}
+
+#jform_twitter-lbl {
+	background-image: url(../images/twitter_20x20.png);
+	background-position: left;
+	background-repeat: no-repeat;
+	padding-left: 25px;
+}
+
+#jform_linkedin-lbl {
+	background-image: url(../images/linkedin_20x20.png);
+	background-position: left;
+	background-repeat: no-repeat;
+	padding-left: 25px;
+}

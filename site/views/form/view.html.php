@@ -3,14 +3,12 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
 // no direct access
 defined('_JEXEC') or die;
-
-jimport('joomla.application.component.view');
 
 class SocialCommunityViewForm extends JViewLegacy
 {
@@ -169,17 +167,12 @@ class SocialCommunityViewForm extends JViewLegacy
         $pathway->addItem(JText::_("COM_SOCIALCOMMUNITY_EDIT_PROFILE"));
 
         // Script
-        JHtml::_("bootstrap.tooltip");
-
-        // Load bootstrap navbar styles
-        if ($this->params->get("bootstrap_navbar", 0)) {
-            JHtml::_("itprism.ui.bootstrap_navbar");
-        }
+        JHtml::_('jquery.framework');
 
         switch ($this->layout) {
 
             case "contact":
-                JHtml::_('itprism.ui.bootstrap_typeahead');
+                JHtml::_('prism.ui.bootstrap3Typeahead');
 
                 if ($this->params->get("include_chosen", 0)) {
                     JHtml::_('formbehavior.chosen', '#jform_country_id');
@@ -198,12 +191,15 @@ class SocialCommunityViewForm extends JViewLegacy
                     JHtml::_('formbehavior.chosen', '#jform_gender');
                 }
 
-                JHtml::_("itprism.ui.bootstrap_maxlength");
-                JHtml::_("itprism.ui.bootstrap_fileuploadstyle");
+                JHtml::_("prism.ui.bootstrapMaxLength");
+                JHtml::_("prism.ui.bootstrap3FileStyle");
 
                 $this->document->addScript('media/' . $this->option . '/js/site/form_basic.js');
-                break;
 
+                JText::script('COM_SOCIALCOMMUNITY_SELECT_FILE');
+                JText::script('COM_SOCIALCOMMUNITY_QUESTION_REMOVE_IMAGE');
+
+                break;
         }
 
     }

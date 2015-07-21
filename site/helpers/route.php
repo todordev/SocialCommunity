@@ -3,15 +3,12 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
 // no direct access
 defined('_JEXEC') or die;
-
-// Component Helper
-jimport('joomla.application.component.helper');
 
 /**
  * Component Route Helper that help to find a menu item.
@@ -26,18 +23,18 @@ jimport('joomla.application.component.helper');
  */
 abstract class SocialCommunityHelperRoute
 {
-
     protected static $component = "com_socialcommunity";
     protected static $lookup;
 
     /**
      * This method route profile
      *
-     * @param    int    User Id
+     * @param    int  $id
+     * 
+     * @return string
      */
     public static function getProfileRoute($id)
     {
-
         $needles = array(
             'profile' => array(0)
         );
@@ -46,9 +43,9 @@ abstract class SocialCommunityHelperRoute
         $link = 'index.php?option=com_socialcommunity&view=profile&id=' . $id;
 
         // Looking for menu item (Itemid)
-        if ($item = self::_findItem($needles)) {
+        if ($item = self::findItem($needles)) {
             $link .= '&Itemid=' . $item;
-        } elseif ($item = self::_findItem()) { // Get the menu item (Itemid) from the active (current) item.
+        } elseif ($item = self::findItem()) { // Get the menu item (Itemid) from the active (current) item.
             $link .= '&Itemid=' . $item;
         }
 
@@ -58,11 +55,10 @@ abstract class SocialCommunityHelperRoute
     /**
      * @param    string $layout
      *
-     * @return URL to form
+     * @return string
      */
     public static function getFormRoute($layout = null)
     {
-
         $needles = array(
             'form' => array(0)
         );
@@ -75,23 +71,59 @@ abstract class SocialCommunityHelperRoute
         }
 
         // Looking for menu item (Itemid)
-        if ($item = self::_findItem($needles)) {
+        if ($item = self::findItem($needles)) {
             $link .= '&Itemid=' . $item;
-        } elseif ($item = self::_findItem()) { // Get the menu item (Itemid) from the active (current) item.
+        } elseif ($item = self::findItem()) { // Get the menu item (Itemid) from the active (current) item.
             $link .= '&Itemid=' . $item;
         }
 
         return $link;
     }
 
-    protected static function _findItem($needles = null)
+    /**
+     * This method routes ordering.
+     *
+     * @param int $id
+     *
+     * @return string
+     */
+    public static function getNotificationRoute($id)
     {
+        /**
+         *
+         * # category
+         * We will check for view category first. If find a menu item with view "category" and "id" equality of the key,
+         * we will get that menu item ( Itemid ).
+         *
+         * # categories view
+         * If miss a menu item with view "category" we continue with searchin but now for view "categories".
+         * It is assumed view "categories" will be in the first level of the menu.
+         * The view "categories" won't contain category ID so it has to contain 0 for ID key.
+         */
+        $needles = array(
+            'notifications' => array(0),
+        );
 
+        //Create the link
+        $link = 'index.php?option=com_socialcommunity&view=notification&id=' . (int)$id;
+
+        // Looking for menu item (Itemid)
+        if ($item = self::findItem($needles)) {
+            $link .= '&Itemid=' . $item;
+        } elseif ($item = self::findItem()) { // Get the menu item (Itemid) from the active (current) item.
+            $link .= '&Itemid=' . $item;
+        }
+
+        return $link;
+    }
+
+    protected static function findItem($needles = null)
+    {
         $app   = JFactory::getApplication();
         $menus = $app->getMenu('site');
 
         // Prepare the reverse lookup array.
-        // Collect all menu items and creat an array that contains
+        // Collect all menu items and create an array that contains
         // the ID from the query string of the menu item as a key,
         // and the menu item id (Itemid) as a value
         // Example:
@@ -147,5 +179,4 @@ abstract class SocialCommunityHelperRoute
 
         return null;
     }
-
 }

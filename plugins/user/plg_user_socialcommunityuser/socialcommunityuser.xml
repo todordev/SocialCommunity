@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.3" type="plugin" group="user" method="upgrade">
+<extension version="3.4" type="plugin" group="user" method="upgrade">
     <name>PLG_USER_SOCIALCOMMUNITYUSER</name>
     <author>Todor Iliev</author>
-    <copyright>Copyright (C) 2014 Todor Iliev ( ITPrism.com ). All rights reserved.</copyright>
+    <copyright>Copyright (C) 2015 Todor Iliev ( ITPrism.com ). All rights reserved.</copyright>
     <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
     <authorEmail>todor@itprism.com</authorEmail>
     <authorUrl>http://itprism.com</authorUrl>
-    <version>1.4.1</version>
-    <creationDate>01 October, 2014</creationDate>
+    <version>2.0</version>
+    <creationDate>20 July, 2015</creationDate>
     <description><![CDATA[
     <p><a href="http://itprism.com/free-joomla-extensions/others/open-source-social-network" target="_blank">User - SocialCommunity User</a> is an extension that creates and removes profiles in Social Community.</p>
     <p><a href='http://itprism.com/help/86-social-community-documentation' target='_blank'>Read documentation</a> that will help you to setup the extensions.</p>
-    <p>Invest in the extension improvement. You can <a href="http://itprism.com/sponsorship"  target="_blank">sponsor the extension via SMS or PayPal</a>.</p>
     <p><a href="http://itprism.com/" target="_blank">Subscribe for the newsletter</a> to receive information about updates and new ITPrism extensions.</p>
     <p>Please, <a href="http://extensions.joomla.org/extensions/clients-a-communities/communities/24556" target="_blank">vote for the extension</a> on Joomla! Extensions Directory</p>
     ]]></description>
     
     <files>
         <filename plugin="socialcommunityuser">socialcommunityuser.php</filename>
-        <filename>index.html</filename>
-        
         <folder>language</folder>
     </files>
     
