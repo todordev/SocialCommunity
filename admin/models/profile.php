@@ -356,7 +356,7 @@ class SocialCommunityModelProfile extends JModelAdmin
 
         /** @var  $params Joomla\Registry\Registry */
         $params     = JComponentHelper::getParams($this->option);
-        $destFolder = JPath::clean(JPATH_ROOT . $params->get("images_directory", "/images/profiles"));
+        $destFolder = JPath::clean(JPATH_ROOT . DIRECTORY_SEPARATOR. $params->get("images_directory", "/images/profiles"));
 
         $options = array(
             "width"         => $params->get("image_width"),

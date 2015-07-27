@@ -1,12 +1,23 @@
 jQuery(document).ready(function($) {
 	
 	// Style file input
-	jQuery('#jform_photo').filestyle({
-        input: true,
-        buttonBefore: true,
-        iconName: "glyphicon-upload",
-        buttonText: Joomla.JText._('COM_SOCIALCOMMUNITY_SELECT_FILE'),
-        badge: false
+	jQuery('#jform_photo').fileinput({
+        browseLabel: Joomla.JText._('COM_SOCIALCOMMUNITY_SELECT_FILE'),
+        browseClass: "btn btn-default",
+        showUpload: false,
+        showPreview: false,
+        removeLabel: Joomla.JText._('COM_SOCIALCOMMUNITY_REMOVE'),
+        removeClass: "btn btn-danger",
+        layoutTemplates: {
+            main1:
+            "<div class=\'input-group {class}\'>\n" +
+            "   <div class=\'input-group-btn\'>\n" +
+            "       {browse}\n" +
+            "       {remove}\n" +
+            "   </div>\n" +
+            "   {caption}\n" +
+            "</div>"
+        }
     });
 	
 	// Initialize symbol length indicator

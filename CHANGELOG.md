@@ -1,6 +1,9 @@
 Social Community Release Notes
 ---------
 
+###v2.1
+* Replaced bootstrap3FileStyle with bootstrap3FileInput.
+
 ###v2.0
 * Improved the library and code quality.
 * Added notifications views.

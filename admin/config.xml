@@ -3,7 +3,7 @@
     
     <fieldset name="images" label="COM_SOCIALCOMMUNITY_IMAGES_TITLE" description="COM_SOCIALCOMMUNITY_IMAGES_PARAMS">
 
-        <field name="images_directory" type="text" default="/images/profiles" size="50" label="COM_SOCIALCOMMUNITY_IMAGES_DIRECTORY" description="COM_SOCIALCOMMUNITY_IMAGES_DIRECTORY_DESC" />
+        <field name="images_directory" type="text" default="images/profiles" size="50" label="COM_SOCIALCOMMUNITY_IMAGES_DIRECTORY" description="COM_SOCIALCOMMUNITY_IMAGES_DIRECTORY_DESC" />
             
         <field name="image_width" type="text" default="200" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_WIDTH_DESC" />
         <field name="image_height" type="text" default="200" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_HEIGHT_DESC" />

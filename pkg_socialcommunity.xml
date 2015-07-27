@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <extension type="package" version="3.4" method="upgrade">
-	<name>Social Community Packages</name>
+	<name>Social Community Package</name>
 	<packagename>socialcommunity</packagename>
 	<author>Todor Iliev</author>
 	<authorEmail>todor@itprism.com</authorEmail>
@@ -10,11 +10,10 @@
 	<url>http://itprism.com</url>
 	<packager>Todor Iliev</packager>
 	<packagerurl>http://itprism.com</packagerurl>
-	<version>2.0</version>
-	<creationDate>20 July, 2015</creationDate>
+	<version>2.1</version>
+	<creationDate>27 July, 2015</creationDate>
 	<description><![CDATA[
 	<p><a href="http://itprism.com/free-joomla-extensions/others/open-source-social-network" target="_blank">Social Community</a> is an extension that provides ability to create a social network on your website.</p>
-	<p>Invest in the extension and help for its improvement. You can <a href="http://itprism.com/sponsorship" target="_blank">sponsor the extension via SMS, PayPal or Bitcoin</a>.</p>
 	<p><a href="http://itprism.com/" target="_blank">Subscribe for the newsletter</a> to receive <strong>gifts</strong>, <strong>discount codes</strong>, information about <strong>updates</strong> and information about <strong>new ITPrism extensions</strong>.</p>
 	<p>Please, <a href="http://extensions.joomla.org/extensions/clients-a-communities/communities/24556" target="_blank">vote for the extension</a> on Joomla! Extensions Directory</p>
 	]]></description>
@@ -26,4 +25,8 @@
 	</files>
 
 	<scriptfile>install.php</scriptfile>
+
+    <updateservers>
+        <server type="extension" priority="1" name="Social Community ( from CDN )">http://cdn.itprism.com/updates/socialcommunity.xml</server>
+    </updateservers>
 </extension>

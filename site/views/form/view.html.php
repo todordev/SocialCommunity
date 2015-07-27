@@ -192,7 +192,7 @@ class SocialCommunityViewForm extends JViewLegacy
                 }
 
                 JHtml::_("prism.ui.bootstrapMaxLength");
-                JHtml::_("prism.ui.bootstrap3FileStyle");
+                JHtml::_("prism.ui.bootstrap3FileInput");
 
                 $this->document->addScript('media/' . $this->option . '/js/site/form_basic.js');
 
