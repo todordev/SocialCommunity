@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -25,7 +25,6 @@ class SocialCommunityModelCountries extends JModelList
      */
     public function __construct($config = array())
     {
-
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
                 'id', 'a.id',
@@ -39,20 +38,12 @@ class SocialCommunityModelCountries extends JModelList
         }
 
         parent::__construct($config);
-
     }
-
-    /**
-     * Method to auto-populate the model state.
-     *
-     * Note. Calling getState in this method will result in recursion.
-     *
-     * @since   1.6
-     */
+    
     protected function populateState($ordering = null, $direction = null)
     {
         // Load the filter state.
-        $value = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+        $value = (string)$this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
         $this->setState('filter.search', $value);
 
         // Load the component parameters.
@@ -107,13 +98,13 @@ class SocialCommunityModelCountries extends JModelList
 
         // Filter by search in title
         $search = $this->getState('filter.search');
-        if (!empty($search)) {
+        if ($search !== '') {
             if (stripos($search, 'id:') === 0) {
                 $query->where('a.id = ' . (int)substr($search, 3));
             } else {
 
                 $escaped = $db->escape($search, true);
-                $quoted  = $db->quote("%" . $escaped . "%", false);
+                $quoted  = $db->quote('%' . $escaped . '%', false);
                 $query->where('a.name LIKE ' . $quoted);
 
             }

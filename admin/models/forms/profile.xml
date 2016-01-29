@@ -23,6 +23,13 @@
                readonly="true"
                />
 
+        <field name="user_id" type="text"
+               label="COM_SOCIALCOMMUNITY_USER_ID"
+               description="COM_SOCIALCOMMUNITY_USER_ID_DESC"
+               default="0"
+               readonly="true"
+        />
+
         <field name="bio" type="textarea" class="span6"
                label="COM_SOCIALCOMMUNITY_BIO"
                description="COM_SOCIALCOMMUNITY_BIO_DESC"

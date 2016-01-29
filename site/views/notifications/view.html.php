@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -36,15 +36,17 @@ class SocialCommunityViewNotifications extends JViewLegacy
 
     protected $pageclass_sfx;
 
-    public function __construct($config)
-    {
-        parent::__construct($config);
-        $this->option = JFactory::getApplication()->input->get("option");
-    }
-
+    /**
+     * @var $app JApplicationSite
+     */
+    protected $app;
+    
     public function display($tpl = null)
     {
-        // Initialise variables
+        $this->app = JFactory::getApplication();
+        
+        $this->option = $this->app->input->get('option');
+        
         $this->items      = $this->get('Items');
         $this->state      = $this->get('State');
         $this->params     = $this->state->get('params');
@@ -67,7 +69,7 @@ class SocialCommunityViewNotifications extends JViewLegacy
         $this->prepearePageHeading();
 
         // Prepare page heading
-        $this->prepearePageTitle();
+        $this->preparePageTitle();
 
         // Meta Description
         if ($this->params->get('menu-meta_description')) {
@@ -76,11 +78,11 @@ class SocialCommunityViewNotifications extends JViewLegacy
 
         // Meta keywords
         if ($this->params->get('menu-meta_keywords')) {
-            $this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
+            $this->document->setMetaData('keywords', $this->params->get('menu-meta_keywords'));
         }
 
         if ($this->params->get('robots')) {
-            $this->document->setMetadata('robots', $this->params->get('robots'));
+            $this->document->setMetaData('robots', $this->params->get('robots'));
         }
 
         // Scripts
@@ -93,12 +95,9 @@ class SocialCommunityViewNotifications extends JViewLegacy
 
     private function prepearePageHeading()
     {
-        $app = JFactory::getApplication();
-        /** @var $app JApplicationSite */
-
         // Because the application sets a default page title,
         // we need to get it from the menu item itself
-        $menus = $app->getMenu();
+        $menus = $this->app->getMenu();
         $menu  = $menus->getActive();
 
         // Prepare page heading
@@ -109,21 +108,18 @@ class SocialCommunityViewNotifications extends JViewLegacy
         }
     }
 
-    private function prepearePageTitle()
+    private function preparePageTitle()
     {
-        $app = JFactory::getApplication();
-        /** @var $app JApplicationSite */
-
         // Prepare page title
         $title = $this->params->get('page_title', '');
 
         // Add title before or after Site Name
         if (!$title) {
-            $title = $app->get('sitename');
-        } elseif ($app->get('sitename_pagetitles', 0) == 1) {
-            $title = JText::sprintf('JPAGETITLE', $app->get('sitename'), $title);
-        } elseif ($app->get('sitename_pagetitles', 0) == 2) {
-            $title = JText::sprintf('JPAGETITLE', $title, $app->get('sitename'));
+            $title = $this->app->get('sitename');
+        } elseif ($this->app->get('sitename_pagetitles', 0) === 1) {
+            $title = JText::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
+        } elseif ($this->app->get('sitename_pagetitles', 0) === 2) {
+            $title = JText::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
         }
 
         $this->document->setTitle($title);

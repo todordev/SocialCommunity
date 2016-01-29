@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -35,20 +35,13 @@ class SocialCommunityViewLocations extends JViewLegacy
 
     protected $sidebar;
 
-    public function __construct($config)
-    {
-        parent::__construct($config);
-        $this->option = JFactory::getApplication()->input->get("option");
-    }
-
     public function display($tpl = null)
     {
+        $this->option = JFactory::getApplication()->input->get('option');
+        
         $this->state      = $this->get('State');
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
-
-        // Add submenu
-        SocialCommunityHelper::addSubmenu($this->getName());
 
         // Prepare sorting data
         $this->prepareSorting();
@@ -69,7 +62,7 @@ class SocialCommunityViewLocations extends JViewLegacy
         // Prepare filters
         $this->listOrder = $this->escape($this->state->get('list.ordering'));
         $this->listDirn  = $this->escape($this->state->get('list.direction'));
-        $this->saveOrder = (strcmp($this->listOrder, 'a.ordering') != 0) ? false : true;
+        $this->saveOrder = (strcmp($this->listOrder, 'a.ordering') === 0);
 
         if ($this->saveOrder) {
             $this->saveOrderingUrl = 'index.php?option=' . $this->option . '&task=' . $this->getName() . '.saveOrderAjax&format=raw';
@@ -91,12 +84,15 @@ class SocialCommunityViewLocations extends JViewLegacy
      */
     protected function addSidebar()
     {
+        // Add submenu
+        SocialCommunityHelper::addSubmenu($this->getName());
+        
         JHtmlSidebar::setAction('index.php?option=' . $this->option . '&view=' . $this->getName());
 
         JHtmlSidebar::addFilter(
             JText::_('JOPTION_SELECT_PUBLISHED'),
             'filter_state',
-            JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array("archived" => false, "trash" => false)), 'value', 'text', $this->state->get('filter.state'), true)
+            JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('archived' => false, 'trash' => false)), 'value', 'text', $this->state->get('filter.state'), true)
         );
 
         $this->sidebar = JHtmlSidebar::render();
@@ -120,19 +116,19 @@ class SocialCommunityViewLocations extends JViewLegacy
 
         // Import
         $link = JRoute::_('index.php?option=com_socialcommunity&view=import&type=locations');
-        $bar->appendButton('Link', 'upload', JText::_("COM_SOCIALCOMMUNITY_IMPORT_LOCATIONS"), $link);
+        $bar->appendButton('Link', 'upload', JText::_('COM_SOCIALCOMMUNITY_IMPORT_LOCATIONS'), $link);
 
         // Export
         $link = JRoute::_('index.php?option=com_socialcommunity&task=export.download&format=raw&type=locations');
-        $bar->appendButton('Link', 'download', JText::_("COM_SOCIALCOMMUNITY_EXPORT_LOCATIONS"), $link);
+        $bar->appendButton('Link', 'download', JText::_('COM_SOCIALCOMMUNITY_EXPORT_LOCATIONS'), $link);
 
         JToolbarHelper::divider();
-        JToolbarHelper::publishList("locations.publish");
-        JToolbarHelper::unpublishList("locations.unpublish");
+        JToolbarHelper::publishList('locations.publish');
+        JToolbarHelper::unpublishList('locations.unpublish');
         JToolbarHelper::divider();
-        JToolbarHelper::deleteList(JText::_("COM_SOCIALCOMMUNITY_DELETE_ITEMS_QUESTION"), "locations.delete");
+        JToolbarHelper::deleteList(JText::_('COM_SOCIALCOMMUNITY_DELETE_ITEMS_QUESTION'), 'locations.delete');
         JToolbarHelper::divider();
-        JToolbarHelper::custom('locations.backToDashboard', "dashboard", "", JText::_("COM_SOCIALCOMMUNITY_DASHBOARD"), false);
+        JToolbarHelper::custom('locations.backToDashboard', 'dashboard', '', JText::_('COM_SOCIALCOMMUNITY_DASHBOARD'), false);
     }
 
     /**
@@ -150,6 +146,6 @@ class SocialCommunityViewLocations extends JViewLegacy
 
         JHtml::_('formbehavior.chosen', 'select');
 
-        JHtml::_('prism.ui.joomlaList');
+        JHtml::_('Prism.ui.joomlaList');
     }
 }

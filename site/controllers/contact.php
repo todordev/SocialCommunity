@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -22,24 +22,21 @@ class SocialCommunityControllerContact extends Prism\Controller\Form\Frontend
     {
         JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-        $app = JFactory::getApplication();
-        /** @var $app JApplicationSite */
-
         // Check for registered user
-        $userId = JFactory::getUser()->id;
+        $userId = (int)JFactory::getUser()->get('id');
         if (!$userId) {
             $redirectOptions = array(
-                "force_direction" => "index.php?option=com_users&view=login"
+                'force_direction' => 'index.php?option=com_users&view=login'
             );
 
-            $this->displayNotice(JText::_("COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN"), $redirectOptions);
+            $this->displayNotice(JText::_('COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN'), $redirectOptions);
             return;
         }
 
-        $data            = $app->input->post->get('jform', array(), 'array');
+        $data            = $this->input->post->get('jform', array(), 'array');
         $redirectOptions = array(
-            "view"   => "form",
-            "layout" => "contact",
+            'view'   => 'form',
+            'layout' => 'contact',
         );
 
         $model = $this->getModel();
@@ -49,7 +46,7 @@ class SocialCommunityControllerContact extends Prism\Controller\Form\Frontend
         /** @var $form JForm */
 
         if (!$form) {
-            throw new Exception(JText::_("COM_SOCIALCOMMUNITY_ERROR_FORM_LOADING"));
+            throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_FORM_LOADING'));
         }
 
         // Test if the data is valid.
@@ -58,11 +55,12 @@ class SocialCommunityControllerContact extends Prism\Controller\Form\Frontend
         // Check for errors.
         if ($validData === false) {
             $this->displayNotice($form->getErrors(), $redirectOptions);
-
             return;
         }
 
         try {
+
+            $validData['user_id'] = $userId;
 
             $model->save($validData);
 
@@ -70,7 +68,6 @@ class SocialCommunityControllerContact extends Prism\Controller\Form\Frontend
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
 
-        $this->displayMessage(JText::_('COM_SOCIALCOMMUNITY_PROFILE_SAVED'), $redirectOptions);
-
+        $this->displayMessage(JText::_('COM_SOCIALCOMMUNITY_CONTACTS_SAVED'), $redirectOptions);
     }
 }

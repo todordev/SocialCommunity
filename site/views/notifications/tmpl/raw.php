@@ -3,16 +3,16 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
 // no direct access
 defined('_JEXEC') or die;?>
 <?php foreach ($this->items as $item) {
-    $notReadClass = "";
+    $notReadClass = '';
     if (!$item->status) {
-        $notReadClass = "sc-note-notread";
+        $notReadClass = 'sc-note-notread';
     }
     ?>
     <div class="row sc-note-tiny <?php echo $notReadClass; ?>">
@@ -22,7 +22,7 @@ defined('_JEXEC') or die;?>
             </a>
         </div>
         <div class="col-xs-2">
-            <img src="<?php echo (!$item->status) ? "media/com_gamification/images/status_active.png" : "media/com_gamification/images/status_inactive.png"; ?>"/>
+            <img src="<?php echo (!$item->status) ? 'media/com_socialcommunity/images/status_active.png' : 'media/com_socialcommunity/images/status_inactive.png'; ?>"/>
         </div>
     </div>
 <?php } ?>

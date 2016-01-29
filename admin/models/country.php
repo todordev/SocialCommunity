@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -74,19 +74,19 @@ class SocialCommunityModelCountry extends JModelAdmin
      */
     public function save($data)
     {
-        $id   = JArrayHelper::getValue($data, "id");
-        $name = JArrayHelper::getValue($data, "name");
-        $code = JArrayHelper::getValue($data, "code");
+        $id   = Joomla\Utilities\ArrayHelper::getValue($data, 'id');
+        $name = Joomla\Utilities\ArrayHelper::getValue($data, 'name');
+        $code = Joomla\Utilities\ArrayHelper::getValue($data, 'code');
 
         // Load a record from the database
         $row = $this->getTable();
         $row->load($id);
 
-        $row->set("name", $name);
-        $row->set("code", $code);
+        $row->set('name', $name);
+        $row->set('code', $code);
 
         $row->store();
 
-        return $row->get("id");
+        return $row->get('id');
     }
 }

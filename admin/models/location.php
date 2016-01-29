@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -12,12 +12,6 @@ defined('_JEXEC') or die;
 
 class SocialCommunityModelLocation extends JModelAdmin
 {
-    /**
-     * @var     string  The prefix to use with controller messages.
-     * @since   1.6
-     */
-    protected $text_prefix = 'COM_SOCIALCOMMUNITY';
-
     /**
      * Returns a reference to the a Table object, always creating it.
      *
@@ -80,29 +74,29 @@ class SocialCommunityModelLocation extends JModelAdmin
      */
     public function save($data)
     {
-        $id          = JArrayHelper::getValue($data, "id");
-        $name        = JArrayHelper::getValue($data, "name");
-        $latitude    = JArrayHelper::getValue($data, "latitude");
-        $longitude   = JArrayHelper::getValue($data, "longitude");
-        $countryCode = JArrayHelper::getValue($data, "country_code");
-        $timezone    = JArrayHelper::getValue($data, "timezone");
-        $stateCode   = JArrayHelper::getValue($data, "state_code");
-        $published   = JArrayHelper::getValue($data, "published");
+        $id          = Joomla\Utilities\ArrayHelper::getValue($data, 'id');
+        $name        = Joomla\Utilities\ArrayHelper::getValue($data, 'name');
+        $latitude    = Joomla\Utilities\ArrayHelper::getValue($data, 'latitude');
+        $longitude   = Joomla\Utilities\ArrayHelper::getValue($data, 'longitude');
+        $countryCode = Joomla\Utilities\ArrayHelper::getValue($data, 'country_code');
+        $timezone    = Joomla\Utilities\ArrayHelper::getValue($data, 'timezone');
+        $stateCode   = Joomla\Utilities\ArrayHelper::getValue($data, 'state_code');
+        $published   = Joomla\Utilities\ArrayHelper::getValue($data, 'published');
 
         // Load a record from the database
         $row = $this->getTable();
         $row->load($id);
 
-        $row->set("name", $name);
-        $row->set("latitude", $latitude);
-        $row->set("longitude", $longitude);
-        $row->set("country_code", $countryCode);
-        $row->set("timezone", $timezone);
-        $row->set("state_code", $stateCode);
-        $row->set("published", $published);
+        $row->set('name', $name);
+        $row->set('latitude', $latitude);
+        $row->set('longitude', $longitude);
+        $row->set('country_code', $countryCode);
+        $row->set('timezone', $timezone);
+        $row->set('state_code', $stateCode);
+        $row->set('published', $published);
 
         $row->store();
 
-        return $row->get("id");
+        return $row->get('id');
     }
 }

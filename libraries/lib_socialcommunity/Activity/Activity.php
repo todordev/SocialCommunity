@@ -3,11 +3,11 @@
  * @package      SocialCommunity
  * @subpackage   Activities
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
-namespace SocialCommunity;
+namespace Socialcommunity\Activity;
 
 use Prism;
 
@@ -37,28 +37,28 @@ class Activity extends Prism\Database\Table
      *    'user_id' => 2
      * );
      *
-     * $activity   = new SocialCommunity\Activity(\JFactory::getDbo());
+     * $activity   = new Socialcommunity\Activity\Activity(\JFactory::getDbo());
      * $activity->load($keys);
      * </code>
      *
      * @param int|array $keys
      * @param $options $keys
      */
-    public function load($keys, $options = array())
+    public function load($keys, array $options = array())
     {
         // Create a new query object.
         $query = $this->db->getQuery(true);
 
         $query
-            ->select("a.id, a.content, a.image, a.url, a.created, a.user_id")
-            ->from($this->db->quoteName("#__itpsc_activities", "a"));
+            ->select('a.id, a.content, a.image, a.url, a.created, a.user_id')
+            ->from($this->db->quoteName('#__itpsc_activities', 'a'));
 
         // Filter by keys.
         if (!is_array($keys)) {
-            $query->where("a.id = " . (int)$keys);
+            $query->where('a.id = ' . (int)$keys);
         } else {
             foreach ($keys as $key => $value) {
-                $query->where($this->db->quoteName($key) . " = " . $this->db->quote($value));
+                $query->where($this->db->quoteName('a.'.$key) . ' = ' . $this->db->quote($value));
             }
         }
 
@@ -66,7 +66,6 @@ class Activity extends Prism\Database\Table
         $result = (array)$this->db->loadAssoc();
 
         $this->bind($result);
-
     }
 
     /**
@@ -78,7 +77,7 @@ class Activity extends Prism\Database\Table
      *  "user_id" => 1
      * );
      *
-     * $activity   = new SocialCommunity\Activity(\JFactory::getDbo());
+     * $activity   = new Socialcommunity\Activity\Activity(\JFactory::getDbo());
      * $activity->bind($data);
      * $activity->store();
      * </code>
@@ -97,12 +96,12 @@ class Activity extends Prism\Database\Table
         $query = $this->db->getQuery(true);
 
         $query
-            ->update($this->db->quoteName("#__itpsc_activities"))
-            ->set($this->db->quoteName("content") . "=" . $this->db->quote($this->content))
-            ->set($this->db->quoteName("image") . "=" . $this->db->quote($this->image))
-            ->set($this->db->quoteName("url") . "=" . $this->db->quote($this->url))
-            ->set($this->db->quoteName("user_id") . "=" . (int)$this->user_id)
-            ->where($this->db->quoteName("id") . "=" . (int)$this->id);
+            ->update($this->db->quoteName('#__itpsc_activities'))
+            ->set($this->db->quoteName('content') . '=' . $this->db->quote($this->content))
+            ->set($this->db->quoteName('image') . '=' . $this->db->quote($this->image))
+            ->set($this->db->quoteName('url') . '=' . $this->db->quote($this->url))
+            ->set($this->db->quoteName('user_id') . '=' . (int)$this->user_id)
+            ->where($this->db->quoteName('id') . '=' . (int)$this->id);
 
         $this->db->setQuery($query);
         $this->db->execute();
@@ -118,17 +117,17 @@ class Activity extends Prism\Database\Table
         }
 
         $query
-            ->insert($this->db->quoteName("#__itpsc_activities"))
-            ->set($this->db->quoteName("content") . "=" . $this->db->quote($this->content))
-            ->set($this->db->quoteName("created") . "=" . $this->db->quote($this->created))
-            ->set($this->db->quoteName("user_id") . "=" . (int)$this->user_id);
+            ->insert($this->db->quoteName('#__itpsc_activities'))
+            ->set($this->db->quoteName('content') . '=' . $this->db->quote($this->content))
+            ->set($this->db->quoteName('created') . '=' . $this->db->quote($this->created))
+            ->set($this->db->quoteName('user_id') . '=' . (int)$this->user_id);
 
         if (!empty($this->image)) {
-            $query->set($this->db->quoteName("image") . "=" . $this->db->quote($this->image));
+            $query->set($this->db->quoteName('image') . '=' . $this->db->quote($this->image));
         }
 
         if (!empty($this->url)) {
-            $query->set($this->db->quoteName("url") . "=" . $this->db->quote($this->url));
+            $query->set($this->db->quoteName('url') . '=' . $this->db->quote($this->url));
         }
 
         $this->db->setQuery($query);
@@ -143,7 +142,7 @@ class Activity extends Prism\Database\Table
      * <code>
      * $content = "...";
      *
-     * $activity   = new SocialCommunity\Activity(\JFactory::getDbo());
+     * $activity   = new Socialcommunity\Activity\Activity(\JFactory::getDbo());
      * $activity->setContent($content);
      * </code>
      *
@@ -164,7 +163,7 @@ class Activity extends Prism\Database\Table
      * <code>
      * $activityId = 1;
      *
-     * $activity   = new SocialCommunity\Activity(\JFactory::getDbo());
+     * $activity   = new Socialcommunity\Activity\Activity(\JFactory::getDbo());
      * $activity->load($activityId);
      *
      * $content = $activity->getContent();
@@ -181,9 +180,9 @@ class Activity extends Prism\Database\Table
      * Set a date when the activity has been created.
      *
      * <code>
-     * $created = "2015-02-02";
+     * $created = "2016-02-02";
      *
-     * $activity   = new SocialCommunity\Activity(\JFactory::getDbo());
+     * $activity   = new Socialcommunity\Activity\Activity(\JFactory::getDbo());
      * $activity->setContent($created);
      * </code>
      *
@@ -202,7 +201,7 @@ class Activity extends Prism\Database\Table
      * Return a date when the activity has been performed.
      *
      * <code>
-     * $activity   = new SocialCommunity\Activity(\JFactory::getDbo());
+     * $activity   = new Socialcommunity\Activity\Activity(\JFactory::getDbo());
      * $date = $activity->getCreated();
      * </code>
      *
@@ -219,7 +218,7 @@ class Activity extends Prism\Database\Table
      * <code>
      * $image = "...";
      *
-     * $activity   = new SocialCommunity\Activity(\JFactory::getDbo());
+     * $activity   = new Socialcommunity\Activity\Activity(\JFactory::getDbo());
      * $activity->setImage($image);
      * </code>
      *
@@ -238,7 +237,7 @@ class Activity extends Prism\Database\Table
      * Return the image which is part of the activity.
      *
      * <code>
-     * $activity   = new SocialCommunity\Activity(\JFactory::getDbo());
+     * $activity   = new Socialcommunity\Activity\Activity(\JFactory::getDbo());
      * $image = $activity->getImage();
      * </code>
      *
@@ -255,7 +254,7 @@ class Activity extends Prism\Database\Table
      * <code>
      * $url = "...";
      *
-     * $activity   = new SocialCommunity\Activity(\JFactory::getDbo());
+     * $activity   = new Socialcommunity\Activity\Activity(\JFactory::getDbo());
      * $activity->setUrl($url);
      * </code>
      *
@@ -274,7 +273,7 @@ class Activity extends Prism\Database\Table
      * Return the URL which is part of the activity.
      *
      * <code>
-     * $activity   = new SocialCommunity\Activity(\JFactory::getDbo());
+     * $activity   = new Socialcommunity\Activity\Activity(\JFactory::getDbo());
      * $url = $activity->getUrl();
      * </code>
      *
@@ -291,7 +290,7 @@ class Activity extends Prism\Database\Table
      * <code>
      * $userId = 1;
      *
-     * $activity   = new SocialCommunity\Activity(\JFactory::getDbo());
+     * $activity   = new Socialcommunity\Activity\Activity(\JFactory::getDbo());
      * $activity->setUrl($userId);
      * </code>
      *
@@ -301,7 +300,7 @@ class Activity extends Prism\Database\Table
      */
     public function setUserId($userId)
     {
-        $this->user_id = $userId;
+        $this->user_id = (int)$userId;
 
         return $this;
     }
@@ -310,7 +309,7 @@ class Activity extends Prism\Database\Table
      * Return an ID of an user which has performed the activity.
      *
      * <code>
-     * $activity   = new SocialCommunity\Activity(\JFactory::getDbo());
+     * $activity   = new Socialcommunity\Activity\Activity(\JFactory::getDbo());
      * $userId     = $activity->getUserId();
      * </code>
      *
@@ -318,6 +317,6 @@ class Activity extends Prism\Database\Table
      */
     public function getUserId()
     {
-        return $this->user_id;
+        return (int)$this->user_id;
     }
 }

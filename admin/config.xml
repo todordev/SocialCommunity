@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-    
-    <fieldset name="images" label="COM_SOCIALCOMMUNITY_IMAGES_TITLE" description="COM_SOCIALCOMMUNITY_IMAGES_PARAMS">
 
-        <field name="images_directory" type="text" default="images/profiles" size="50" label="COM_SOCIALCOMMUNITY_IMAGES_DIRECTORY" description="COM_SOCIALCOMMUNITY_IMAGES_DIRECTORY_DESC" />
-            
+    <fieldset name="profile" label="COM_SOCIALCOMMUNITY_PROFILE_TITLE" description="COM_SOCIALCOMMUNITY_PROFILE_PARAMS">
+        <field name="profile_wall" type="radio" default="0" label="COM_SOCIALCOMMUNITY_PROFILE_WALL" description="COM_SOCIALCOMMUNITY_PROFILE_WALL_DESC" class="btn-group">
+            <option value="0">COM_SOCIALCOMMUNITY_DISABLED</option>
+            <option value="1">COM_SOCIALCOMMUNITY_ENABLED</option>
+        </field>
+    </fieldset>
+
+    <fieldset name="media" label="COM_SOCIALCOMMUNITY_MEDIA_TITLE" description="COM_SOCIALCOMMUNITY_MEDIA_PARAMS">
         <field name="image_width" type="text" default="200" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_WIDTH_DESC" />
         <field name="image_height" type="text" default="200" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_HEIGHT_DESC" />
         
@@ -16,7 +20,40 @@
         
         <field name="image_icon_width" type="text" default="24" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_ICON_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_ICON_WIDTH_DESC" />
         <field name="image_icon_height" type="text" default="24" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_ICON_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_ICON_HEIGHT_DESC" />
-        
+        <field name="image_aspect_ratio" type="list" default="" label="COM_SOCIALCOMMUNITY_ASPECT_RATIO" description="COM_SOCIALCOMMUNITY_ASPECT_RATIO_DESC">
+            <option value="">COM_SOCIALCOMMUNITY_FREE</option>
+            <option value="1/1">1/1</option>
+            <option value="2/3">2/3</option>
+            <option value="4/3">4/3</option>
+            <option value="16/9">16/9</option>
+        </field>
+    </fieldset>
+
+    <fieldset name="filesystem_options" label="COM_SOCIALCOMMUNITY_FILESYSTEMS" description="COM_SOCIALCOMMUNITY_FILESYSTEMS_PARAMS">
+        <field name="filesystem" type="list" default="local" label="COM_SOCIALCOMMUNITY_FILESYSTEM" description="COM_SOCIALCOMMUNITY_FILESYSTEM_DESC">
+            <option value="local">COM_SOCIALCOMMUNITY_LOCAL</option>
+            <option value="amazon_s3">COM_SOCIALCOMMUNITY_AMAZON_S3</option>
+        </field>
+
+        <field name="local_media_folder" type="text" default="media/socialcommunity" label="COM_SOCIALCOMMUNITY_LOCAL_MEDIA_DIRECTORY" description="COM_SOCIALCOMMUNITY_LOCAL_MEDIA_DIRECTORY_DESC" class="xx-large"/>
+
+        <field name="amazon_bucket" type="text" label="COM_SOCIALCOMMUNITY_AMAZON_S3_BUCKET" description="COM_SOCIALCOMMUNITY_AMAZON_S3_BUCKET_DESC" class="input-xxlarge"/>
+        <field name="amazon_key" type="text" label="COM_SOCIALCOMMUNITY_AMAZON_S3_KEY" description="COM_SOCIALCOMMUNITY_AMAZON_S3_KEY_DESC" class="input-xxlarge"/>
+        <field name="amazon_secret" type="text" label="COM_SOCIALCOMMUNITY_AMAZON_S3_SECRET" description="COM_SOCIALCOMMUNITY_AMAZON_S3_SECRET_DESC" class="input-xxlarge"/>
+
+        <field name="amazon_region" type="list" default="us-east-1" label="COM_SOCIALCOMMUNITY_AMAZON_S3_REGION" description="COM_SOCIALCOMMUNITY_AMAZON_S3_REGION_DESC" class="btn-group">
+            <option value="us-east-1">COM_SOCIALCOMMUNITY_AMAZON_S3_REGION_US_EAST_1</option>
+            <option value="us-west-1">COM_SOCIALCOMMUNITY_AMAZON_S3_REGION_US_WEST_1</option>
+            <option value="us-west-2">COM_SOCIALCOMMUNITY_AMAZON_S3_REGION_US_WEST_2</option>
+            <option value="eu-west-1">COM_SOCIALCOMMUNITY_AMAZON_S3_REGION_EU_WEST_1</option>
+            <option value="eu-west-2">COM_SOCIALCOMMUNITY_AMAZON_S3_REGION_EU_WEST_2</option>
+            <option value="ap-southeast-1">COM_SOCIALCOMMUNITY_AMAZON_S3_REGION_AP_SOUTHEAST_1</option>
+            <option value="ap-southeast-2">COM_SOCIALCOMMUNITY_AMAZON_S3_REGION_AP_SOUTHEAST_2</option>
+            <option value="ap-northeast-1">COM_SOCIALCOMMUNITY_AMAZON_S3_REGION_AP_NORTHEAST_1</option>
+            <option value="sa-east-1">COM_SOCIALCOMMUNITY_AMAZON_S3_REGION_SA_EAST_1</option>
+        </field>
+        <field name="remote_media_folder" type="text" default="profiles" label="COM_SOCIALCOMMUNITY_REMOTE_MEDIA_DIRECTORY" description="COM_SOCIALCOMMUNITY_REMOTE_MEDIA_DIRECTORY_DESC" class="input-xxlarge" />
+        <field name="remote_domain" type="text" label="COM_SOCIALCOMMUNITY_DOMAIN" description="COM_SOCIALCOMMUNITY_REMOTE_DOMAIN_DESC" class="input-xxlarge" />
     </fieldset>
 
     <fieldset name="advanced" label="COM_SOCIALCOMMUNITY_ADVANCED" description="COM_SOCIALCOMMUNITY_ADVANCED_PARAMS">

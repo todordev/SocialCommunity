@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -25,7 +25,7 @@ class SocialCommunityInstallHelper
 
     public static function endTable()
     {
-        echo "</table></div>";
+        echo '</table></div>';
     }
 
     public static function addRowHeading($heading)
@@ -39,8 +39,8 @@ class SocialCommunityInstallHelper
     /**
      * Display an HTML code for a row
      *
-     * @param string $title
-     * @param array  $result
+     * @param string  $title
+     * @param array   $result
      * @param string  $info
      *
      * array(
@@ -50,11 +50,11 @@ class SocialCommunityInstallHelper
      */
     public static function addRow($title, $result, $info)
     {
-        $outputType = JArrayHelper::getValue($result, "type", "");
-        $outputText = JArrayHelper::getValue($result, "text", "");
+        $outputType = Joomla\Utilities\ArrayHelper::getValue($result, 'type', '', 'string');
+        $outputText = Joomla\Utilities\ArrayHelper::getValue($result, 'text', '', 'string');
 
-        $output = "";
-        if (!empty($outputType) AND !empty($outputText)) {
+        $output = '';
+        if ($outputType !== '' and $outputText !== '') {
             $output = '<span class="label label-' . $outputType . '">' . $outputText . '</span>';
         }
 
@@ -68,16 +68,16 @@ class SocialCommunityInstallHelper
 
     public static function createFolder($imagesPath)
     {
-        // Create image folder
+        // Create image folder.
         if (true !== JFolder::create($imagesPath)) {
-            JLog::add(JText::sprintf("COM_SOCIALCOMMUNITY_ERROR_CANNOT_CREATE_FOLDER", $imagesPath));
+            JLog::add(JText::sprintf('COM_SOCIALCOMMUNITY_ERROR_CANNOT_CREATE_FOLDER', $imagesPath));
         } else {
 
             // Copy index.html
-            $indexFile = $imagesPath . DIRECTORY_SEPARATOR . "index.html";
-            $html      = '<html><body style="background-color: #FFF;"></body></html>';
+            $indexFile = $imagesPath . DIRECTORY_SEPARATOR . 'index.html';
+            $html      = '<html><body style="background-color: #fff;"></body></html>';
             if (true !== JFile::write($indexFile, $html)) {
-                JLog::add(JText::sprintf("COM_SOCIALCOMMUNITY_ERROR_CANNOT_SAVE_FILE", $indexFile));
+                JLog::add(JText::sprintf('COM_SOCIALCOMMUNITY_ERROR_CANNOT_SAVE_FILE', $indexFile));
             }
 
         }

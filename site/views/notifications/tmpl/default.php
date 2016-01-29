@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -15,32 +15,44 @@ defined('_JEXEC') or die;?>
     <?php } ?>
 
     <?php foreach ($this->items as $item) {
-        $notReadClass = "";
+        $notReadClass = '';
         if (!$item->status) {
-            $notReadClass = "sc-note-notread";
+            $notReadClass = 'sc-note-notread';
         }
         ?>
-        <div class="sc-notification <?php echo $notReadClass; ?> row mtb-5px" id="js-sc-note-element<?php echo $item->id; ?>">
-            <div class="col-md-10">
-                <div class="media">
-                    <?php if (!empty($item->image)) { ?>
-                        <div class="media-left">
-                            <img class="media-object" src="<?php echo $item->image; ?>">
-                        </div>
-                    <?php } ?>
-                    <div class="media-body">
-                        <a href="<?php echo JRoute::_(SocialCommunityHelperRoute::getNotificationRoute($item->id)); ?>"><?php echo $item->content; ?></a>
+        <div class="panel panel-default" id="js-sc-note-element<?php echo $item->id; ?>">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-md-11 gray-light4">
+                        <?php echo JHtml::_('date', $item->created, JText::_('DATE_FORMAT_LC2')); ?>
+                    </div>
+                    <div class="col-md-1">
+                        <button data-element-id="<?php echo (int)$item->id; ?>" class="btn btn-xs btn-danger js-sc-btn-remove-notification">
+                            <i class="fa fa-times"></i>
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-1">
-                <img src="<?php echo (!$item->status) ? "media/com_socialcommunity/images/status_active.png" : "media/com_socialcommunity/images/status_inactive.png"; ?>"/>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-11">
+                        <div class="media">
+                            <?php if (!empty($item->image)) { ?>
+                                <div class="media-left">
+                                    <img class="media-object" src="<?php echo $item->image; ?>">
+                                </div>
+                            <?php } ?>
+                            <div class="media-body">
+                                <a href="<?php echo JRoute::_(SocialCommunityHelperRoute::getNotificationRoute($item->id)); ?>"><?php echo $item->content; ?></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <img src="<?php echo (!$item->status) ? 'media/com_socialcommunity/images/status_active.png' : 'media/com_socialcommunity/images/status_inactive.png'; ?>"/>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-1">
-                <button data-element-id="<?php echo (int)$item->id; ?>" class="btn btn-danger js-sc-btn-remove-notification">
-                    <i class="glyphicon glyphicon-trash"></i>
-                </button>
-            </div>
+
         </div>
     <?php } ?>
 

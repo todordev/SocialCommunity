@@ -3,16 +3,14 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-JLoader::register("SocialCommunityModelProfile", SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR . "/models/profile.php");
-
-class SocialCommunityModelBasic extends SocialCommunityModelProfile
+class SocialCommunityModelBasic extends JModelForm
 {
     /**
      * Returns a reference to the a Table object, always creating it.
@@ -21,7 +19,7 @@ class SocialCommunityModelBasic extends SocialCommunityModelProfile
      * @param   string $prefix A prefix for the table class name. Optional.
      * @param   array  $config Configuration array for model. Optional.
      *
-     * @return  JTable  A database object
+     * @return  SocialCommunityTableProfile  A database object
      * @since   1.6
      */
     public function getTable($type = 'Profile', $prefix = 'SocialCommunityTable', $config = array())
@@ -42,8 +40,8 @@ class SocialCommunityModelBasic extends SocialCommunityModelProfile
         /** @var $app JApplicationSite */
 
         // Set user ID to state.
-        $userId = JFactory::getUser()->get("id");
-        $this->setState($this->getName() . ".profile.user_id", $userId);
+        $userId = JFactory::getUser()->get('id');
+        $this->setState($this->getName() . '.profile.user_id', $userId);
 
         // Load the parameters.
         $params = $app->getParams($this->option);
@@ -67,7 +65,7 @@ class SocialCommunityModelBasic extends SocialCommunityModelProfile
     {
         // Get the form.
         $form = $this->loadForm($this->option . '.basic', 'basic', array('control' => 'jform', 'load_data' => $loadData));
-        if (empty($form)) {
+        if (!$form) {
             return false;
         }
 
@@ -98,32 +96,27 @@ class SocialCommunityModelBasic extends SocialCommunityModelProfile
      *
      * @param    integer  $id  The id of the object to get.
      *
-     * @return    mixed    Object on success, false on failure.
+     * @return    mixed   Object on success, false on failure.
      */
     public function getItem($id = null)
     {
         $item = null;
 
         if (!$id) {
-            $id = $this->getState($this->getName() . ".profile.user_id");
+            $id = (int)$this->getState($this->getName() . '.profile.user_id');
         }
 
-        if (!empty($id)) {
+        if ($id > 0) {
 
             $db    = $this->getDbo();
             $query = $db->getQuery(true);
             $query
-                ->select("a.name, a.image, a.bio, a.birthday, a.gender")
-                ->from($db->quoteName("#__itpsc_profiles", "a"))
-                ->where("a.id = " . (int)$id);
+                ->select('a.name, a.bio, a.birthday, a.gender')
+                ->from($db->quoteName('#__itpsc_profiles', 'a'))
+                ->where('a.user_id = ' . (int)$id);
 
             $db->setQuery($query, 0, 1);
-            $item = $db->loadAssoc();
-
-            if (empty($item)) {
-                $item = null;
-            }
-
+            $item = $db->loadObject();
         }
 
         return $item;
@@ -139,41 +132,38 @@ class SocialCommunityModelBasic extends SocialCommunityModelProfile
      */
     public function save($data)
     {
-        $id   = JFactory::getUser()->get("id");
-        $name = JString::trim(JArrayHelper::getValue($data, "name"));
-        $bio  = JString::trim(JArrayHelper::getValue($data, "bio"));
+        $id   = Joomla\Utilities\ArrayHelper::getValue($data, 'id', 0, 'int');
+        $name = JString::trim(Joomla\Utilities\ArrayHelper::getValue($data, 'name'));
+        $bio  = JString::trim(Joomla\Utilities\ArrayHelper::getValue($data, 'bio'));
 
-        if (empty($bio)) {
+        if (!$bio) {
             $bio = null;
         }
 
         // Prepare gender.
-        $allowedGender = array("male", "female");
-        $gender        = JString::trim(JArrayHelper::getValue($data, "gender"));
-        if (!in_array($gender, $allowedGender)) {
-            $gender = "male";
+        $allowedGender = array('male', 'female');
+        $gender        = JString::trim(Joomla\Utilities\ArrayHelper::getValue($data, 'gender'));
+        if (!in_array($gender, $allowedGender, true)) {
+            $gender = 'male';
         }
 
         // Prepare birthday
-        $birthday = $this->prepareBirthday($data);
+        $birthday = SocialCommunityHelper::prepareBirthday($data);
 
         // Load a record from the database
         $row = $this->getTable();
-        $row->load($id);
+        $row->load(array('user_id' => $id));
 
-        $row->set("name", $name);
-        $row->set("bio", $bio);
-        $row->set("birthday", $birthday);
-        $row->set("gender", $gender);
-
-        $this->prepareTable($row);
-        $this->prepareImages($row, $data);
+        $row->set('name', $name);
+        $row->set('bio', $bio);
+        $row->set('birthday', $birthday);
+        $row->set('gender', $gender);
 
         $row->store(true);
 
         // Update the name in Joomla! users table
-        $this->updateName($id, $name);
+        SocialCommunityHelper::updateName($id, $name);
 
-        return $row->get("id");
+        return $row->get('id');
     }
 }

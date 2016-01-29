@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -25,13 +25,12 @@ class SocialCommunityControllerProfile extends JControllerLegacy
      * @param    string $prefix The class prefix. Optional.
      * @param    array  $config Configuration array for model. Optional.
      *
-     * @return    object    The model.
+     * @return   stdClass    The model.
      * @since    1.5
      */
     public function getModel($name = 'Contact', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
     {
         $model = parent::getModel($name, $prefix, $config);
-
         return $model;
     }
 
@@ -47,16 +46,17 @@ class SocialCommunityControllerProfile extends JControllerLegacy
     public function loadLocation()
     {
         // Get the input
-        $app   = JFactory::getApplication();
-        $query = $app->input->get->get('query', "", 'string');
+        $app       = JFactory::getApplication();
+        $search    = $app->input->get->get('search', '', 'string');
+        $countryId = $app->input->get->getInt('country_id');
 
         $response = new Prism\Response\Json();
 
         try {
-            $locations = new SocialCommunity\Locations(JFactory::getDbo());
-            $locations->load(array("search" => $query));
+            $locations = new Socialcommunity\Location\Locations(JFactory::getDbo());
+            $locations->load(array('search' => $search, 'country_id' => $countryId));
 
-            $locationData = $locations->toOptions();
+            $locationData = $locations->toOptions('id', 'name', 'country_code');
         } catch (Exception $e) {
             JLog::add($e->getMessage());
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));

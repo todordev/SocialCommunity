@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -40,18 +40,9 @@ class JFormFieldScCountries extends JFormFieldList
      */
     protected function getOptions()
     {
-
-        $db    = JFactory::getDbo();
-        $query = $db->getQuery(true);
-
-        $query
-            ->select('a.id AS value, a.name AS text')
-            ->from($db->quoteName('#__itpsc_countries', 'a'))
-            ->order("a.name ASC");
-
         // Get the options.
-        $db->setQuery($query);
-        $options = $db->loadObjectList();
+        $filters = new Socialcommunity\Filter\Countries(JFactory::getDbo());
+        $options = $filters->toOptions();
 
         // Merge any additional options in the XML definition.
         $options = array_merge(parent::getOptions(), $options);

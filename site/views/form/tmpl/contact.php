@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -13,7 +13,7 @@ defined('_JEXEC') or die;?>
 <div class="row">
 	<div class="col-md-12">
 		<?php 
-    		$layout      = new JLayoutFile('profile_wizard', $this->layoutsBasePath);
+    		$layout      = new JLayoutFile('profile_wizard');
     	    echo $layout->render($this->layoutData);
 		?>	
 	</div>
@@ -34,13 +34,13 @@ defined('_JEXEC') or die;?>
             </div>
 
             <div class="form-group">
-            <?php echo $this->form->getLabel('location_preview'); ?>
-            <?php echo $this->form->getInput('location_preview'); ?>
-            </div>
-
-            <div class="form-group">
             <?php echo $this->form->getLabel('country_id'); ?>
             <?php echo $this->form->getInput('country_id'); ?>
+            </div>
+            
+            <div class="form-group">
+                <?php echo $this->form->getLabel('location_preview'); ?>
+                <?php echo $this->form->getInput('location_preview'); ?>
             </div>
 
             <div class="form-group">
@@ -54,8 +54,8 @@ defined('_JEXEC') or die;?>
             <?php echo JHtml::_('form.token'); ?>
                 
             <button type="submit" class="btn btn-primary">
-                <span class="glyphicon glyphicon-ok" ></span>
-                <?php echo JText::_("JSAVE")?>
+                <span class="fa fa-check" ></span>
+                <?php echo JText::_('JSAVE'); ?>
             </button>
             
         </form>

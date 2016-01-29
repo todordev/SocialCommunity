@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -12,7 +12,6 @@ defined('_JEXEC') or die;
 
 class SocialCommunityViewCountry extends JViewLegacy
 {
-
     /**
      * @var JDocumentHtml
      */
@@ -25,17 +24,10 @@ class SocialCommunityViewCountry extends JViewLegacy
     protected $documentTitle;
     protected $option;
 
-    public function __construct($config)
-    {
-        parent::__construct($config);
-        $this->option = JFactory::getApplication()->input->get("option");
-    }
-
-    /**
-     * Display the view
-     */
     public function display($tpl = null)
     {
+        $this->option = JFactory::getApplication()->input->get('option');
+        
         $this->state = $this->get('State');
         $this->item  = $this->get('Item');
         $this->form  = $this->get('Form');
@@ -55,10 +47,9 @@ class SocialCommunityViewCountry extends JViewLegacy
     protected function addToolbar()
     {
         JFactory::getApplication()->input->set('hidemainmenu', true);
-        $isNew = ($this->item->id == 0);
+        $isNew = ((int)$this->item->id === 0);
 
-        $this->documentTitle = $isNew ? JText::_('COM_SOCIALCOMMUNITY_ADD_COUNTRY')
-            : JText::_('COM_SOCIALCOMMUNITY_EDIT_COUNTRY');
+        $this->documentTitle = $isNew ? JText::_('COM_SOCIALCOMMUNITY_ADD_COUNTRY') : JText::_('COM_SOCIALCOMMUNITY_EDIT_COUNTRY');
 
         JToolbarHelper::title($this->documentTitle);
 

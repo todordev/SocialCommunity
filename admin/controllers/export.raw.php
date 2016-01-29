@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -21,7 +21,6 @@ class SocialCommunityControllerExport extends JControllerLegacy
     public function getModel($name = 'Export', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
     {
         $model = parent::getModel($name, $prefix, $config);
-
         return $model;
     }
 
@@ -30,30 +29,30 @@ class SocialCommunityControllerExport extends JControllerLegacy
         $app = JFactory::getApplication();
         /** @var $app JApplicationAdministrator */
 
-        $type  = $app->input->get->getCmd("type");
+        $type  = $this->input->get->getCmd('type');
         $model = $this->getModel();
 
         try {
 
             switch ($type) {
-                case "locations":
+                case 'locations':
                     $output   = $model->getLocations();
-                    $fileName = "locations.xml";
+                    $fileName = 'locations.xml';
                     break;
 
-                case "countries":
+                case 'countries':
                     $output   = $model->getCountries();
-                    $fileName = "countries.xml";
+                    $fileName = 'countries.xml';
                     break;
 
-                case "states":
+                case 'states':
                     $output   = $model->getStates();
-                    $fileName = "states.xml";
+                    $fileName = 'states.xml';
                     break;
 
                 default: // Error
-                    $output   = "";
-                    $fileName = "error.xml";
+                    $output   = '';
+                    $fileName = 'error.xml';
                     break;
             }
 
@@ -67,13 +66,13 @@ class SocialCommunityControllerExport extends JControllerLegacy
         jimport('joomla.filesystem.path');
         jimport('joomla.filesystem.archive');
 
-        $tmpFolder = JPath::clean($app->get("tmp_path"));
+        $tmpFolder = JPath::clean($app->get('tmp_path'));
 
         $date = new JDate();
-        $date = $date->format("d_m_Y_H_i_s");
+        $date = $date->format('d_m_Y_H_i_s');
 
-        $archiveName = JFile::stripExt(basename($fileName)) . "_" . $date;
-        $archiveFile = $archiveName . ".zip";
+        $archiveName = JFile::stripExt(basename($fileName)) . '_' . $date;
+        $archiveFile = $archiveName . '.zip';
         $destination = $tmpFolder . DIRECTORY_SEPARATOR . $archiveFile;
 
         // compression type
@@ -98,9 +97,9 @@ class SocialCommunityControllerExport extends JControllerLegacy
         $doc = JFactory::getDocument();
         $doc->setMimeEncoding('application/octet-stream');
 
-        JFactory::getApplication()->sendHeaders();
+        $app->sendHeaders();
 
         echo file_get_contents($destination);
-        JFactory::getApplication()->close();
+        $app->close();
     }
 }

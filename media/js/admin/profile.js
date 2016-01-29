@@ -9,11 +9,18 @@ window.addEvent('domready', function(){
 
     // Load locations from the server
     jQuery('#jform_location_preview').typeahead({
-
         ajax : {
             url: "index.php?option=com_socialcommunity&format=raw&task=profile.loadLocation",
             method: "get",
             triggerLength: 3,
+            displayField: 'text',
+            valueField: 'value',
+            preDispatch: function(query) {
+                return {
+                    search: query,
+                    country_id: jQuery('#jform_country_id').val()
+                }
+            },
             preProcess: function (response) {
 
                 if (response.success === false) {

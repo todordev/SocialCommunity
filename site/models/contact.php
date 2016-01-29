@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -12,6 +12,8 @@ defined('_JEXEC') or die;
 
 class SocialCommunityModelContact extends JModelAdmin
 {
+    protected $item;
+
     /**
      * Returns a reference to the a Table object, always creating it.
      *
@@ -19,7 +21,7 @@ class SocialCommunityModelContact extends JModelAdmin
      * @param   string $prefix A prefix for the table class name. Optional.
      * @param   array  $config Configuration array for model. Optional.
      *
-     * @return  JTable  A database object
+     * @return  SocialCommunityTableProfile  A database object
      * @since   1.6
      */
     public function getTable($type = 'Profile', $prefix = 'SocialCommunityTable', $config = array())
@@ -39,10 +41,6 @@ class SocialCommunityModelContact extends JModelAdmin
         $app = JFactory::getApplication();
         /** @var $app JApplicationSite */
 
-        // Set user ID to state.
-        $userId = JFactory::getUser()->get("id");
-        $this->setState($this->getName() . ".profile.user_id", $userId);
-
         // Load the parameters.
         $params = $app->getParams($this->option);
         $this->setState('params', $params);
@@ -55,7 +53,7 @@ class SocialCommunityModelContact extends JModelAdmin
      * The base form is loaded from XML and then an event is fired
      * for users plugins to extend the form with extra fields.
      *
-     * @param    array   $data     An optional array of data for the form to interogate.
+     * @param    array   $data     An optional array of data for the form to interrogate.
      * @param    boolean $loadData True if the form is to load its own data (default case), false if not.
      *
      * @return    JForm    A JForm object on success, false on failure
@@ -85,21 +83,29 @@ class SocialCommunityModelContact extends JModelAdmin
 
         $data = $app->getUserState($this->option . '.profile.contact', array());
 
-
         if (!$data) {
-            $data = $this->getItem();
 
-            if (!empty($data["location_id"])) {
+            $userId = (int)JFactory::getUser()->get('id');
+            $data   = $this->getItem($userId);
 
-                $location = new SocialCommunity\Location(JFactory::getDbo());
-                $location->load(array("id" => $data["location_id"]));
+            if (!empty($data['location_id'])) {
+                $location = new Socialcommunity\Location\Location(JFactory::getDbo());
+                $location->load(array('id' => $data['location_id']));
 
-                $locationName = $location->getName(SocialCommunity\Constants::INCLUDE_COUNTRY_CODE);
-
-                if (!empty($locationName)) {
-                    $data["location_preview"] = $locationName;
+                $locationName = $location->getName(Socialcommunity\Constants::INCLUDE_COUNTRY_CODE);
+                if ($locationName) {
+                    $data['location_preview'] = $locationName;
                 }
+            }
 
+            $secretKey       = $app->get('secret');
+            
+            try {
+                $data['phone']   = ($data['phone'] !== null) ? Defuse\Crypto\Crypto::decrypt($data['phone'], $secretKey) : null;
+                $data['address'] = ($data['address'] !== null) ? Defuse\Crypto\Crypto::decrypt($data['address'], $secretKey) : null;
+            } catch (Exception $e) {
+                $data['phone'] = null;
+                $data['address'] = null;
             }
         }
 
@@ -109,37 +115,28 @@ class SocialCommunityModelContact extends JModelAdmin
     /**
      * Method to get an object.
      *
-     * @param    integer  $id  The id of the object to get.
+     * @param    int  $pk  The id of the object to get.
      *
      * @return    mixed    Object on success, false on failure.
      */
-    public function getItem($id = null)
+    public function getItem($pk = null)
     {
-        $item = null;
+        $pk = (int)$pk;
 
-        if (!$id) {
-            $id = $this->getState($this->getName() . ".profile.user_id");
-        }
-
-        if (!empty($id)) {
+        if ($this->item === null and $pk > 0) {
 
             $db    = $this->getDbo();
             $query = $db->getQuery(true);
             $query
-                ->select("a.phone, a.address, a.location_id, a.country_id, a.website")
-                ->from($db->quoteName("#__itpsc_profiles", "a"))
-                ->where("a.id = " . (int)$id);
+                ->select('a.phone, a.address, a.location_id, a.country_id, a.website, a.phone, a.address')
+                ->from($db->quoteName('#__itpsc_profiles', 'a'))
+                ->where('a.user_id = ' . (int)$pk);
 
             $db->setQuery($query, 0, 1);
-            $item = $db->loadAssoc();
-
-            if (empty($item)) {
-                $item = null;
-            }
-
+            $this->item    = (array)$db->loadAssoc();
         }
 
-        return $item;
+        return $this->item;
     }
 
     /**
@@ -152,35 +149,33 @@ class SocialCommunityModelContact extends JModelAdmin
      */
     public function save($data)
     {
-        $id         = JFactory::getUser()->get("id");
-        $phone      = JString::trim(JArrayHelper::getValue($data, "phone"));
-        $address    = JString::trim(JArrayHelper::getValue($data, "address"));
-        $locationId = JString::trim(JArrayHelper::getValue($data, "location_id", 0, "int"));
-        $countryId  = JString::trim(JArrayHelper::getValue($data, "country_id", 0, "int"));
-        $website    = JString::trim(JArrayHelper::getValue($data, "website"));
+        $userId     = Joomla\Utilities\ArrayHelper::getValue($data, 'user_id', 0, 'int');
+        $phone      = JString::trim(Joomla\Utilities\ArrayHelper::getValue($data, 'phone'));
+        $address    = JString::trim(Joomla\Utilities\ArrayHelper::getValue($data, 'address'));
+        $website    = JString::trim(Joomla\Utilities\ArrayHelper::getValue($data, 'website'));
+        $countryId  = Joomla\Utilities\ArrayHelper::getValue($data, 'country_id', 0, 'int');
+        $locationId = Joomla\Utilities\ArrayHelper::getValue($data, 'location_id', 0, 'int');
 
-        if (empty($phone)) {
-            $phone = null;
-        }
-        if (empty($address)) {
-            $address = null;
-        }
-        if (empty($website)) {
-            $website = null;
-        }
+        $secretKey  = JFactory::getApplication()->get('secret');
+        $db         = $this->getDbo();
 
-        // Load a record from the database
-        $row = $this->getTable();
-        $row->load($id);
+        $phone   = (!$phone)   ? 'NULL' : $db->quote(Defuse\Crypto\Crypto::encrypt($phone, $secretKey));
+        $address = (!$address) ? 'NULL' : $db->quote(Defuse\Crypto\Crypto::encrypt($address, $secretKey));
+        $website = (!$website) ? 'NULL' : $db->quote($website);
 
-        $row->set("phone", $phone);
-        $row->set("address", $address);
-        $row->set("location_id", $locationId);
-        $row->set("country_id", $countryId);
-        $row->set("website", $website);
+        $query = $db->getQuery(true);
+        $query
+            ->update($db->quoteName('#__itpsc_profiles'))
+            ->set($db->quoteName('location_id') . '=' . (int)$locationId)
+            ->set($db->quoteName('country_id') . '=' . (int)$countryId)
+            ->set($db->quoteName('website') . '=' . $website)
+            ->set($db->quoteName('phone') . ' = ' . $phone)
+            ->set($db->quoteName('address') . ' = ' . $address)
+            ->where($db->quoteName('user_id') . ' = ' . (int)$userId);
 
-        $row->store(true);
+        $db->setQuery($query);
+        $db->execute();
 
-        return $row->get("id");
+        return $db->insertid();
     }
 }

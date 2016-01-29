@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -23,7 +23,7 @@ defined('_JEXEC') or die;
  */
 abstract class SocialCommunityHelperRoute
 {
-    protected static $component = "com_socialcommunity";
+    protected static $component = 'com_socialcommunity';
     protected static $lookup;
 
     /**
@@ -33,14 +33,18 @@ abstract class SocialCommunityHelperRoute
      * 
      * @return string
      */
-    public static function getProfileRoute($id)
+    public static function getProfileRoute($id = 0)
     {
         $needles = array(
             'profile' => array(0)
         );
 
         // Create the link
-        $link = 'index.php?option=com_socialcommunity&view=profile&id=' . $id;
+        $link = 'index.php?option=com_socialcommunity&view=profile';
+
+        if ($id > 0) {
+            $link .= '&id=' . $id;
+        }
 
         // Looking for menu item (Itemid)
         if ($item = self::findItem($needles)) {
@@ -48,7 +52,7 @@ abstract class SocialCommunityHelperRoute
         } elseif ($item = self::findItem()) { // Get the menu item (Itemid) from the active (current) item.
             $link .= '&Itemid=' . $item;
         }
-
+        
         return $link;
     }
 
@@ -66,8 +70,8 @@ abstract class SocialCommunityHelperRoute
         //Create the link
         $link = 'index.php?option=com_socialcommunity&view=form';
 
-        if (!empty($layout)) {
-            $link .= "&layout=" . $layout;
+        if ($layout !== null) {
+            $link .= '&layout=' . $layout;
         }
 
         // Looking for menu item (Itemid)

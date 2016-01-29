@@ -3,11 +3,11 @@
  * @package      SocialCommunity
  * @subpackage   Notifications
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
-namespace SocialCommunity;
+namespace Socialcommunity\Notification;
 
 use Prism;
 
@@ -35,37 +35,35 @@ class Notification extends Prism\Database\Table
      * <code>
      * $notificationId = 1;
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
      * $notification->load($notificationId);
      * </code>
      *
      * @param int|array $keys
      * @param array $options
      */
-    public function load($keys, $options = array())
+    public function load($keys, array $options = array())
     {
         // Create a new query object.
         $query = $this->db->getQuery(true);
 
         $query
-            ->select("a.id, a.content, a.image, a.url, a.created, a.status, a.user_id")
-            ->from($this->db->quoteName("#__itpsc_notifications", "a"));
+            ->select('a.id, a.content, a.image, a.url, a.created, a.status, a.user_id')
+            ->from($this->db->quoteName('#__itpsc_notifications', 'a'));
 
         // Filter by keys.
         if (!is_array($keys)) {
-            $query->where("a.id = " . (int)$keys);
+            $query->where('a.id = ' . (int)$keys);
         } else {
             foreach ($keys as $key => $value) {
-                $query->where($this->db->quoteName($key) . " = " . $this->db->quote($value));
+                $query->where($this->db->quoteName('a.'.$key) . ' = ' . $this->db->quote($value));
             }
         }
 
         $this->db->setQuery($query);
-        $result = $this->db->loadAssoc();
+        $result = (array)$this->db->loadAssoc();
 
-        if (!empty($result)) {
-            $this->bind($result);
-        }
+        $this->bind($result);
     }
 
     /**
@@ -74,7 +72,7 @@ class Notification extends Prism\Database\Table
      * <code>
      * $notificationId = 1;
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
      * $notification->load($notificationId);
      *
      * if (...) {
@@ -84,15 +82,7 @@ class Notification extends Prism\Database\Table
      */
     public function reset()
     {
-        $parameters = get_object_vars($this);
-
-        foreach ($parameters as $key => $value) {
-            if (strcmp("db", $key) == 0) {
-                continue;
-            }
-            $this->$key = null;
-        }
-
+        parent::reset();
         $this->status = 0;
     }
 
@@ -105,7 +95,7 @@ class Notification extends Prism\Database\Table
      *  "user_id" => 1
      * );
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
      * $notification->bind($data);
      * 
      * $notification->store();
@@ -122,17 +112,20 @@ class Notification extends Prism\Database\Table
 
     protected function updateObject()
     {
+        $image = (!$this->image) ? 'NULL' : $this->db->quote($this->image);
+        $url = (!$this->url) ? 'NULL' : $this->db->quote($this->url);
+
         // Create a new query object.
         $query = $this->db->getQuery(true);
 
         $query
-            ->update($this->db->quoteName("#__itpsc_notifications"))
-            ->set($this->db->quoteName("content") . "=" . $this->db->quote($this->content))
-            ->set($this->db->quoteName("image") . "=" . $this->db->quote($this->image))
-            ->set($this->db->quoteName("url") . "=" . $this->db->quote($this->url))
-            ->set($this->db->quoteName("status") . "=" . (int)$this->status)
-            ->set($this->db->quoteName("user_id") . "=" . (int)$this->user_id)
-            ->where($this->db->quoteName("id") . "=" . (int)$this->id);
+            ->update($this->db->quoteName('#__itpsc_notifications'))
+            ->set($this->db->quoteName('content') . '=' . $this->db->quote($this->content))
+            ->set($this->db->quoteName('image') . '=' . $image)
+            ->set($this->db->quoteName('url') . '=' . $url)
+            ->set($this->db->quoteName('status') . '=' . (int)$this->status)
+            ->set($this->db->quoteName('user_id') . '=' . (int)$this->user_id)
+            ->where($this->db->quoteName('id') . '=' . (int)$this->id);
 
         $this->db->setQuery($query);
         $this->db->execute();
@@ -149,18 +142,18 @@ class Notification extends Prism\Database\Table
         }
 
         $query
-            ->insert($this->db->quoteName("#__itpsc_notifications"))
-            ->set($this->db->quoteName("content") . " = " . $this->db->quote($this->content))
-            ->set($this->db->quoteName("created") . " = " . $this->db->quote($this->created))
-            ->set($this->db->quoteName("status") . " = " . (int)$this->status)
-            ->set($this->db->quoteName("user_id") . " = " . (int)$this->user_id);
+            ->insert($this->db->quoteName('#__itpsc_notifications'))
+            ->set($this->db->quoteName('content') . ' = ' . $this->db->quote($this->content))
+            ->set($this->db->quoteName('created') . ' = ' . $this->db->quote($this->created))
+            ->set($this->db->quoteName('status') . ' = ' . (int)$this->status)
+            ->set($this->db->quoteName('user_id') . ' = ' . (int)$this->user_id);
 
-        if (!empty($this->image)) {
-            $query->set($this->db->quoteName("image") . " = " . $this->db->quote($this->image));
+        if ($this->image !== null and $this->image !== '') {
+            $query->set($this->db->quoteName('image') . ' = ' . $this->db->quote($this->image));
         }
 
-        if (!empty($this->url)) {
-            $query->set($this->db->quoteName("url") . " = " . $this->db->quote($this->url));
+        if ($this->url !== null and $this->url !== '') {
+            $query->set($this->db->quoteName('url') . ' = ' . $this->db->quote($this->url));
         }
 
         $this->db->setQuery($query);
@@ -175,7 +168,7 @@ class Notification extends Prism\Database\Table
      * <code>
      * $notificationId = 1;
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
      * $notification->load($notificationId);
      *
      * if ($notification->getId()) {
@@ -188,8 +181,8 @@ class Notification extends Prism\Database\Table
         // Create a new query object.
         $query = $this->db->getQuery(true);
         $query
-            ->delete($this->db->quoteName("#__itpsc_notifications"))
-            ->where($this->db->quoteName("id") . "=" . (int)$this->id);
+            ->delete($this->db->quoteName('#__itpsc_notifications'))
+            ->where($this->db->quoteName('id') . '=' . (int)$this->id);
 
         $this->db->setQuery($query);
         $this->db->execute();
@@ -203,7 +196,7 @@ class Notification extends Prism\Database\Table
      * <code>
      * $id = 1;
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
      * $notification->load($id);
      *
      * if (!$notification->getId()) {
@@ -225,7 +218,7 @@ class Notification extends Prism\Database\Table
      * $notificationId = 1;
      * $userId = 2;
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
      * $notification->setUser($userId);
      * </code>
      * 
@@ -247,7 +240,7 @@ class Notification extends Prism\Database\Table
      * $notificationId = 1;
      * $content = 2;
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
      * $notification->setUser($userId);
      * </code>
      *
@@ -268,7 +261,7 @@ class Notification extends Prism\Database\Table
      * <code>
      * $notificationId = 1;
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
      *
      * if ($notification->isArchived()) {
      * ....
@@ -289,7 +282,7 @@ class Notification extends Prism\Database\Table
      * $notificationId = 1;
      * $image = "....";
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
      * $notification->setImage($image);
      * </code>
      *
@@ -311,7 +304,7 @@ class Notification extends Prism\Database\Table
      * $notificationId = 1;
      * $url = "....";
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
      * $notification->setUrl($url);
      * </code>
      *
@@ -331,9 +324,9 @@ class Notification extends Prism\Database\Table
      *
      * <code>
      * $notificationId = 1;
-     * $date = "12-13-2015";
+     * $date = "12-13-2016";
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
      * $notification->setCreated($date);
      * </code>
      *
@@ -354,8 +347,8 @@ class Notification extends Prism\Database\Table
      * <code>
      * $notificationId = 1;
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
-     * $notification->setStatus(SocialCommunityConstants::ARCHIVED);
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
+     * $notification->setStatus(SocialcommunityConstants::ARCHIVED);
      * </code>
      *
      * @param string $status
@@ -375,7 +368,7 @@ class Notification extends Prism\Database\Table
      * <code>
      * $id = 1;
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
      * $notification->load($id);
      *
      * if (!$notification->isRead()) {
@@ -396,7 +389,7 @@ class Notification extends Prism\Database\Table
      * <code>
      * $id = 1;
      *
-     * $notification   = new SocialCommunity\Notification(\JFactory::getDbo());
+     * $notification   = new Socialcommunity\Notification\Notification(\JFactory::getDbo());
      * $notification->load($id);
      *
      * $notification->updateStatus(Prism\Constants::READ);
@@ -409,7 +402,7 @@ class Notification extends Prism\Database\Table
     public function updateStatus($status)
     {
         if (!$this->id or !$this->user_id) {
-            throw new \InvalidArgumentException(\JText::_("LIB_SOCIALCOMMUNITY_ERROR_INVALID_PARAMETER_ID_OR_USER_ID"));
+            throw new \InvalidArgumentException(\JText::_('LIB_SOCIALCOMMUNITY_ERROR_INVALID_PARAMETER_ID_OR_USER_ID'));
         }
 
         $this->status = (int)$status;
@@ -417,10 +410,10 @@ class Notification extends Prism\Database\Table
         $query = $this->db->getQuery(true);
 
         $query
-            ->update($this->db->quoteName("#__itpsc_notifications"))
-            ->set($this->db->quoteName("status") . "=" . (int)$this->status)
-            ->where($this->db->quoteName("id") . "=" . (int)$this->id)
-            ->where($this->db->quoteName("user_id") . "=" . (int)$this->user_id);
+            ->update($this->db->quoteName('#__itpsc_notifications'))
+            ->set($this->db->quoteName('status') . '=' . (int)$this->status)
+            ->where($this->db->quoteName('id') . '=' . (int)$this->id)
+            ->where($this->db->quoteName('user_id') . '=' . (int)$this->user_id);
 
         $this->db->setQuery($query);
         $this->db->execute();

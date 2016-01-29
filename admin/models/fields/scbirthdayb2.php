@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -42,25 +42,26 @@ class JFormFieldScBirthdayB2 extends JFormField
             $date = new Prism\Validator\Date($this->value);
 
             if (!$date->isValid()) {
-                $birthdayDay   = "";
-                $birthdayMonth = "";
-                $birthdayYear  = "";
+                $birthdayDay   = '';
+                $birthdayMonth = '';
+                $birthdayYear  = '';
             } else {
                 $date = new JDate($this->value);
 
-                $birthdayDay   = $date->format("d");
-                $birthdayMonth = $date->format("m");
-                $birthdayYear  = $date->format("Y");
+                $birthdayDay   = $date->format('d');
+                $birthdayMonth = $date->format('m');
+                $birthdayYear  = $date->format('Y');
             }
-
         }
 
+        $months = new Socialcommunity\Filter\Months();
+        
         $html = array();
 
         $html[] = '<div class="controls controls-row ' . $class . '">';
-        $html[] = '    <input name="' . $this->name . '[day]"   value="' . $birthdayDay . '" id="birthday_day"   class="span3" type="text" placeholder="' . JText::_("COM_SOCIALCOMMUNITY_DAY") . '" ' . $required . '>';
-        $html[] = '    <input name="' . $this->name . '[month]" value="' . $birthdayMonth . '" id="birthday_month" class="span3" type="text" placeholder="' . JText::_("COM_SOCIALCOMMUNITY_MONTH") . '" ' . $required . '>';
-        $html[] = '    <input name="' . $this->name . '[year]"  value="' . $birthdayYear . '" id="birthday_year"  class="span4" type="text" placeholder="' . JText::_("COM_SOCIALCOMMUNITY_YEAR") . '" ' . $required . '>';
+        $html[] = '    <input name="' . $this->name . '[day]"   value="' . $birthdayDay . '" id="birthday_day"   class="span3" type="text" placeholder="' . JText::_('COM_SOCIALCOMMUNITY_DAY') . '" ' . $required . '>';
+        $html[] = JHTML::_('select.genericlist', $months->toOptions(), $this->name . '[month]', array('class' => 'span3 ' . $class), 'text', 'value', $birthdayMonth, 'birthday_month');
+        $html[] = '    <input name="' . $this->name . '[year]"  value="' . $birthdayYear . '" id="birthday_year"  class="span4" type="text" placeholder="' . JText::_('COM_SOCIALCOMMUNITY_YEAR') . '" ' . $required . '>';
         $html[] = '</div>';
 
         return implode($html);

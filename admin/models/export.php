@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -32,7 +32,7 @@ class SocialCommunityModelExport extends JModelLegacy
         $db->setQuery($query);
         $results = $db->loadAssocList();
 
-        $output = $this->prepareXML($results, "locations", "location");
+        $output = $this->prepareXML($results, 'locations', 'location');
 
         return $output;
     }
@@ -53,7 +53,7 @@ class SocialCommunityModelExport extends JModelLegacy
         $db->setQuery($query);
         $results = $db->loadAssocList();
 
-        $output = $this->prepareXML($results, "states", "state");
+        $output = $this->prepareXML($results, 'states', 'state');
 
         return $output;
     }
@@ -74,7 +74,7 @@ class SocialCommunityModelExport extends JModelLegacy
         $db->setQuery($query);
         $results = $db->loadAssocList();
 
-        $output = $this->prepareXML($results, "countries", "country");
+        $output = $this->prepareXML($results, 'countries', 'country');
 
         return $output;
     }
@@ -82,7 +82,7 @@ class SocialCommunityModelExport extends JModelLegacy
     protected function prepareXML($results, $root, $child)
     {
         $xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" ?><' . $root . '/>');
-        $xml->addAttribute("generator", "com_socialcommunity");
+        $xml->addAttribute('generator', 'com_socialcommunity');
 
         if (!empty($root) and !empty($child)) {
 

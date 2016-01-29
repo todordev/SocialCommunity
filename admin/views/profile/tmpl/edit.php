@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -22,13 +22,12 @@ defined('_JEXEC') or die;
                 <?php echo $this->loadTemplate("basic");?>
            </div>
            <div class="span4">
-            <?php if(!empty($this->item->image)) {?>
-            	<img src="<?php echo $this->imagesFolder."/".$this->item->image;?>" class="img-polaroid" />
-
+            <?php if (!empty($this->item->image)) {?>
+            	<img src="<?php echo $this->mediaFolder."/".$this->item->image;?>" class="img-polaroid" />
                 <div class="clearfix"></div>
-                <a href="<?php echo JRoute::_("index.php?option=com_socialcommunity&task=profile.removeImage&".JSession::getFormToken()."=1&id=".(int)$this->item->id);?>" class="btn btn-mini btn-danger">
+                <a href="<?php echo JRoute::_('index.php?option=com_socialcommunity&task=profile.removeImage&'.JSession::getFormToken().'=1&id='.(int)$this->item->id);?>" class="btn btn-mini btn-danger">
                     <i class="icon-trash"></i>
-                    <?php echo JText::_("COM_SOCIALCOMMUNITY_REMOVE_IMAGE");?>
+                    <?php echo JText::_('COM_SOCIALCOMMUNITY_REMOVE_IMAGE'); ?>
                 </a>
 
             <?php } else {?>
@@ -49,7 +48,7 @@ defined('_JEXEC') or die;
         <?php echo JHtml::_('bootstrap.addTab', 'profile-data', 'social', JText::_('COM_SOCIALCOMMUNITY_SOCIAL')); ?>
         <div class="row-fluid">
             <div class="span12">
-            <?php echo $this->loadTemplate("social");?>
+            <?php echo $this->loadTemplate('social'); ?>
             </div>
         </div>
         <?php echo JHtml::_('bootstrap.endTab'); ?>

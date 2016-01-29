@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -39,12 +39,15 @@ class SocialCommunityControllerNotification extends JControllerLegacy
      */
     public function remove()
     {
-        $itemId = $this->input->getUint("id");
-        $userId = JFactory::getUser()->get("id");
+        $app = JFactory::getApplication();
+        /** @var $app JApplicationSite */
+
+        $itemId = $this->input->getUint('id');
+        $userId = JFactory::getUser()->get('id');
 
         $response = new Prism\Response\Json();
 
-        $validatorOwner = new SocialCommunity\Validator\Notification\Owner(JFactory::getDbo(), $itemId, $userId);
+        $validatorOwner = new Socialcommunity\Validator\Notification\Owner(JFactory::getDbo(), $itemId, $userId);
         if (!$validatorOwner->isValid()) {
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
@@ -52,12 +55,12 @@ class SocialCommunityControllerNotification extends JControllerLegacy
                 ->failure();
 
             echo $response;
-            JFactory::getApplication()->close();
+            $app->close();
         }
 
         try {
 
-            $notification = new SocialCommunity\Notification(JFactory::getDbo());
+            $notification = new Socialcommunity\Notification\Notification(JFactory::getDbo());
             $notification->load($itemId);
             $notification->remove();
 
@@ -72,6 +75,6 @@ class SocialCommunityControllerNotification extends JControllerLegacy
             ->success();
 
         echo $response;
-        JFactory::getApplication()->close();
+        $app->close();
     }
 }

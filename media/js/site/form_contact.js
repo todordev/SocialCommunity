@@ -8,10 +8,19 @@ jQuery(document).ready(function($) {
     }, {
         source: function(query, syncResults, asyncResults) {
 
+            var country_id = jQuery('#jform_country_id').val();
+
+            var fields = {
+                query: query,
+                format: 'raw',
+                task: 'contact.loadLocation',
+                country_id: country_id
+            };
+
             jQuery.ajax({
-                url: "index.php?option=com_socialcommunity&format=raw&task=contact.loadLocation",
-                type: "get",
-                data: {query: query},
+                url: "index.php?option=com_socialcommunity",
+                type: "GET",
+                data: fields,
                 dataType: "text json",
                 async: true,
                 beforeSend : function() {
@@ -31,11 +40,12 @@ jQuery(document).ready(function($) {
 
         },
         async: true,
-        limit: 5,
-        display: "name"
+        limit: 10,
+        display: "text",
+        name: "value"
     });
 
     $inputTypeahead.bind('typeahead:select', function(event, suggestion) {
-        jQuery("#jform_location_id").attr("value", suggestion.id);
+        jQuery("#jform_location_id").attr("value", suggestion.value);
     });
 });

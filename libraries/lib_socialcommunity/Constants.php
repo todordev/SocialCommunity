@@ -3,11 +3,11 @@
  * @package      SocialCommunity
  * @subpackage   Constants
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
-namespace SocialCommunity;
+namespace Socialcommunity;
 
 defined('JPATH_PLATFORM') or die;
 
@@ -20,4 +20,5 @@ defined('JPATH_PLATFORM') or die;
 class Constants
 {
     const INCLUDE_COUNTRY_CODE = true;
+    const TEMPORARY_IMAGE_CONTEXT = 'tmp_image_profile';
 }

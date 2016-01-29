@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -34,26 +34,19 @@ class SocialCommunityViewDashboard extends JViewLegacy
 
     protected $sidebar;
 
-    public function __construct($config)
-    {
-        parent::__construct($config);
-        $this->option = JFactory::getApplication()->input->get("option");
-    }
-
     public function display($tpl = null)
     {
-        $this->version = new SocialCommunity\Version();
+        $this->option = JFactory::getApplication()->input->get('option');
+        
+        $this->version = new Socialcommunity\Version();
 
         // Load Prism library version
-        if (!class_exists("Prism\\Version")) {
-            $this->itprismVersion = JText::_("COM_SOCIALCOMMUNITY_PRISM_LIBRARY_DOWNLOAD");
+        if (!class_exists('Prism\\Version')) {
+            $this->prismVersion = JText::_('COM_SOCIALCOMMUNITY_PRISM_LIBRARY_DOWNLOAD');
         } else {
             $itprismVersion     = new Prism\Version();
             $this->prismVersion = $itprismVersion->getShortVersion();
         }
-
-        // Add submenu
-        SocialCommunityHelper::addSubmenu($this->getName());
 
         $this->addToolbar();
         $this->addSidebar();
@@ -67,6 +60,9 @@ class SocialCommunityViewDashboard extends JViewLegacy
      */
     protected function addSidebar()
     {
+        // Add submenu
+        SocialCommunityHelper::addSubmenu($this->getName());
+
         $this->sidebar = JHtmlSidebar::render();
     }
 

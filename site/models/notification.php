@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -47,7 +47,7 @@ class SocialCommunityModelNotification extends JModelItem
 
         $storedId = $this->getStoreId($id);
 
-        if (!isset($this->item[$storedId])) {
+        if (!array_key_exists($storedId, $this->item)) {
 
             $this->item[$storedId] = null;
 
@@ -55,19 +55,23 @@ class SocialCommunityModelNotification extends JModelItem
             $table = JTable::getInstance('Notification', 'SocialCommunityTable');
             /** @var $table SocialCommunityTableNotification */
 
-            $keys = array("id" => $id, "user_id" => $userId);
+            $keys = array(
+                'id' => $id,
+                'user_id' => $userId
+            );
 
             // Attempt to load the row.
             if ($table->load($keys)) {
 
                 $properties = $table->getProperties();
-                $properties = JArrayHelper::toObject($properties);
+                $properties = Joomla\Utilities\ArrayHelper::toObject($properties);
 
                 $this->item[$storedId] = $properties;
+            } else {
+                $this->item[$storedId] = null;
             }
-
         }
 
-        return (!isset($this->item[$storedId])) ? null : $this->item[$storedId];
+        return $this->item[$storedId];
     }
 }

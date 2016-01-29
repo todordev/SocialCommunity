@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -19,15 +19,10 @@ class SocialCommunityViewNotifications extends JViewLegacy
 
     protected $option;
 
-    public function __construct($config)
-    {
-        parent::__construct($config);
-        $this->option = JFactory::getApplication()->input->get("option");
-    }
-
     public function display($tpl = null)
     {
-        // Initialise variables
+        $this->option = JFactory::getApplication()->input->get('option');
+        
         $this->items  = $this->get('Items');
         $this->state  = $this->get('State');
         $this->params = $this->state->get('params');

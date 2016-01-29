@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -40,7 +40,7 @@ class SocialCommunityModelSocial extends JModelAdmin
         /** @var $app JApplicationSite */
 
         // Set user ID to state.
-        $this->setState($this->getName() . ".profile.user_id", JFactory::getUser()->id);
+        $this->setState($this->getName() . '.profile.user_id', JFactory::getUser()->get('id'));
 
         // Load the parameters.
         $params = $app->getParams($this->option);
@@ -87,7 +87,7 @@ class SocialCommunityModelSocial extends JModelAdmin
 
             if (!empty($items)) {
                 foreach ($items as $item) {
-                    $data[$item["type"]] = $item["alias"];
+                    $data[$item['type']] = $item['alias'];
                 }
             }
         }
@@ -107,25 +107,20 @@ class SocialCommunityModelSocial extends JModelAdmin
         $items = array();
 
         if (!$id) {
-            $id = $this->getState($this->getName() . ".profile.user_id");
+            $id = (int)$this->getState($this->getName() . '.profile.user_id');
         }
 
-        if (!empty($id)) {
+        if ($id > 0) {
 
             $db    = $this->getDbo();
             $query = $db->getQuery(true);
             $query
-                ->select("a.id, a.alias, a.type, a.user_id")
-                ->from($db->quoteName("#__itpsc_socialprofiles", "a"))
-                ->where("a.user_id = " . (int)$id);
+                ->select('a.id, a.alias, a.type, a.user_id')
+                ->from($db->quoteName('#__itpsc_socialprofiles', 'a'))
+                ->where('a.user_id = ' . (int)$id);
 
             $db->setQuery($query);
-            $items = $db->loadAssocList();
-
-            if (empty($items)) {
-                $items = array();
-            }
-
+            $items = (array)$db->loadAssocList();
         }
 
         return $items;
@@ -141,22 +136,22 @@ class SocialCommunityModelSocial extends JModelAdmin
      */
     public function save($profiles)
     {
-        $userId = JFactory::getUser()->get("id");
+        $userId = JFactory::getUser()->get('id');
 
-        $allowedTypes = array("facebook", "twitter", "linkedin");
+        $allowedTypes = array('facebook', 'twitter', 'linkedin');
 
         foreach ($profiles as $key => $alias) {
 
             $type  = JString::trim($key);
             $alias = JString::trim($alias);
 
-            if (!in_array($type, $allowedTypes)) {
+            if (!in_array($type, $allowedTypes, true)) {
                 continue;
             }
 
             $keys = array(
-                "user_id" => (int)$userId,
-                "type"    => $type
+                'user_id' => (int)$userId,
+                'type'    => $type
             );
 
             // Load a record from the database
@@ -175,11 +170,11 @@ class SocialCommunityModelSocial extends JModelAdmin
             } else { // Add new
 
                 if (!$row->id) {
-                    $row->set("user_id", (int)$userId);
+                    $row->set('user_id', (int)$userId);
                 }
 
-                $row->set("alias", $alias);
-                $row->set("type", $type);
+                $row->set('alias', $alias);
+                $row->set('type', $type);
 
                 $row->store();
 

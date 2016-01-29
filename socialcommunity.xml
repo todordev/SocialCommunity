@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="3.4" method="upgrade">
+<extension type="component" version="3.5" method="upgrade">
 	<name>COM_SOCIALCOMMUNITY</name>
 	<author>Todor Iliev</author>
 	<authorEmail>todor@itprism.com</authorEmail>
 	<authorUrl>http://itprism.com</authorUrl>
-	<copyright>Copyright (C) 2015 Todor Iliev ( ITPrism.com )</copyright>
-	<license>http://www.gnu.org/copyleft/gpl.html</license>
-	<version>2.1</version>
-	<creationDate>27 July, 2015</creationDate>
+	<copyright>Copyright (C) 2016 Todor Iliev ( ITPrism.com )</copyright>
+	<license>http://www.gnu.org/licenses/gpl-3.0.en.html GNU/GPLv3</license>
+	<version>2.2</version>
+	<creationDate>29 February, 2016</creationDate>
 	<description><![CDATA[
-    <p><a href="http://itprism.com/free-joomla-extensions/others/open-source-social-network">Social Community</a> is an extension that provides ability to create a social network on your website.</p>
+    <p><a href="http://itprism.com/free-joomla-extensions/others/open-source-social-network">Social Community</a> is an extension that provides ability to create social network on your website.</p>
     <p><a href='http://itprism.com/help/86-social-community-documentation' target='_blank'>Read documentation</a> that will help you to setup the extensions.</p>
     <p><a href="http://itprism.com/" target="_blank">Subscribe for the newsletter</a> to receive <strong>gifts</strong>, <strong>discount codes</strong>, information about <strong>updates</strong> and information about <strong>new ITPrism extensions</strong>.</p>
-    <p>Please, <a href="http://extensions.joomla.org/extensions/clients-a-communities/communities/24556">vote for the extension</a> on Joomla! Extensions Directory</p>
+    <p>Please, <a href="http://extensions.joomla.org/extensions/extension/clients-a-communities/communities/social-community">vote for the extension</a> on Joomla! Extensions Directory</p>
     ]]></description>
 
 	<install>

@@ -3,11 +3,11 @@
  * @package      SocialCommunity
  * @subpackage   Locations
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
-namespace SocialCommunity;
+namespace Socialcommunity\Location;
 
 use Prism;
 
@@ -38,7 +38,7 @@ class Location extends Prism\Database\TableImmutable
      * <code>
      * $locationId = 1;
      *
-     * $location   = SocialCommunity\Location::getInstance(\JFactory::getDbo(), $locationId);
+     * $location   = Socialcommunity\Location\Location::getInstance(\JFactory::getDbo(), $locationId);
      * </code>
      *
      * @param \JDatabaseDriver $db
@@ -48,9 +48,9 @@ class Location extends Prism\Database\TableImmutable
      */
     public static function getInstance(\JDatabaseDriver $db, $keys)
     {
-        $id = (!isset($keys["id"])) ? 0 : (int)$keys["id"];
+        $id = (!array_key_exists('id', $keys)) ? 0 : (int)$keys['id'];
 
-        if (!isset(self::$instances[$id])) {
+        if (!array_key_exists($id, self::$instances) and $id > 0) {
             $item = new Location($db);
             $item->load($keys);
 
@@ -68,26 +68,26 @@ class Location extends Prism\Database\TableImmutable
      *    "id" => 1
      * );
      *
-     * $location   = new SocialCommunity\Location(\JFactory::getDbo());
+     * $location   = new Socialcommunity\Location\Location(\JFactory::getDbo());
      * $location->load($keys);
      * </code>
      *
      * @param int|array $keys
      * @param array $options
      */
-    public function load($keys, $options = array())
+    public function load($keys, array $options = array())
     {
         $query = $this->db->getQuery(true);
         $query
-            ->select("a.id, a.name, a.latitude, a.longitude, a.country_code, a.state_code, a.timezone, a.published")
-            ->from($this->db->quoteName("#__itpsc_locations", "a"));
+            ->select('a.id, a.name, a.latitude, a.longitude, a.country_code, a.state_code, a.timezone, a.published')
+            ->from($this->db->quoteName('#__itpsc_locations', 'a'));
 
         // Filter by keys.
         if (!is_array($keys)) {
-            $query->where("a.id = " . (int)$keys);
+            $query->where('a.id = ' . (int)$keys);
         } else {
             foreach ($keys as $key => $value) {
-                $query->where($this->db->quoteName($key) . " = " . $this->db->quote($value));
+                $query->where($this->db->quoteName('a.'.$key) . ' = ' . $this->db->quote($value));
             }
         }
 
@@ -105,7 +105,7 @@ class Location extends Prism\Database\TableImmutable
      *    "id" => 1
      * );
      *
-     * $location    = new SocialCommunity\Location(\JFactory::getDbo());
+     * $location    = new Socialcommunity\Location\Location(\JFactory::getDbo());
      * $location->load($keys);
      *
      * if (!$location->getId()) {
@@ -117,7 +117,7 @@ class Location extends Prism\Database\TableImmutable
      */
     public function getId()
     {
-        return $this->id;
+        return (int)$this->id;
     }
 
     /**
@@ -128,7 +128,7 @@ class Location extends Prism\Database\TableImmutable
      *    "id" => 1
      * );
      *
-     * $location    = new SocialCommunity\Location(\JFactory::getDbo());
+     * $location    = new Socialcommunity\Location\Location(\JFactory::getDbo());
      * $location->load($keys);
      *
      * $code = $location->getCountryCode();
@@ -149,10 +149,10 @@ class Location extends Prism\Database\TableImmutable
      *    "id" => 1
      * );
      *
-     * $location    = new SocialCommunity\Location(\JFactory::getDbo());
+     * $location    = new Socialcommunity\Location\Location(\JFactory::getDbo());
      * $location->load($keys);
      *
-     * $name = $location->getName(SocialCommunityConstants::INCLUDE_COUNTRY_CODE);
+     * $name = $location->getName(SocialcommunityConstants::INCLUDE_COUNTRY_CODE);
      * </code>
      *
      * @param bool $includeCountryCode A flag that indicate to be included country code to the name.
@@ -161,8 +161,8 @@ class Location extends Prism\Database\TableImmutable
      */
     public function getName($includeCountryCode = false)
     {
-        if ($includeCountryCode and !empty($this->country_code)) {
-            return $this->name .", ". $this->country_code;
+        if ($includeCountryCode and ($this->country_code !== null and $this->country_code !== '')) {
+            return $this->name .', '. $this->country_code;
         }
 
         return $this->name;

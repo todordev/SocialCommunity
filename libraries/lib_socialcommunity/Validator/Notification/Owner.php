@@ -3,11 +3,11 @@
  * @package      SocialCommunity\Notification
  * @subpackage   Validators
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
-namespace SocialCommunity\Validator\Notification;
+namespace Socialcommunity\Validator\Notification;
 
 use Prism\Validator\ValidatorInterface;
 
@@ -33,7 +33,7 @@ class Owner implements ValidatorInterface
      * $notificationId = 1;
      * $userId = 2;
      *
-     * $owner = new SocialCommunity\Validator\Notification\Owner(JFactory::getDbo(), $notificationId, $userId);
+     * $owner = new Socialcommunity\Validator\Notification\Owner(JFactory::getDbo(), $notificationId, $userId);
      * </code>
      *
      * @param \JDatabaseDriver $db Database object.
@@ -54,7 +54,7 @@ class Owner implements ValidatorInterface
      * $notificationId = 1;
      * $userId = 2;
      *
-     * $owner = new SocialCommunity\Validator\Notification\Owner(JFactory::getDbo(), $notificationId, $userId);
+     * $owner = new Socialcommunity\Validator\Notification\Owner(JFactory::getDbo(), $notificationId, $userId);
      * if(!$owner->isValid()) {
      * ......
      * }
@@ -67,10 +67,10 @@ class Owner implements ValidatorInterface
         $query = $this->db->getQuery(true);
 
         $query
-            ->select("COUNT(*)")
-            ->from($this->db->quoteName("#__itpsc_notifications", "a"))
-            ->where("a.id = " . (int)$this->id)
-            ->where("a.user_id = " . (int)$this->userId);
+            ->select('COUNT(*)')
+            ->from($this->db->quoteName('#__itpsc_notifications', 'a'))
+            ->where('a.id = ' . (int)$this->id)
+            ->where('a.user_id = ' . (int)$this->userId);
 
         $this->db->setQuery($query, 0, 1);
         return (bool)$this->db->loadResult();

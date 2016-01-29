@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -25,7 +25,7 @@ class SocialCommunityViewProfiles extends JViewLegacy
     protected $items;
     protected $pagination;
 
-    protected $imagesFolder;
+    protected $filesystemHelper;
 
     protected $option;
     protected $listOrder;
@@ -36,25 +36,22 @@ class SocialCommunityViewProfiles extends JViewLegacy
     protected $sortFields;
 
     protected $sidebar;
-
-    public function __construct($config)
-    {
-        parent::__construct($config);
-        $this->option = JFactory::getApplication()->input->get("option");
-    }
-
+    
     public function display($tpl = null)
     {
+        $this->option     = JFactory::getApplication()->input->get('option');
+
+        // Create profiles if orphans exist.
+        SocialCommunityHelper::createProfiles();
+
         $this->state      = $this->get('State');
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
 
         // Load the component parameters.
-        $params             = JComponentHelper::getParams($this->option);
-        $this->imagesFolder = $params->get("images_directory", "images/profiles");
+        $params           = $this->state->get('params');
 
-        // Add submenu
-        SocialCommunityHelper::addSubmenu($this->getName());
+        $this->filesystemHelper  = new Prism\Filesystem\Helper($params);
 
         // Prepare sorting data
         $this->prepareSorting();
@@ -75,7 +72,7 @@ class SocialCommunityViewProfiles extends JViewLegacy
         // Prepare filters
         $this->listOrder = $this->escape($this->state->get('list.ordering'));
         $this->listDirn  = $this->escape($this->state->get('list.direction'));
-        $this->saveOrder = (strcmp($this->listOrder, 'a.ordering') != 0) ? false : true;
+        $this->saveOrder = (strcmp($this->listOrder, 'a.ordering') === 0);
 
         if ($this->saveOrder) {
             $this->saveOrderingUrl = 'index.php?option=' . $this->option . '&task=' . $this->getName() . '.saveOrderAjax&format=raw';
@@ -94,11 +91,14 @@ class SocialCommunityViewProfiles extends JViewLegacy
      */
     protected function addSidebar()
     {
+        // Add submenu
+        SocialCommunityHelper::addSubmenu($this->getName());
+        
         JHtmlSidebar::setAction('index.php?option=' . $this->option . '&view=' . $this->getName());
 
         $states = array(
-            JHtml::_("select.option", "0", JText::_("COM_SOCIALCOMMUNITY_DOES_NOT_EXISTS")),
-            JHtml::_("select.option", "1", JText::_("COM_SOCIALCOMMUNITY_EXISTS"))
+            JHtml::_('select.option', '0', JText::_('COM_SOCIALCOMMUNITY_DOES_NOT_EXISTS')),
+            JHtml::_('select.option', '1', JText::_('COM_SOCIALCOMMUNITY_EXISTS'))
         );
 
         JHtmlSidebar::addFilter(
@@ -121,11 +121,7 @@ class SocialCommunityViewProfiles extends JViewLegacy
         JToolBarHelper::title(JText::_('COM_SOCIALCOMMUNITY_PROFILES_MANAGER'));
         JToolBarHelper::editList('profile.edit');
         JToolBarHelper::divider();
-        JToolBarHelper::custom('profiles.create', "plus", "", JText::_("COM_SOCIALCOMMUNITY_CREATE_PROFILE"), false);
-        JToolBarHelper::divider();
-        JToolBarHelper::deleteList(JText::_("COM_SOCIALCOMMUNITY_DELETE_ITEMS_QUESTION"), "profiles.delete");
-        JToolBarHelper::divider();
-        JToolBarHelper::custom('profiles.backToDashboard', "dashboard", "", JText::_("COM_SOCIALCOMMUNITY_BACK_DASHBOARD"), false);
+        JToolBarHelper::custom('profiles.backToDashboard', 'dashboard', '', JText::_('COM_SOCIALCOMMUNITY_BACK_DASHBOARD'), false);
     }
 
     /**
@@ -142,6 +138,6 @@ class SocialCommunityViewProfiles extends JViewLegacy
         JHtml::_('formbehavior.chosen', 'select');
         JHtml::_('bootstrap.tooltip');
 
-        JHtml::_('prism.ui.joomlaList');
+        JHtml::_('Prism.ui.joomlaList');
     }
 }

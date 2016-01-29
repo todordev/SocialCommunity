@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -33,13 +33,13 @@ class SocialCommunityController extends JControllerLegacy
      */
     public function display($cachable = false, $urlparams = array())
     {
-        $option = $this->input->getCmd("option");
+        $option = $this->input->getCmd('option');
 
         $viewName = $this->input->getCmd('view', 'dashboard');
-        $this->input->set("view", $viewName);
+        $this->input->set('view', $viewName);
 
         $doc = JFactory::getDocument();
-        $doc->addStyleSheet("../media/" . $option . '/css/backend.style.css');
+        $doc->addStyleSheet('../media/' . $option . '/css/backend.style.css');
 
         parent::display();
 

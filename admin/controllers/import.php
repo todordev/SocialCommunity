@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -20,14 +20,9 @@ jimport('itprism.controller.form.backend');
  */
 class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
 {
-    /**
-     * Proxy for getModel.
-     * @since   1.6
-     */
     public function getModel($name = 'Import', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
     {
         $model = parent::getModel($name, $prefix, $config);
-
         return $model;
     }
 
@@ -40,7 +35,7 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         $data = array_merge($data, $file);
 
         $redirectOptions = array(
-            "view" => "locations",
+            'view' => 'locations',
         );
 
         $model = $this->getModel();
@@ -50,7 +45,7 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         /** @var $form JForm */
 
         if (!$form) {
-            throw new Exception(JText::_("COM_SOCIALCOMMUNITY_ERROR_FORM_CANNOT_BE_LOADED"));
+            throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_FORM_CANNOT_BE_LOADED'));
         }
 
         // Validate the form
@@ -59,30 +54,33 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         // Check for errors.
         if ($validData === false) {
             $this->displayNotice($form->getErrors(), $redirectOptions);
-
             return;
         }
 
-        $fileData = JArrayHelper::getValue($data, "data");
-        if (empty($fileData) or empty($fileData["name"])) {
+        $fileData = Joomla\Utilities\ArrayHelper::getValue($data, 'data');
+        if (!$fileData or empty($fileData['name'])) {
             $this->displayNotice(JText::_('COM_SOCIALCOMMUNITY_ERROR_FILE_CANT_BE_UPLOADED'), $redirectOptions);
-
             return;
         }
 
         try {
 
-            $filePath = $model->uploadFile($fileData, "locations");
+            $filePath = $model->uploadFile($fileData, 'locations');
 
-            $resetId   = JArrayHelper::getValue($data, "reset_id", false, "bool");
-            $removeOld = JArrayHelper::getValue($data, "remove_old", false, "bool");
+            $resetId   = Joomla\Utilities\ArrayHelper::getValue($data, 'reset_id', false, 'bool');
+            $removeOld = Joomla\Utilities\ArrayHelper::getValue($data, 'remove_old', false, 'bool');
 
-            $minPopulation = JArrayHelper::getValue($data, "minimum_population", 0, "int");
+            $minPopulation = Joomla\Utilities\ArrayHelper::getValue($data, 'minimum_population', 0, 'int');
 
-            if (!empty($removeOld)) {
-                $model->removeAll("locations");
+            if ($removeOld) {
+                $model->removeAll('locations');
             }
             $model->importLocations($filePath, $resetId, $minPopulation);
+
+        } catch (RuntimeException $e) {
+
+            $this->displayError(JString::substr($e->getMessage(), 0, 255), $redirectOptions);
+            return;
 
         } catch (Exception $e) {
             JLog::add($e->getMessage());
@@ -90,7 +88,6 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         }
 
         $this->displayMessage(JText::_('COM_SOCIALCOMMUNITY_LOCATIONS_IMPORTED'), $redirectOptions);
-
     }
 
     public function countries()
@@ -102,7 +99,7 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         $data = array_merge($data, $file);
 
         $redirectOptions = array(
-            "view" => "countries",
+            'view' => 'countries',
         );
 
         $model = $this->getModel();
@@ -112,7 +109,7 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         /** @var $form JForm */
 
         if (!$form) {
-            throw new Exception(JText::_("COM_SOCIALCOMMUNITY_ERROR_FORM_CANNOT_BE_LOADED"));
+            throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_FORM_CANNOT_BE_LOADED'));
         }
 
         // Validate the form
@@ -124,20 +121,20 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
             return;
         }
 
-        $fileData = JArrayHelper::getValue($data, "data");
-        if (empty($fileData) or empty($fileData["name"])) {
+        $fileData = Joomla\Utilities\ArrayHelper::getValue($data, 'data');
+        if (!$fileData or empty($fileData['name'])) {
             $this->displayNotice(JText::_('COM_SOCIALCOMMUNITY_ERROR_FILE_CANT_BE_UPLOADED'), $redirectOptions);
             return;
         }
 
         try {
 
-            $filePath = $model->uploadFile($fileData, "countries");
+            $filePath = $model->uploadFile($fileData, 'countries');
 
-            $resetId   = JArrayHelper::getValue($data, "reset_id", false, "bool");
-            $removeOld = JArrayHelper::getValue($data, "remove_old", false, "bool");
-            if (!empty($removeOld)) {
-                $model->removeAll("countries");
+            $resetId   = Joomla\Utilities\ArrayHelper::getValue($data, 'reset_id', false, 'bool');
+            $removeOld = Joomla\Utilities\ArrayHelper::getValue($data, 'remove_old', false, 'bool');
+            if ($removeOld) {
+                $model->removeAll('countries');
             }
             $model->importCountries($filePath, $resetId);
 
@@ -147,7 +144,6 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         }
 
         $this->displayMessage(JText::_('COM_SOCIALCOMMUNITY_COUNTRIES_IMPORTED'), $redirectOptions);
-
     }
 
     public function states()
@@ -159,7 +155,7 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         $data = array_merge($data, $file);
 
         $redirectOptions = array(
-            "view" => "locations",
+            'view' => 'locations',
         );
 
         $model = $this->getModel();
@@ -169,7 +165,7 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         /** @var $form JForm */
 
         if (!$form) {
-            throw new Exception(JText::_("COM_SOCIALCOMMUNITY_ERROR_FORM_CANNOT_BE_LOADED"));
+            throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_FORM_CANNOT_BE_LOADED'));
         }
 
         // Validate the form
@@ -181,15 +177,15 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
             return;
         }
 
-        $fileData = JArrayHelper::getValue($data, "data");
-        if (empty($fileData) or empty($fileData["name"])) {
+        $fileData = Joomla\Utilities\ArrayHelper::getValue($data, 'data');
+        if (!$fileData or empty($fileData['name'])) {
             $this->displayNotice(JText::_('COM_SOCIALCOMMUNITY_ERROR_FILE_CANT_BE_UPLOADED'), $redirectOptions);
             return;
         }
 
         try {
 
-            $filePath = $model->uploadFile($fileData, "states");
+            $filePath = $model->uploadFile($fileData, 'states');
 
             $model->importStates($filePath);
 
@@ -206,14 +202,14 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         $app = JFactory::getApplication();
         /** @var $app JApplicationAdministrator */
 
-        $view = $app->getUserState("import.context", "countries");
+        $view = $app->getUserState('import.context', 'countries');
 
-        // Redirect to locations if the view is "states".
-        if (strcmp("states", $view) == 0) {
-            $view = "locations";
+        // Redirect to locations if the view is 'states'.
+        if (strcmp('states', $view) === 0) {
+            $view = 'locations';
         }
 
-        $link = $this->defaultLink . "&view=" . $view;
+        $link = $this->defaultLink . '&view=' . $view;
         $this->setRedirect(JRoute::_($link, false));
     }
 }

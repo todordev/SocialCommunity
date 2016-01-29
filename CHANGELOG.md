@@ -1,6 +1,14 @@
 Social Community Release Notes
 ---------
 
+###v2.2
+* The namespaces of the classes in Socailcommunity library were changed.
+* Added view where users will be able to upload and crop their profile picture.
+* Added option to use filesystems - local or Amazon S3.
+* It was added new layouts on the profile page - registration/login, about, wall.
+* Phone and Address fields are encrypted now.
+* Added view for profile settings.
+
 ###v2.1
 * Replaced bootstrap3FileStyle with bootstrap3FileInput.
 

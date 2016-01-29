@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Component
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 defined('JPATH_PLATFORM') or die;
@@ -28,7 +28,7 @@ class SocialCommunityObserverProfile extends JTableObserver
      * @var    string
      * @since  3.1.2
      */
-    protected $typeAliasPattern = null;
+    protected $typeAliasPattern;
 
     /**
      * Creates the associated observer instance and attaches it to the $observableObject
@@ -45,7 +45,7 @@ class SocialCommunityObserverProfile extends JTableObserver
     {
         $observer = new self($observableObject);
 
-        $observer->typeAliasPattern = JArrayHelper::getValue($params, 'typeAlias');
+        $observer->typeAliasPattern = Joomla\Utilities\ArrayHelper::getValue($params, 'typeAlias');
 
         return $observer;
     }
@@ -64,28 +64,21 @@ class SocialCommunityObserverProfile extends JTableObserver
     {
         $db = $this->table->getDbo();
 
-        jimport("socialcommunity.profile");
+        jimport('Socialcommunity.profile');
 
-        $profile = new SocialCommunityProfile($db);
+        $profile = new Socialcommunity\Profile\Profile($db);
         $profile->load($this->table->id);
 
         if ($profile->getId()) {
 
+            $params       = JComponentHelper::getParams('com_socialcommunity');
             /** @var  $params Joomla\Registry\Registry */
-            $params       = JComponentHelper::getParams("com_socialcommunity");
-            $imagesFolder = JPath::clean(JPATH_ROOT . DIRECTORY_SEPARATOR . $params->get("images_directory", "images/profiles"));
 
-            // Remove images
-            $profile->removeImages($imagesFolder);
+            $filesystemHelper = new Prism\Filesystem\Helper($params);
+            $mediaFolder = $filesystemHelper->getMediaFolderUri($profile->getId());
+            $filesystem  = $filesystemHelper->getFilesystem();
 
-            // Remove social profiles.
-//            $profile->removeSocialProfiles();
-
-            // Remove activities.
-//            $profile->removeActivities();
-
-            // Remove notifications
-//            $profile->removeNotifications();
+            $profile->removeImages($filesystem, $mediaFolder);
 
         }
     }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="privacy">
+        <field name="picture" type="list" labelclass="col-md-2 text-right"
+               label="COM_SOCIALCOMMUNITY_PICTURE_ACCESS"
+               description="COM_SOCIALCOMMUNITY_PICTURE_ACCESS_DESC"
+               filter="int"
+               default="0"
+        >
+            <option value="0">COM_SOCIALCOMMUNITY_PRIVATE</option>
+            <option value="1">COM_SOCIALCOMMUNITY_PUBLIC</option>
+        </field>
+
+        <field name="bio" type="list" labelclass="col-md-2 text-right"
+               label="COM_SOCIALCOMMUNITY_BIO_ACCESS"
+               description="COM_SOCIALCOMMUNITY_BIO_ACCESS_DESC"
+               filter="int"
+               default="0"
+        >
+            <option value="0">COM_SOCIALCOMMUNITY_PRIVATE</option>
+            <option value="1">COM_SOCIALCOMMUNITY_PUBLIC</option>
+        </field>
+    </fields>
+
+    <fields name="account">
+        <field name="account_state" type="list" labelclass="col-md-2 text-right"
+               label="COM_SOCIALCOMMUNITY_ACCOUNT_STATE"
+               description="COM_SOCIALCOMMUNITY_ACCOUNT_STATE_DESC"
+               filter="int"
+               default="0"
+        >
+            <option value="0">COM_SOCIALCOMMUNITY_INACTIVE</option>
+            <option value="1">COM_SOCIALCOMMUNITY_ACTIVE</option>
+        </field>
+    </fields>
+
+</form>

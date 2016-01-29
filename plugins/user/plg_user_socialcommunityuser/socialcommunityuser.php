@@ -10,7 +10,8 @@
 // No direct access
 defined('_JEXEC') or die;
 
-jimport("SocialCommunity.init");
+jimport('Prism.init');
+jimport('Socialcommunity.init');
 
 /**
  * This plugin creates or deletes a Social Community profile.
@@ -41,13 +42,9 @@ class plgUserSocialCommunityUser extends JPlugin
      */
     public function onUserAfterSave($user, $isNew, $success, $msg)
     {
-        if ($isNew) {
-            if (!JComponentHelper::isEnabled("com_socialcommunity")) {
-                return;
-            }
-
-            $userId = JArrayHelper::getValue($user, "id", 0, "int");
-            $name   = JArrayHelper::getValue($user, "name");
+        if ($isNew and JComponentHelper::isEnabled('com_socialcommunity')) {
+            $userId = Joomla\Utilities\ArrayHelper::getValue($user, 'id', 0, 'int');
+            $name   = Joomla\Utilities\ArrayHelper::getValue($user, 'name');
             $this->createProfile($userId, $name);
         }
     }
@@ -58,7 +55,7 @@ class plgUserSocialCommunityUser extends JPlugin
      * Method is called after user data is deleted from the database
      *
      * @param   array   $user    Holds the user data
-     * @param   boolean $success True if user was succesfully stored in the database
+     * @param   boolean $success True if user was successfully stored in the database
      * @param   string  $msg     Message
      *
      * @return  boolean
@@ -67,35 +64,38 @@ class plgUserSocialCommunityUser extends JPlugin
      */
     public function onUserAfterDelete($user, $success, $msg)
     {
-        $userId = JArrayHelper::getValue($user, "id");
+        $userId = Joomla\Utilities\ArrayHelper::getValue($user, 'id', 0, 'int');
 
         if (!$success or !$userId) {
             return false;
         }
 
         // Remove profile images.
-        $profile = new SocialCommunity\Profile($this->db);
-        $profile->load($userId);
+        $profile = new Socialcommunity\Profile\Profile($this->db);
+        $profile->load(array('user_id' => $userId));
 
         if ($profile->getId()) {
 
             // Remove profile record.
             $query = $this->db->getQuery(true);
             $query
-                ->delete($this->db->quoteName("#__itpsc_profiles"))
-                ->where($this->db->quoteName("id") ."=". $userId);
+                ->delete($this->db->quoteName('#__itpsc_profiles'))
+                ->where($this->db->quoteName('user_id') .'='. (int)$userId);
 
             $this->db->setQuery($query);
             $this->db->execute();
 
             // Remove profile images.
 
-            /** @var  $params Joomla\Registry\Registry */
-            $params       = JComponentHelper::getParams("com_socialcommunity");
-            $imagesFolder = JPath::clean(JPATH_ROOT . DIRECTORY_SEPARATOR . $params->get("images_directory", "images/profiles"));
+            $params = JComponentHelper::getParams('com_socialcommunity');
+            /** @var $params Joomla\Registry\Registry */
 
-            // Remove images
-            $profile->removeImages($imagesFolder);
+            jimport('Prism.libs.init');
+            $filesystemHelper = new Prism\Filesystem\Helper($params);
+            $mediaFolder = $filesystemHelper->getMediaFolder($userId);
+            $filesystem  = $filesystemHelper->getFilesystem();
+
+            $profile->removeImages($filesystem, $mediaFolder);
         }
 
         return true;
@@ -112,26 +112,23 @@ class plgUserSocialCommunityUser extends JPlugin
      */
     public function onUserLogin($user, $options)
     {
-        if (!JComponentHelper::isEnabled("com_socialcommunity")) {
-            return true;
-        }
+        if (JComponentHelper::isEnabled('com_socialcommunity')) {
 
-        $query = $this->db->getQuery(true);
+            $query = $this->db->getQuery(true);
 
-        $query
-            ->select("a.id, b.id AS profile_id")
-            ->from($this->db->quoteName("#__users", "a"))
-            ->leftJoin($this->db->quoteName("#__itpsc_profiles", "b") . " ON a.id = b.id")
-            ->where("a.username = " . $this->db->quote($user["username"]));
+            $query
+                ->select('a.id, b.user_id')
+                ->from($this->db->quoteName('#__users', 'a'))
+                ->leftJoin($this->db->quoteName('#__itpsc_profiles', 'b') . ' ON a.id = b.user_id')
+                ->where('a.username = ' . $this->db->quote($user['username']));
 
-        $this->db->setQuery($query, 0, 1);
-        $result = $this->db->loadAssoc();
+            $this->db->setQuery($query, 0, 1);
+            $result = $this->db->loadAssoc();
 
-        // Create profile
-        if (empty($result["profile_id"])) {
-            $userId = JArrayHelper::getValue($result, "id");
-            $name   = JArrayHelper::getValue($user, "fullname");
-            $this->createProfile($userId, $name);
+            // Create profile
+            if ($result !== null and !$result['user_id']) {
+                $this->createProfile($result['id'], $user['fullname']);
+            }
         }
 
         return true;
@@ -140,13 +137,27 @@ class plgUserSocialCommunityUser extends JPlugin
     private function createProfile($userId, $name)
     {
         $data = array(
-            "id" => (int)$userId,
-            "name" => $name,
-            "alias" => JApplicationHelper::stringURLSafe($name),
+            'user_id'   => (int)$userId,
+            'name'      => $name,
+            'alias'     => $name,
+            'active'    => Prism\Constants::ACTIVE
         );
 
-        $profile = new SocialCommunity\Profile($this->db);
+        $profile = new Socialcommunity\Profile\Profile($this->db);
         $profile->bind($data);
-        $profile->create();
+        $profile->store();
+
+        $params = JComponentHelper::getParams('com_socialcommunity');
+        /** @var $params Joomla\Registry\Registry */
+
+        $filesystemHelper = new Prism\Filesystem\Helper($params);
+
+        // If the filesystem is local, create a user folder.
+        if ($filesystemHelper->isLocal()) {
+            $mediaFolder = JPath::clean(JPATH_BASE .'/'. $filesystemHelper->getMediaFolder($userId), '/');
+            if (!JFolder::exists($mediaFolder)) {
+                JFolder::create($mediaFolder);
+            }
+        }
     }
 }

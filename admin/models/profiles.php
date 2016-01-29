@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -39,20 +39,12 @@ class SocialCommunityModelProfiles extends JModelList
 
         parent::__construct($config);
     }
-
-    /**
-     * Method to auto-populate the model state.
-     * Note. Calling getState in this method will result in recursion.
-     * @since   1.6
-     */
+    
     protected function populateState($ordering = null, $direction = null)
     {
         // Load the filter state.
-        $value = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+        $value = (string)$this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
         $this->setState('filter.search', $value);
-
-        $value = $this->getUserStateFromRequest($this->context . '.filter.profile', 'filter_profile', '', 'string');
-        $this->setState('filter.profile', $value);
 
         // Load the component parameters.
         $params = JComponentHelper::getParams($this->option);
@@ -101,32 +93,23 @@ class SocialCommunityModelProfiles extends JModelList
         $query->select(
             $this->getState(
                 'list.select',
-                'a.id as profile_id, a.alias, a.image_icon, ' .
-                'b.id, b.name, b.registerDate, ' .
+                'a.id, a.alias, a.image_icon, a.user_id, ' .
+                'b.name, b.registerDate, ' .
                 'c.name as country'
             )
         );
         $query->from($db->quoteName('#__itpsc_profiles', 'a'));
-        $query->rightJoin($db->quoteName('#__users', 'b') . ' ON b.id = a.id');
+        $query->leftJoin($db->quoteName('#__users', 'b') . ' ON a.user_id = b.id');
         $query->leftJoin($db->quoteName('#__itpsc_countries', 'c') . ' ON a.country_id = c.id');
-
-        $profile = $this->getState('filter.profile');
-        if (is_numeric($profile)) {
-            if ($profile == 1) {
-                $query->where('a.id > 0');
-            } else {
-                $query->where('a.id IS NULL');
-            }
-        }
 
         // Filter by search in title
         $search = $this->getState('filter.search');
-        if (!empty($search)) {
+        if ($search !== '') {
             if (stripos($search, 'id:') === 0) {
-                $query->where('a.id = ' . (int)substr($search, 3));
+                $query->where('a.user_id = ' . (int)substr($search, 3));
             } else {
                 $escaped = $db->escape($search, true);
-                $quoted  = $db->quote("%" . $escaped . "%", false);
+                $quoted  = $db->quote('%' . $escaped . '%', false);
                 $query->where('a.name LIKE ' . $quoted);
             }
         }

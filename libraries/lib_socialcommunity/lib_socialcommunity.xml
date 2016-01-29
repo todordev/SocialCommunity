@@ -1,31 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<extension type="library" version="3.4" method="upgrade">
+<extension type="library" version="3.5" method="upgrade">
     <name>SocialCommunity Library</name>
-    <libraryname>SocialCommunity</libraryname>
+    <libraryname>Socialcommunity</libraryname>
     <author>Todor Iliev</author>
     <authorEmail>todor@itprism.com</authorEmail>
     <authorUrl>http://itprism.com</authorUrl>
-    <copyright>Copyright (C) 2015 Todor Iliev ( ITPrism.com ). All rights reserved.</copyright>
-    <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+    <copyright>Copyright (C) 2016 Todor Iliev ( ITPrism.com ). All rights reserved.</copyright>
+    <license>http://www.gnu.org/licenses/gpl-3.0.en.html GNU/GPLv3</license>
     <packager>ITPrism</packager>
     <packagerurl>http://www.itprism.com</packagerurl>
-    <version>2.1</version>
-    <creationDate>27 July, 2015</creationDate>
+    <version>2.2</version>
+    <creationDate>29 February, 2016</creationDate>
     <description>SocialCommunity Library</description>
 
     <files>
-        <folder>language</folder>
+        <folder>Activity</folder>
+        <folder>Filter</folder>
+        <folder>Location</folder>
+        <folder>Notification</folder>
+        <folder>Profile</folder>
         <folder>Validator</folder>
+        <folder>Wall</folder>
 
-        <file>Activity.php</file>
         <file>Constants.php</file>
         <file>init.php</file>
-        <file>Location.php</file>
-        <file>Locations.php</file>
-        <file>Notification.php</file>
-        <file>Notifications.php</file>
-        <file>Profile.php</file>
-        <file>SocialProfiles.php</file>
         <file>Version.php</file>
     </files>
 

@@ -3,10 +3,6 @@
 	min-height: 100px;
 }
 
-#itpsc-profile-form textarea {
-	width: 300px;
-}
-
 .contact-info {
 	display: block;
 }
@@ -32,15 +28,54 @@
 	padding-left: 25px;
 }
 
-.sc-profile-link {
+.sc-website-link {
 	background: url(../images/link_20x20.png) left no-repeat;
 	padding-left: 25px;
+	display: block;
+	margin: 10px 0;
 }
 
-.mt-10 {
-    margin-top: 10px;
+.sc-socialprofile-link {
+	display: inline;
+	margin: 0 10px 0 0;
 }
 
-.mtb-5px {
-	margin: 5px 0;
+.form-group input.form-control {
+	width: 100%;
+}
+
+span.fileinput-button {
+	line-height: 1.457;
+}
+
+.sc-block {
+	display: block !important;
+	text-align: left;
+}
+
+.sc-wall-posts {
+	margin-top: 10px;
+	border-top: thin solid #dcdcdc;
+}
+
+.sc-wall-form textarea {
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.sc-user-alias {
+	color: #e7e7e7;
+	font-size: small;
+}
+
+.sc-post-created {
+	color: #add8e6;
+	font-size: small;
+}
+
+.sc-user-post-footbar {
+	border: thin solid #e7e7e7;
+	margin-top: 5px;
+	height: 30px;
+	background: #f7f7f7;
 }

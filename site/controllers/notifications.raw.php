@@ -3,7 +3,7 @@
  * @package      Gamification Platform
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -25,10 +25,10 @@ class SocialCommunityControllerNotifications extends JControllerLegacy
      * @param    string $prefix The class prefix. Optional.
      * @param    array  $config Configuration array for model. Optional.
      *
-     * @return    object    The model.
+     * @return   SocialCommunityModelNotifications    The model.
      * @since    1.5
      */
-    public function getModel($name = 'Notifications', $prefix = 'GamificationModel', $config = array('ignore_request' => false))
+    public function getModel($name = 'Notifications', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => false))
     {
         $model = parent::getModel($name, $prefix, $config);
 
@@ -44,21 +44,21 @@ class SocialCommunityControllerNotifications extends JControllerLegacy
 
         try {
 
-            $notifications = new SocialCommunity\Notifications(JFactory::getDbo());
+            $notifications = new Socialcommunity\Notification\Notifications(JFactory::getDbo());
 
             $options = array(
-                "user_id" => JFactory::getUser()->get("id"),
-                "status"  => Prism\Constants::NOT_READ
+                'user_id' => JFactory::getUser()->get('id'),
+                'status'  => Prism\Constants::NOT_READ
             );
 
             $notRead = $notifications->getNumber($options);
 
         } catch (Exception $e) {
             JLog::add($e->getMessage());
-            throw new Exception(JText::_('COM_CROWDFUNDING_ERROR_SYSTEM'));
+            throw new Exception(JText::_('COM_CHALLENGES_ERROR_SYSTEM'));
         }
 
-        $data = array("results" => $notRead);
+        $data = array('results' => $notRead);
 
         $response
             ->setData($data)

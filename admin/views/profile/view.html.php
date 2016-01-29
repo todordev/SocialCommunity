@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -30,39 +30,33 @@ class SocialCommunityViewProfile extends JViewLegacy
     protected $item;
     protected $form;
 
-    protected $imagesFolder;
+    protected $mediaFolder;
 
     protected $documentTitle;
     protected $option;
 
-    public function __construct($config)
-    {
-        parent::__construct($config);
-        $this->option = JFactory::getApplication()->input->get("option");
-    }
-
     public function display($tpl = null)
     {
+        $this->option = JFactory::getApplication()->input->get('option');
+        
         $this->state = $this->get('State');
         $this->item  = $this->get('Item');
         $this->form  = $this->get('Form');
 
-        $this->params = $this->state->get("params");
+        $this->params = $this->state->get('params');
 
-        if (empty($this->item->id)) {
+        if (!$this->item->id) {
             $app = JFactory::getApplication();
-            $app->enqueueMessage(JText::_("COM_SOCIALCOMMUNITY_NO_PROFILE"), "notice");
+            $app->enqueueMessage(JText::_('COM_SOCIALCOMMUNITY_NO_PROFILE'), 'notice');
             $app->redirect(JRoute::_('index.php?option=com_socialcommunity&view=profiles', false));
 
             return;
         }
 
-        $model = $this->getModel();
+        $filesystemHelper  = new Prism\Filesystem\Helper($this->params);
+        $this->mediaFolder = $filesystemHelper->getMediaFolderUri($this->item->user_id);
 
-        $this->imagesFolder = "../" . $this->params->get("images_directory", "images/profiles");
-        $this->item         = $model->getItem();
-
-        // Prepare actions, behaviors, scritps and document
+        // Prepare actions, behaviors, scripts and document
         $this->addToolbar();
         $this->setDocument();
 
@@ -77,10 +71,9 @@ class SocialCommunityViewProfile extends JViewLegacy
     protected function addToolbar()
     {
         JFactory::getApplication()->input->set('hidemainmenu', true);
-        $isNew = ($this->item->id == 0);
+        $isNew = ((int)$this->item->id === 0);
 
-        $this->documentTitle = $isNew ? JText::_('COM_SOCIALCOMMUNITY_NEW_PROFILE')
-            : JText::_('COM_SOCIALCOMMUNITY_EDIT_PROFILE');
+        $this->documentTitle = $isNew ? JText::_('COM_SOCIALCOMMUNITY_NEW_PROFILE') : JText::_('COM_SOCIALCOMMUNITY_EDIT_PROFILE');
 
         if (!$isNew) {
             JToolBarHelper::title($this->documentTitle, 'itp-profile-edit');
@@ -113,7 +106,7 @@ class SocialCommunityViewProfile extends JViewLegacy
 
         JHtml::_('formbehavior.chosen', '#jform_country_id');
 
-        JHtml::_('prism.ui.bootstrap2Typeahead');
+        JHtml::_('Prism.ui.bootstrap2Typeahead');
 
         // Add scripts
         $this->document->addScript('../media/' . $this->option . '/js/admin/' . strtolower($this->getName()) . '.js');

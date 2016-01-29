@@ -14,17 +14,20 @@
                rows="5"
                 />
 
-        <field name="location_preview" type="text" class="form-control"
-               label="COM_SOCIALCOMMUNITY_LOCATION"
-               description="COM_SOCIALCOMMUNITY_FIELD_LOCATION_DESC"
-               filter="trim"
-                />
-
         <field name="country_id" type="sccountries" class="form-control"
                label="COM_SOCIALCOMMUNITY_COUNTRY"
                description="COM_SOCIALCOMMUNITY_FIELD_COUNTRY_DESC"
                filter="int"
-                />
+        >
+            <option value="">COM_SOCIALCOMMUNITY_SELECT_COUNTRY</option>
+        </field>
+
+        <field name="location_preview" type="text" class="form-control"
+               label="COM_SOCIALCOMMUNITY_LOCATION"
+               description="COM_SOCIALCOMMUNITY_FIELD_LOCATION_DESC"
+               filter="trim"
+        />
+
 
         <field name="website" type="url" class="form-control"
                label="COM_SOCIALCOMMUNITY_WEBSITE"

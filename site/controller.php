@@ -3,7 +3,7 @@
  * @package      SocialCommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 
 class SocialCommunityController extends JControllerLegacy
 {
-    protected $cacheableViews = array("profile");
+    protected $cachableViews = array('profile');
 
     /**
      * Method to display a view.
@@ -25,7 +25,7 @@ class SocialCommunityController extends JControllerLegacy
      */
     public function display($cachable = false, $urlparams = array())
     {
-        $safeurlparams = array(
+        $safeUrlParams = array(
             'id'               => 'INT',
             'limit'            => 'INT',
             'limitstart'       => 'INT',
@@ -35,7 +35,8 @@ class SocialCommunityController extends JControllerLegacy
         );
 
         // Load component styles
-        JHtml::stylesheet("com_socialcommunity/frontend.style.css", false, true, false);
+        JHtml::stylesheet('com_socialcommunity/frontend.style.css', false, true, false);
+        JHtml::_('Prism.ui.styles');
 
         // Set the default view name and format from the Request.
         // Note we are using catid to avoid collisions with the router and the return page.
@@ -44,10 +45,10 @@ class SocialCommunityController extends JControllerLegacy
         $this->input->set('view', $viewName);
 
         // Cache some views.
-        if (in_array($viewName, $this->cacheableViews)) {
+        if (in_array($viewName, $this->cachableViews, true)) {
             $cachable = true;
         }
 
-        return parent::display($cachable, $safeurlparams);
+        return parent::display($cachable, $safeUrlParams);
     }
 }

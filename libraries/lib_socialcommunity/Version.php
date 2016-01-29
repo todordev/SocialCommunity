@@ -3,11 +3,11 @@
  * @package      SocialCommunity
  * @subpackage   Version
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2015 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
 
-namespace SocialCommunity;
+namespace Socialcommunity;
 
 defined('JPATH_PLATFORM') or die;
 
@@ -38,7 +38,7 @@ class Version
      *
      * @var integer
      */
-    public $devLevel = '1';
+    public $devLevel = '2';
 
     /**
      * Release Type
@@ -59,28 +59,28 @@ class Version
      *
      * @var string
      */
-    public $releaseDate = '27 July, 2015';
+    public $releaseDate = '29 February, 2016';
 
     /**
      * Minimum required version of Prism library.
      *
      * @var string
      */
-    public $requiredPrismVersion = '1.1';
+    public $requiredPrismVersion = '1.9';
 
     /**
      * License
      *
      * @var string
      */
-    public $license = '<a href="http://www.gnu.org/copyleft/gpl.html" target="_blank">GNU/GPL</a>';
+    public $license = '<a href="http://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GNU/GPLv3</a>';
 
     /**
      * Copyright Text
      *
      * @var string
      */
-    public $copyright = '&copy; 2015 ITPrism. All rights reserved.';
+    public $copyright = '&copy; 2016 ITPrism. All rights reserved.';
 
     /**
      * URL
