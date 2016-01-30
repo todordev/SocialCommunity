@@ -29,5 +29,5 @@ This repository contains code that you should use to create a package. You will 
 * Type "__ant__" and click enter. The system will copy all files from distribution to the folder where you are going to build the installable package.
 
 ##Contribute
-If you would like to contribute to the project you should use Social Community distribution. That repository provides Joomla CMS + Social Community.
+If you would like to contribute to the project you should use [Social Community distribution] (https://github.com/ITPrism/SocialCommunityDistribution). That repository provides Joomla CMS + Social Community.
 You can clone it on your PC and install it on your local host. You should use it as development environment. You should use it to create branches, to add new features, to fix issues and to send pull request.
