@@ -27,6 +27,7 @@
 	<scriptfile>install.php</scriptfile>
 
     <updateservers>
-        <server type="extension" priority="1" name="Social Community ( from CDN )">http://cdn.itprism.com/updates/socialcommunity.xml</server>
+		<server type="extension" priority="1" name="Social Community ( from CDN )">http://cdn.itprism.com/updates/socialcommunity/package.xml</server>
+		<server type="extension" priority="2" name="Social Community ( from CDN )">http://cdn.itprism.com/updates/socialcommunity.xml</server>
     </updateservers>
 </extension>

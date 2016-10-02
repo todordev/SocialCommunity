@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `#__itpsc_socialprofiles` (
   `type` enum('facebook','twitter','linkedin') COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_itpsc_sprofiles_user_id` (`user_id`)
+  KEY `idx_itpsc_sprofiles_user_id` (`user_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__itpsc_userwalls` (
@@ -86,5 +86,5 @@ CREATE TABLE IF NOT EXISTS `#__itpsc_userwalls` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `user_id` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_itpsc_userwalls_user_id` (`user_id`)
+  KEY `idx_itpsc_userwalls_user_id` (`user_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

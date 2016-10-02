@@ -17,7 +17,6 @@
 	<property name="cfg.librariesDestDir" location="${cfg.pkgDir}/libraries" />
 	
 	<property name="cfg.pluginsDestDir" location="${cfg.pkgDir}/plugins" />
-	<property name="cfg.modulesDestDir" location="${cfg.pkgDir}/modules" />
 
 	<!-- Admin, Site and Media source -->
 	<property name="cfg.adminSourceDir" location="${cfg.sourceDir}/administrator/components" />
@@ -28,9 +27,6 @@
 	<!-- plugins source -->
     <property name="cfg.pluginsSourceDir" location="${cfg.sourceDir}/plugins" />
 	
-	<!-- modules source -->
-    <property name="cfg.modulesSourceDir" location="${cfg.sourceDir}/modules" />
-	
 	<target name="build" depends="clean, init, copy, build_component, info" />
 
 	<!-- delete old files -->
@@ -39,7 +35,6 @@
 			<fileset dir="${cfg.adminDestDir}" includes="**/*" />
 			<fileset dir="${cfg.librariesDestDir}" includes="**/*" />
 			<fileset dir="${cfg.mediaDestDir}" includes="**/*" />
-			<fileset dir="${cfg.modulesDestDir}" includes="**/*" />
 			<fileset dir="${cfg.pluginsDestDir}" includes="**/*" />
 			<fileset dir="${cfg.siteDestDir}" includes="**/*" />
 			
@@ -62,7 +57,6 @@
 		<mkdir dir="${cfg.pkgDir}/site" />
 		<mkdir dir="${cfg.pkgDir}/libraries" />
 		<mkdir dir="${cfg.pkgDir}/packages" />
-		<mkdir dir="${cfg.pkgDir}/modules" />
 		<mkdir dir="${cfg.pkgDir}/plugins" />
 		
 		<!-- plug-ins -->
