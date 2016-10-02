@@ -4,7 +4,7 @@
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
- * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
@@ -42,7 +42,6 @@ class SocialCommunityModelAvatar extends JModelLegacy
         // Load the parameters.
         $params = $app->getParams($this->option);
         $this->setState('params', $params);
-
     }
 
     /**
@@ -57,7 +56,6 @@ class SocialCommunityModelAvatar extends JModelLegacy
         $item = null;
 
         if ($id > 0) {
-
             $db    = $this->getDbo();
             $query = $db->getQuery(true);
             $query
@@ -219,17 +217,17 @@ class SocialCommunityModelAvatar extends JModelLegacy
     }
 
     /**
-     * Crop the image and generates smaller ones.
+     * Move the images to file system.
      *
      * @param array $images
-     * @param string $mediaFolder
      * @param League\Flysystem\MountManager $manager
+     * @param string $mediaFolder
      *
      * @throws Exception
      *
      * @return array
      */
-    public function moveImages($images, $mediaFolder, $manager)
+    public function moveImages($images, $manager, $mediaFolder)
     {
         // Resize image
         if (!$images) {
@@ -237,7 +235,6 @@ class SocialCommunityModelAvatar extends JModelLegacy
         }
 
         foreach ($images as $fileName) {
-
             if (!$manager->has('temporary://'.$fileName)) {
                 throw new Exception(JText::sprintf('COM_SOCIALCOMMUNITY_ERROR_FILE_NOT_FOUND_S', $fileName));
             }
@@ -251,10 +248,10 @@ class SocialCommunityModelAvatar extends JModelLegacy
      *
      * @param    array    $images
      * @param    int      $userId
-     * @param    string   $mediaFolder
      * @param    League\Flysystem\Filesystem  $filesystem
+     * @param    string   $mediaFolder
      */
-    public function storeImages($userId, $images, $mediaFolder, $filesystem)
+    public function storeImages($userId, $images, $filesystem, $mediaFolder)
     {
         // Load a record from the database
         $row = $this->getTable();

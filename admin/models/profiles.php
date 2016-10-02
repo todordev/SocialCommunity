@@ -4,7 +4,7 @@
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
- * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
@@ -127,5 +127,39 @@ class SocialCommunityModelProfiles extends JModelList
         $orderDirn = $this->getState('list.direction');
 
         return $orderCol . ' ' . $orderDirn;
+    }
+
+    /**
+     * This method updates the name of user in
+     * the Joomla! users table.
+     */
+    public function createProfiles()
+    {
+        $db    = $this->getDbo();
+        $query = $db->getQuery(true);
+
+        $query
+            ->select('a.id, a.name')
+            ->from($db->quoteName('#__users', 'a'))
+            ->leftJoin($db->quoteName('#__itpsc_profiles', 'b') . ' ON a.id = b.user_id')
+            ->where('b.user_id IS NULL');
+
+        $db->setQuery($query);
+
+        $results = $db->loadAssocList();
+
+        if ($results !== null and count($results) > 0) {
+
+            foreach ($results as $result) {
+                $profile = new Socialcommunity\Profile\Profile($db);
+
+                $profile->setUserId($result['id']);
+                $profile->setName($result['name']);
+                $profile->setAlias($result['name']);
+
+                $profile->store();
+            }
+        }
+
     }
 }

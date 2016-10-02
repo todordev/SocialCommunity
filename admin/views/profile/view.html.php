@@ -4,7 +4,7 @@
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
- * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
@@ -76,18 +76,18 @@ class SocialCommunityViewProfile extends JViewLegacy
         $this->documentTitle = $isNew ? JText::_('COM_SOCIALCOMMUNITY_NEW_PROFILE') : JText::_('COM_SOCIALCOMMUNITY_EDIT_PROFILE');
 
         if (!$isNew) {
-            JToolBarHelper::title($this->documentTitle, 'itp-profile-edit');
+            JToolbarHelper::title($this->documentTitle, 'itp-profile-edit');
         } else {
-            JToolBarHelper::title($this->documentTitle, 'itp-profile-add');
+            JToolbarHelper::title($this->documentTitle, 'itp-profile-add');
         }
 
-        JToolBarHelper::apply('profile.apply');
-        JToolBarHelper::save('profile.save');
+        JToolbarHelper::apply('profile.apply');
+        JToolbarHelper::save('profile.save');
 
         if (!$isNew) {
-            JToolBarHelper::cancel('profile.cancel', 'JTOOLBAR_CANCEL');
+            JToolbarHelper::cancel('profile.cancel', 'JTOOLBAR_CANCEL');
         } else {
-            JToolBarHelper::cancel('profile.cancel', 'JTOOLBAR_CLOSE');
+            JToolbarHelper::cancel('profile.cancel', 'JTOOLBAR_CLOSE');
         }
     }
 

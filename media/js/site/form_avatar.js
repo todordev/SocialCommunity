@@ -14,7 +14,7 @@ jQuery(document).ready(function() {
         width: aspectWidth,
         height: aspectHeight
     });
-console.log(socialCommunityOptions);
+
     // Initialize the cropper if image exists (browser has been reloaded).
     var $image = $pictureWrapper.find("img");
     if ($image) {

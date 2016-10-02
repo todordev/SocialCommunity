@@ -4,11 +4,14 @@
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
- * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // No direct access
 defined('_JEXEC') or die;
+
+jimport('Prism.libs.GuzzleHttp.init');
+jimport('Prism.libs.Aws.init');
 
 /**
  * Avatar controller class.
@@ -56,14 +59,11 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
         }
 
         try {
-
-            // Get image
             $image = $this->input->files->get('profile_image', array(), 'array');
             $file  = null;
 
             // Upload image
             if (!empty($image['name'])) {
-
                 $params = JComponentHelper::getParams('com_socialcommunity');
 
                 $filesystemHelper = new Prism\Filesystem\Helper($params);
@@ -120,11 +120,8 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
         }
 
         try {
-
-            // Remove old image if it exists.
             $oldImage = $app->getUserState(Socialcommunity\Constants::TEMPORARY_IMAGE_CONTEXT);
-            if (JString::strlen($oldImage) > 0) {
-
+            if (Joomla\String\StringHelper::strlen($oldImage) > 0) {
                 $params = JComponentHelper::getParams('com_socialcommunity');
 
                 $filesystemHelper = new Prism\Filesystem\Helper($params);
@@ -208,7 +205,6 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
         $imageUrl = '';
 
         try {
-
             // Get the folder where the images will be stored
             $params = JComponentHelper::getParams('com_socialcommunity');
 
@@ -223,7 +219,6 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
             // Resize the picture.
             $images            = $model->cropImage($temporaryFile, $options, $params);
 
-            jimport('Prism.libs.init');
             $temporaryAdapter    = new League\Flysystem\Adapter\Local($temporaryFolder);
             $temporaryFilesystem = new League\Flysystem\Filesystem($temporaryAdapter);
 
@@ -236,9 +231,9 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
 
             $mediaFolder       = $filesystemHelper->getMediaFolder($userId);
 
-            $model->moveImages($images, $mediaFolder, $manager);
+            $model->moveImages($images, $manager, $mediaFolder);
 
-            $model->storeImages($userId, $images, $mediaFolder, $storageFilesystem);
+            $model->storeImages($userId, $images, $storageFilesystem, $mediaFolder);
 
             // Prepare URL to the image.
             $imageName  = basename(Joomla\Utilities\ArrayHelper::getValue($images, 'image_profile'));
@@ -247,7 +242,6 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
             $app->setUserState(Socialcommunity\Constants::TEMPORARY_IMAGE_CONTEXT, null);
 
         } catch (RuntimeException $e) {
-
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
                 ->setText($e->getMessage())
@@ -257,7 +251,6 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
             $app->close();
 
         } catch (Exception $e) {
-
             JLog::add($e->getMessage(), JLog::DEBUG);
 
             $response

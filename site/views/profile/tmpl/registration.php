@@ -4,7 +4,7 @@
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
- * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
@@ -17,17 +17,29 @@ defined('_JEXEC') or die;
         </div>
     <?php endif; ?>
 
-    <div class="row">
-        <div class="col-md-6">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item active">
+            <a class="nav-link active" data-toggle="tab" href="#signin" role="tab">
+                <?php echo JText::_('COM_SOCIALCOMMUNITY_SIGNIN');?>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#registration" role="tab">
+                <?php echo JText::_('COM_SOCIALCOMMUNITY_REGISTRATION');?>
+            </a>
+        </li>
+    </ul>
 
+    <div class="tab-content">
+        <div class="tab-pane active" id="signin" role="tabpanel">
             <form action="<?php echo JRoute::_('index.php?option=com_users&task=user.login'); ?>" method="post" class="form-validate form-horizontal well">
 
                 <fieldset>
-                    <legend><?php echo JText::_('COM_SOCIALCOMMUNITY_SIGNIN_DEFAULT_LABEL');?></legend>
+                    <legend><?php echo JText::_('COM_SOCIALCOMMUNITY_SIGNIN');?></legend>
                     <div class="form-group">
                         <?php echo $this->formLogin->getLabel('username'); ?>
                         <div class="col-md-10">
-                        <?php echo $this->formLogin->getInput('username'); ?>
+                            <?php echo $this->formLogin->getInput('username'); ?>
                         </div>
                     </div>
 
@@ -52,9 +64,11 @@ defined('_JEXEC') or die;
                     <?php endif; ?>
 
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary">
-                            <?php echo JText::_('JLOGIN'); ?>
-                        </button>
+                        <div class="col-md-offset-2 col-md-10">
+                            <button type="submit" class="btn btn-primary">
+                                <?php echo JText::_('COM_SOCIALCOMMUNITY_SIGN_IN'); ?>
+                            </button>
+                        </div>
                     </div>
 
                     <input type="hidden" name="return" value="<?php echo base64_encode(JRoute::_(SocialCommunityHelperRoute::getProfileRoute())); ?>" />
@@ -69,13 +83,12 @@ defined('_JEXEC') or die;
                     <?php echo JText::_('COM_SOCIALCOMMUNITY_LOGIN_REMIND'); ?>
                 </a>
             </div>
-
         </div>
 
-        <div class="col-md-6">
+        <div class="tab-pane" id="registration" role="tabpanel">
             <form id="member-registration" action="<?php echo JRoute::_('index.php?option=com_users&task=registration.register'); ?>" method="post" class="form-validate form-horizontal well" enctype="multipart/form-data">
                 <fieldset>
-                    <legend><?php echo JText::_('COM_SOCIALCOMMUNITY_REGISTRATION_DEFAULT_LABEL');?></legend>
+                    <legend><?php echo JText::_('COM_SOCIALCOMMUNITY_USER_REGISTRATION');?></legend>
 
                     <div class="form-group">
                         <?php echo $this->formRegistration->getLabel('name'); ?>

@@ -20,7 +20,7 @@
         
         <field name="image_icon_width" type="text" default="24" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_ICON_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_ICON_WIDTH_DESC" />
         <field name="image_icon_height" type="text" default="24" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_ICON_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_ICON_HEIGHT_DESC" />
-        <field name="image_aspect_ratio" type="list" default="" label="COM_SOCIALCOMMUNITY_ASPECT_RATIO" description="COM_SOCIALCOMMUNITY_ASPECT_RATIO_DESC">
+        <field name="image_aspect_ratio" type="list" default="local" label="COM_SOCIALCOMMUNITY_ASPECT_RATIO" description="COM_SOCIALCOMMUNITY_ASPECT_RATIO_DESC">
             <option value="">COM_SOCIALCOMMUNITY_FREE</option>
             <option value="1/1">1/1</option>
             <option value="2/3">2/3</option>

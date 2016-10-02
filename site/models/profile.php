@@ -4,7 +4,7 @@
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
- * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
@@ -47,9 +47,10 @@ class SocialCommunityModelProfile extends JModelItem
     /**
      * Method to get an object.
      *
-     * @param    int $pk   The id of the object to get.
+     * @param    int $pk The id of the object to get.
      *
-     * @return    mixed    Object on success, false on failure.
+     * @throws   \RuntimeException
+     * @return   mixed    Object on success, false on failure.
      */
     public function getItem($pk = null)
     {
@@ -60,14 +61,17 @@ class SocialCommunityModelProfile extends JModelItem
         $storedId = $this->getStoreId($pk);
 
         if (!array_key_exists($storedId, $this->item)) {
-
             $db    = JFactory::getDbo();
             $query = $db->getQuery(true);
             $query
                 ->select('a.id, a.name, a.alias, a.image, a.image_square, a.bio, a.address, a.website, a.params, a.active, a.user_id')
                 ->from($db->quoteName('#__itpsc_profiles', 'a'))
-                ->where('a.user_id = ' . (int)$pk)
-                ->where('a.active = ' . (int)Prism\Constants::ACTIVE);
+                ->where('a.user_id = ' . (int)$pk);
+
+            $isOwner = $this->getState($this->option . '.visitor.is_owner');
+            if (!$isOwner) {
+                $query->where('a.active = ' . (int)Prism\Constants::ACTIVE);
+            }
 
             $db->setQuery($query, 0, 1);
             $item = $db->loadObject();

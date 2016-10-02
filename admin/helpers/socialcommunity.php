@@ -4,7 +4,7 @@
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
- * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
@@ -98,41 +98,5 @@ class SocialCommunityHelper
 
         $db->setQuery($query);
         $db->execute();
-    }
-
-    /**
-     * Create profiles for orphan users.
-     */
-    public static function createProfiles()
-    {
-        $db    = JFactory::getDbo();
-        $query = $db->getQuery(true);
-
-        $query
-            ->select('a.id, a.name')
-            ->from($db->quoteName('#__users', 'a'))
-            ->leftJoin($db->quoteName('#__itpsc_profiles', 'b') . ' ON a.id = b.user_id')
-            ->where('b.user_id IS NULL');
-
-        $db->setQuery($query);
-
-        $results = $db->loadAssocList();
-
-        if ($results !== null and count($results) > 0) {
-
-            foreach ($results as $result) {
-                $profile = new Socialcommunity\Profile\Profile($db);
-
-                $data = array(
-                    'user_id' => $result['id'],
-                    'name' => $result['name'],
-                    'alias' => $result['name'],
-                    'active' => Prism\Constants::ACTIVE
-                );
-
-                $profile->bind($data);
-                $profile->store();
-            }
-        }
     }
 }

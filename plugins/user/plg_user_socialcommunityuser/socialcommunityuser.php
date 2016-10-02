@@ -3,8 +3,8 @@
  * @package      SocialCommunity
  * @subpackage   Plugins
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2014 Todor Iliev <todor@itprism.com>. All rights reserved.
- * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -37,6 +37,7 @@ class plgUserSocialCommunityUser extends JPlugin
      * @param    boolean $success True if user was successfully stored in the database.
      * @param    string  $msg     Message.
      *
+     * @throws \InvalidArgumentException
      * @return    void
      * @since    1.6
      */
@@ -58,6 +59,7 @@ class plgUserSocialCommunityUser extends JPlugin
      * @param   boolean $success True if user was successfully stored in the database
      * @param   string  $msg     Message
      *
+     * @throws \InvalidArgumentException
      * @return  boolean
      *
      * @since   1.6
@@ -75,7 +77,6 @@ class plgUserSocialCommunityUser extends JPlugin
         $profile->load(array('user_id' => $userId));
 
         if ($profile->getId()) {
-
             // Remove profile record.
             $query = $this->db->getQuery(true);
             $query
@@ -107,13 +108,13 @@ class plgUserSocialCommunityUser extends JPlugin
      * @param   array $user    Holds the user data
      * @param   array $options Array holding options (remember, autoregister, group)
      *
+     * @throws \RuntimeException
      * @return  boolean  True on success
      * @since   1.5
      */
     public function onUserLogin($user, $options)
     {
         if (JComponentHelper::isEnabled('com_socialcommunity')) {
-
             $query = $this->db->getQuery(true);
 
             $query
@@ -139,8 +140,7 @@ class plgUserSocialCommunityUser extends JPlugin
         $data = array(
             'user_id'   => (int)$userId,
             'name'      => $name,
-            'alias'     => $name,
-            'active'    => Prism\Constants::ACTIVE
+            'alias'     => $name
         );
 
         $profile = new Socialcommunity\Profile\Profile($this->db);

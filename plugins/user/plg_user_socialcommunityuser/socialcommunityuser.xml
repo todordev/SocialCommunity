@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.5" type="plugin" group="user" method="upgrade">
+<extension version="3.6" type="plugin" group="user" method="upgrade">
     <name>PLG_USER_SOCIALCOMMUNITYUSER</name>
     <author>Todor Iliev</author>
     <copyright>Copyright (C) 2016 Todor Iliev ( ITPrism.com ). All rights reserved.</copyright>
@@ -7,7 +7,7 @@
     <authorEmail>todor@itprism.com</authorEmail>
     <authorUrl>http://itprism.com</authorUrl>
     <version>2.2</version>
-    <creationDate>29 February, 2016</creationDate>
+    <creationDate>02 October, 2016</creationDate>
     <description><![CDATA[
     <p><a href="http://itprism.com/free-joomla-extensions/others/open-source-social-network" target="_blank">User - SocialCommunity User</a> is an extension that creates and removes profiles in Social Community.</p>
     <p><a href='http://itprism.com/help/86-social-community-documentation' target='_blank'>Read documentation</a> that will help you to setup the extensions.</p>

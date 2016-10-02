@@ -4,11 +4,14 @@
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
- * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // No direct access
 defined('_JEXEC') or die();
+
+jimport('Prism.libs.GuzzleHttp.init');
+jimport('Prism.libs.Aws.init');
 
 /**
  * SocialCommunity profile controller class.
@@ -67,23 +70,20 @@ class SocialCommunityControllerProfile extends Prism\Controller\Form\Backend
         }
 
         try {
-
-            // Get image
             $image = $this->input->files->get('jform', array(), 'array');
             $image = Joomla\Utilities\ArrayHelper::getValue($image, 'photo');
 
             // Upload image
             if (!empty($image['name'])) {
-
                 $imageNames = $model->uploadImage($image);
+
                 if (!empty($imageNames['image'])) {
                     $validData = array_merge($validData, $imageNames);
                 }
-
             }
 
             $itemId = $model->save($validData);
-            
+
             $redirectOptions['id'] = $itemId;
 
         } catch (Exception $e) {
@@ -117,7 +117,6 @@ class SocialCommunityControllerProfile extends Prism\Controller\Form\Backend
         }
 
         try {
-
             $params = JComponentHelper::getParams('com_socialcommunity');
 
             $filesystemHelper = new Prism\Filesystem\Helper($params);
@@ -127,7 +126,7 @@ class SocialCommunityControllerProfile extends Prism\Controller\Form\Backend
             $mediaFolder         = $filesystemHelper->getMediaFolder($profile->getUserId());
 
             $model = $this->getModel();
-            $model->removeImage($itemId, $mediaFolder, $storageFilesystem);
+            $model->removeImage($itemId, $storageFilesystem, $mediaFolder);
 
         } catch (Exception $e) {
             JLog::add($e->getMessage());

@@ -4,7 +4,7 @@
  * @subpackage   Version
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
- * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 namespace Socialcommunity;
@@ -59,14 +59,14 @@ class Version
      *
      * @var string
      */
-    public $releaseDate = '29 February, 2016';
+    public $releaseDate = '02 October, 2016';
 
     /**
      * Minimum required version of Prism library.
      *
      * @var string
      */
-    public $requiredPrismVersion = '1.9';
+    public $requiredPrismVersion = '1.16';
 
     /**
      * License

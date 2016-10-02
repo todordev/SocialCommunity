@@ -148,7 +148,7 @@ class pkg_socialCommunityInstallerScript
         // Display result about verification for GD library
         $title = JText::_('COM_SOCIALCOMMUNITY_GD_LIBRARY');
         $info  = '';
-        if (!extension_loaded('gd') and function_exists('gd_info')) {
+        if (!extension_loaded('gd') and !function_exists('gd_info')) {
             $result = array('type' => 'important', 'text' => JText::_('COM_SOCIALCOMMUNITY_WARNING'));
         } else {
             $result = array('type' => 'success', 'text' => JText::_('JON'));
@@ -188,10 +188,21 @@ class pkg_socialCommunityInstallerScript
         }
         SocialCommunityInstallHelper::addRow($title, $result, $info);
 
+        // Display result about verification PHP Intl
+        $title = JText::_('COM_SOCIALCOMMUNITY_PHPINTL');
+        $info  = '';
+        if (!extension_loaded('intl')) {
+            $info   = JText::_('COM_SOCIALCOMMUNITY_PHPINTL_INFO');
+            $result = array('type' => 'important', 'text' => JText::_('JOFF'));
+        } else {
+            $result = array('type' => 'success', 'text' => JText::_('JON'));
+        }
+        SocialCommunityInstallHelper::addRow($title, $result, $info);
+        
         // Display result about verification PHP Version.
         $title = JText::_('COM_SOCIALCOMMUNITY_PHP_VERSION');
         $info  = '';
-        if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+        if (version_compare(PHP_VERSION, '5.5.0', '<')) {
             $result = array('type' => 'important', 'text' => JText::_('COM_SOCIALCOMMUNITY_WARNING'));
         } else {
             $result = array('type' => 'success', 'text' => JText::_('JYES'));
@@ -210,13 +221,28 @@ class pkg_socialCommunityInstallerScript
         SocialCommunityInstallHelper::addRow($title, $result, $info);
 
         // Display result about verification of installed Prism Library
-        $title = JText::_('COM_SOCIALCOMMUNITY_PRISM_LIBRARY');
         $info  = '';
         if (!class_exists('Prism\\Version')) {
+            $title  = JText::_('COM_SOCIALCOMMUNITY_PRISM_LIBRARY');
             $info   = JText::_('COM_SOCIALCOMMUNITY_PRISM_LIBRARY_DOWNLOAD');
             $result = array('type' => 'important', 'text' => JText::_('JNO'));
         } else {
-            $result = array('type' => 'success', 'text' => JText::_('JYES'));
+            $prismVersion   = new Prism\Version();
+            $text           = JText::sprintf('COM_SOCIALCOMMUNITY_CURRENT_V_S', $prismVersion->getShortVersion());
+
+            if (class_exists('Socialcommunity\\Version')) {
+                $componentVersion = new Socialcommunity\Version();
+                $title            = JText::sprintf('COM_SOCIALCOMMUNITY_PRISM_LIBRARY_S', $componentVersion->requiredPrismVersion);
+
+                if (version_compare($prismVersion->getShortVersion(), $componentVersion->requiredPrismVersion, '<')) {
+                    $info   = JText::_('COM_SOCIALCOMMUNITY_PRISM_LIBRARY_DOWNLOAD');
+                    $result = array('type' => 'warning', 'text' => $text);
+                }
+
+            } else {
+                $title  = JText::_('COM_SOCIALCOMMUNITY_PRISM_LIBRARY');
+                $result = array('type' => 'success', 'text' => $text);
+            }
         }
         SocialCommunityInstallHelper::addRow($title, $result, $info);
 
@@ -240,7 +266,6 @@ class pkg_socialCommunityInstallerScript
         if (!class_exists('Prism\\Version')) {
             echo JText::_('COM_SOCIALCOMMUNITY_MESSAGE_INSTALL_PRISM_LIBRARY');
         } else {
-
             if (class_exists('Socialcommunity\\Version')) {
                 $prismVersion     = new Prism\Version();
                 $componentVersion = new Socialcommunity\Version();
@@ -249,8 +274,5 @@ class pkg_socialCommunityInstallerScript
                 }
             }
         }
-
-        // Create profiles if orphans exist.
-        SocialCommunityHelper::createProfiles();
     }
 }

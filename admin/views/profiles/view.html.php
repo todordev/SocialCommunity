@@ -4,7 +4,7 @@
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
- * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
@@ -42,7 +42,8 @@ class SocialCommunityViewProfiles extends JViewLegacy
         $this->option     = JFactory::getApplication()->input->get('option');
 
         // Create profiles if orphans exist.
-        SocialCommunityHelper::createProfiles();
+        $model            = $this->getModel();
+        $model->createProfiles();
 
         $this->state      = $this->get('State');
         $this->items      = $this->get('Items');
@@ -120,6 +121,8 @@ class SocialCommunityViewProfiles extends JViewLegacy
         // Set toolbar items for the page
         JToolBarHelper::title(JText::_('COM_SOCIALCOMMUNITY_PROFILES_MANAGER'));
         JToolBarHelper::editList('profile.edit');
+        JToolBarHelper::divider();
+        JToolBarHelper::deleteList(JText::_('COM_SOCIALCOMMUNITY_DELETE_ITEMS_QUESTION'), 'profiles.delete');
         JToolBarHelper::divider();
         JToolBarHelper::custom('profiles.backToDashboard', 'dashboard', '', JText::_('COM_SOCIALCOMMUNITY_BACK_DASHBOARD'), false);
     }

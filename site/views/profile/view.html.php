@@ -4,7 +4,7 @@
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
- * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
@@ -83,7 +83,6 @@ class SocialCommunityViewProfile extends JViewLegacy
         }
 
         switch ($this->getLayout()) {
-
             case 'registration':
                 $this->prepareRegistration();
                 break;
@@ -113,9 +112,7 @@ class SocialCommunityViewProfile extends JViewLegacy
                 $pluginContext     = 'com_socialcommunity.profile';
 
                 switch ($this->getLayout()) {
-
                     case 'default':
-
                         $pluginContext .= '.wall';
 
                         // If I am logged in and I try to load profile page,
@@ -135,7 +132,6 @@ class SocialCommunityViewProfile extends JViewLegacy
                         break;
 
                     default: // details
-
                         $pluginContext .= '.details';
                         $this->prepareDetails();
 
@@ -181,8 +177,8 @@ class SocialCommunityViewProfile extends JViewLegacy
 
         JHtml::_('behavior.formvalidator');
 
-        $this->documentTitle = JText::sprintf('COM_SOCIALCOMMUNITY_REGISTRATION_S', $this->app->get('site'));
-        $this->breadcrumbTitle = JText::_('COM_SOCIALCOMMUNITY_REGISTRATION');
+        $this->documentTitle   = JText::sprintf('COM_SOCIALCOMMUNITY_SIGN_IN_S', $this->app->get('sitename'));
+        $this->breadcrumbTitle = JText::_('COM_SOCIALCOMMUNITY_LOGIN');
     }
 
     /**

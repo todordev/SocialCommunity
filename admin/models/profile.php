@@ -4,7 +4,7 @@
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
- * @license      http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
@@ -39,14 +39,14 @@ class SocialCommunityModelProfile extends JModelAdmin
      * @param   array   $data     An optional array of data for the form to interogate.
      * @param   boolean $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return  JForm   A JForm object on success, false on failure
+     * @return  JForm|bool   A JForm object on success, false on failure
      * @since   1.6
      */
     public function getForm($data = array(), $loadData = true)
     {
         // Get the form.
         $form = $this->loadForm($this->option . '.profile', 'profile', array('control' => 'jform', 'load_data' => $loadData));
-        if (empty($form)) {
+        if (!$form) {
             return false;
         }
 
@@ -56,6 +56,8 @@ class SocialCommunityModelProfile extends JModelAdmin
     /**
      * Method to get the data that should be injected in the form.
      *
+     * @throws \Exception
+     *
      * @return  mixed   The data for the form.
      * @since   1.6
      */
@@ -64,24 +66,23 @@ class SocialCommunityModelProfile extends JModelAdmin
         // Check the session for previously entered form data.
         $data = JFactory::getApplication()->getUserState($this->option . '.edit.profile.data', array());
 
-        if (empty($data)) {
+        if (!$data) {
             $data = $this->getItem();
 
             if ($data !== null and $data->id > 0) {
-
                 // Prepare social profiles
 
                 $socialProfiles = new Socialcommunity\Profile\SocialProfiles($this->getDbo());
                 $socialProfiles->load(array('user_id' => $data->user_id));
                 if (count($socialProfiles) > 0) {
                     foreach ($socialProfiles as $item) {
-                        $data->$item['type'] = $item['alias'];
+                        $type = $item['type'];
+                        $data->$type = $item['alias'];
                     }
                 }
 
                 // Prepare locations
                 if ($data->location_id > 0) {
-                    
                     $location = new Socialcommunity\Location\Location(JFactory::getDbo());
                     $location->load($data->location_id);
 
@@ -90,7 +91,6 @@ class SocialCommunityModelProfile extends JModelAdmin
                     if ($locationName !== '') {
                         $data->location_preview = $locationName;
                     }
-
                 }
 
                 $secretKey  = JFactory::getApplication()->get('secret');
@@ -98,7 +98,6 @@ class SocialCommunityModelProfile extends JModelAdmin
                 $data->phone   = ($data->phone !== null) ? Defuse\Crypto\Crypto::decrypt($data->phone, $secretKey) : null;
                 $data->address = ($data->address !== null) ? Defuse\Crypto\Crypto::decrypt($data->address, $secretKey) : null;
             }
-
         }
 
         return $data;
@@ -108,6 +107,10 @@ class SocialCommunityModelProfile extends JModelAdmin
      * Save data into the DB
      *
      * @param array $data The data about item
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \UnexpectedValueException
      *
      * @return  int   Item ID
      */
@@ -124,7 +127,7 @@ class SocialCommunityModelProfile extends JModelAdmin
 
         // Prepare gender.
         $allowedGender = array('male', 'female');
-        $gender        = JString::trim(Joomla\Utilities\ArrayHelper::getValue($data, 'gender'));
+        $gender        = trim(Joomla\Utilities\ArrayHelper::getValue($data, 'gender'));
         if (!in_array($gender, $allowedGender, true)) {
             $gender = 'male';
         }
@@ -148,12 +151,14 @@ class SocialCommunityModelProfile extends JModelAdmin
 
         $row->store(true);
 
+        $id = $row->get('id');
+
         // Update the name in Joomla! users table
         SocialCommunityHelper::updateName($row->get('user_id'), $name);
 
         $this->saveSocialProfiles($row->get('user_id'), $data);
 
-        return $row->get('id');
+        return $id;
     }
 
     /**
@@ -161,6 +166,10 @@ class SocialCommunityModelProfile extends JModelAdmin
      *
      * @param    int   $userId
      * @param    array $data
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \UnexpectedValueException
      *
      * @return    mixed        The record id on success, null on failure.
      * @since    1.6
@@ -177,9 +186,8 @@ class SocialCommunityModelProfile extends JModelAdmin
         $allowedTypes = array('facebook', 'twitter', 'linkedin');
 
         foreach ($profiles as $key => $alias) {
-
-            $type  = Joomla\String\String::trim($key);
-            $alias = Joomla\String\String::trim($alias);
+            $type  = Joomla\String\StringHelper::trim($key);
+            $alias = Joomla\String\StringHelper::trim($alias);
 
             if (!in_array($type, $allowedTypes, true)) {
                 continue;
@@ -230,17 +238,16 @@ class SocialCommunityModelProfile extends JModelAdmin
      * @param SocialCommunityTableProfile $table
      * @param array                       $data
      *
+     * @throws  \Exception
      * @since    1.6
      */
     protected function prepareImages($table, $data)
     {
         // Prepare image
         if (!empty($data['image'])) {
-
-            $params          = JComponentHelper::getParams($this->option);
+            $params              = JComponentHelper::getParams($this->option);
             /** @var  $params Joomla\Registry\Registry */
 
-            jimport('Prism.libs.init');
             $filesystemHelper    = new Prism\Filesystem\Helper($params);
 
             $mediaFolder         = $filesystemHelper->getMediaFolder($data['user_id']);
@@ -248,11 +255,11 @@ class SocialCommunityModelProfile extends JModelAdmin
 
             // Delete old image if I upload a new one
             if ($table->get('image')) {
-                $this->deleteImages($table, $mediaFolder, $storageFilesystem);
+                $this->deleteImages($table, $storageFilesystem, $mediaFolder);
             }
 
             // Move the images from temporary to media folder.
-            $this->moveImages($data, $mediaFolder, $storageFilesystem);
+            $this->moveImages($data, $storageFilesystem, $mediaFolder);
             
             $table->set('image', $data['image']);
             $table->set('image_small', $data['image_small']);
@@ -263,14 +270,14 @@ class SocialCommunityModelProfile extends JModelAdmin
 
     /**
      * Move the images from temporary to media folder.
-     * 
+     *
      * @param array $data
-     * @param string $mediaFolder
      * @param League\Flysystem\Filesystem $storageFilesystem
+     * @param string $mediaFolder
      *
      * @throws Exception
      */
-    protected function moveImages($data, $mediaFolder, $storageFilesystem)
+    protected function moveImages($data, $storageFilesystem, $mediaFolder)
     {
         $app = JFactory::getApplication();
         /** @var $app JApplicationAdministrator */
@@ -298,6 +305,7 @@ class SocialCommunityModelProfile extends JModelAdmin
      * @param SocialCommunityTableProfile $table
      * @param array                       $data
      *
+     * @throws \Exception
      * @since    1.6
      */
     protected function prepareContact($table, $data)
@@ -332,7 +340,12 @@ class SocialCommunityModelProfile extends JModelAdmin
      *
      * @param array $image Array with information about uploaded file.
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
+     * @throws \Exception
+     *
      * @return array
      */
     public function uploadImage($image)
@@ -346,6 +359,7 @@ class SocialCommunityModelProfile extends JModelAdmin
 
         $params          = JComponentHelper::getParams($this->option);
         /** @var  $params Joomla\Registry\Registry */
+
         $temporaryFolder = JPath::clean($app->get('tmp_path'));
 
         // Joomla! media extension parameters
@@ -443,7 +457,7 @@ class SocialCommunityModelProfile extends JModelAdmin
             JFile::delete($originalFile);
         }
 
-        return $names = array(
+        return array(
             'image'        => $imageName,
             'image_small'  => $smallName,
             'image_icon'   => $iconName,
@@ -455,18 +469,21 @@ class SocialCommunityModelProfile extends JModelAdmin
      * Delete image only
      *
      * @param int $id Item ID.
-     * @param string $mediaFolder
      * @param League\Flysystem\Filesystem  $filesystem
+     * @param string $mediaFolder
+     *
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
      */
-    public function removeImage($id, $mediaFolder, $filesystem)
+    public function removeImage($id, $filesystem, $mediaFolder)
     {
         // Load category data
         $row = $this->getTable();
         $row->load($id);
 
         if ((int)$row->get('id') > 0) {
-            
-            $this->deleteImages($row, $mediaFolder, $filesystem);
+            $this->deleteImages($row, $filesystem, $mediaFolder);
 
             $row->set('image', '');
             $row->set('image_small', '');
@@ -480,10 +497,12 @@ class SocialCommunityModelProfile extends JModelAdmin
      * Delete the images.
      *
      * @param JTable $row
-     * @param string $mediaFolder
      * @param League\Flysystem\Filesystem  $filesystem
+     * @param string $mediaFolder
+     *
+     * @throws \Exception
      */
-    protected function deleteImages($row, $mediaFolder, $filesystem)
+    protected function deleteImages($row, $filesystem, $mediaFolder)
     {
         // Delete the profile pictures.
         if ($row->get('image') !== '' and $filesystem->has($mediaFolder .'/'. $row->get('image'))) {
