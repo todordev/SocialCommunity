@@ -21,7 +21,7 @@ if(!$this->item->image){
 }
 
 $layoutData = new stdClass();
-$layoutData->profileLink = JRoute::_(SocialCommunityHelperRoute::getProfileRoute($this->item->user_id), false);
+$layoutData->profileLink = JRoute::_(SocialcommunityHelperRoute::getProfileRoute($this->item->user_id), false);
 $layoutData->imageAlt = $imageAlt;
 $layoutData->imageSquare = $imageSquare;
 $layoutData->name = $this->escape($this->item->name);

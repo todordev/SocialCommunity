@@ -82,7 +82,7 @@ class SocialCommunityControllerWall extends JControllerLegacy
         $displayData = new stdClass();
         $displayData->id = $entity->getId();
 
-        $displayData->profileLink = JRoute::_(SocialCommunityHelperRoute::getProfileRoute($profile->getSlug()), false);
+        $displayData->profileLink = JRoute::_(SocialcommunityHelperRoute::getProfileRoute($profile->getSlug()), false);
         $displayData->name        = htmlentities($profile->getName(), ENT_QUOTES, 'utf-8');
         $displayData->alias       = htmlentities($profile->getAlias(), ENT_QUOTES, 'utf-8');
         $displayData->imageSquare = $mediaFolder .'/'. $profile->getImageSquare();

@@ -43,7 +43,7 @@ defined('_JEXEC') or die;?>
                                 </div>
                             <?php } ?>
                             <div class="media-body">
-                                <a href="<?php echo JRoute::_(SocialCommunityHelperRoute::getNotificationRoute($item->id)); ?>"><?php echo $item->content; ?></a>
+                                <a href="<?php echo JRoute::_(SocialcommunityHelperRoute::getNotificationRoute($item->id)); ?>"><?php echo $item->content; ?></a>
                             </div>
                         </div>
                     </div>

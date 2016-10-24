@@ -10,8 +10,8 @@
 	<url>http://itprism.com</url>
 	<packager>Todor Iliev</packager>
 	<packagerurl>http://itprism.com</packagerurl>
-	<version>2.2</version>
-	<creationDate>02 October, 2016</creationDate>
+	<version>2.2.1</version>
+	<creationDate>24 October, 2016</creationDate>
 	<description><![CDATA[
 	<p><a href="http://itprism.com/free-joomla-extensions/others/open-source-social-network" target="_blank">Social Community</a> is an extension that provides ability to create social network on your website.</p>
 	<p><a href="http://itprism.com/" target="_blank">Subscribe for the newsletter</a> to receive <strong>gifts</strong>, <strong>discount codes</strong>, information about <strong>updates</strong> and information about <strong>new ITPrism extensions</strong>.</p>
@@ -27,7 +27,6 @@
 	<scriptfile>install.php</scriptfile>
 
     <updateservers>
-		<server type="extension" priority="1" name="Social Community ( from CDN )">http://cdn.itprism.com/updates/socialcommunity/package.xml</server>
-		<server type="extension" priority="2" name="Social Community ( from CDN )">http://cdn.itprism.com/updates/socialcommunity.xml</server>
+		<server type="extension" priority="1" name="SocialCommunity ( from CDN )">http://cdn.itprism.com/updates/socialcommunity/package.xml</server>
     </updateservers>
 </extension>

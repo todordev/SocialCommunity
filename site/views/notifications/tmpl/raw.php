@@ -17,7 +17,7 @@ defined('_JEXEC') or die;?>
     ?>
     <div class="row sc-note-tiny <?php echo $notReadClass; ?>">
         <div class="col-xs-10">
-            <a href="<?php echo JRoute::_(SocialCommunityHelperRoute::getNotificationRoute($item->id)); ?>">
+            <a href="<?php echo JRoute::_(SocialcommunityHelperRoute::getNotificationRoute($item->id)); ?>">
                 <?php echo $this->escape($item->content); ?>
             </a>
         </div>

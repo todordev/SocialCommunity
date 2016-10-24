@@ -71,7 +71,7 @@ defined('_JEXEC') or die;
                         </div>
                     </div>
 
-                    <input type="hidden" name="return" value="<?php echo base64_encode(JRoute::_(SocialCommunityHelperRoute::getProfileRoute())); ?>" />
+                    <input type="hidden" name="return" value="<?php echo base64_encode(JRoute::_(SocialcommunityHelperRoute::getProfileRoute())); ?>" />
                     <?php echo JHtml::_('form.token'); ?>
                 </fieldset>
             </form>
@@ -128,7 +128,7 @@ defined('_JEXEC') or die;
                 </div>
                 <input type="hidden" name="option" value="com_users" />
                 <input type="hidden" name="task" value="registration.register" />
-                <input type="hidden" name="return" value="<?php echo base64_encode(JRoute::_(SocialCommunityHelperRoute::getProfileRoute())); ?>" />
+                <input type="hidden" name="return" value="<?php echo base64_encode(JRoute::_(SocialcommunityHelperRoute::getProfileRoute())); ?>" />
                 <?php echo JHtml::_('form.token');?>
             </form>
             <?php echo $this->formRegistration->getLabel('spacer'); ?>

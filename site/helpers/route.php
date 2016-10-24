@@ -21,7 +21,7 @@ defined('_JEXEC') or die;
  * @subpackage     Components
  * @since          1.5
  */
-abstract class SocialCommunityHelperRoute
+abstract class SocialcommunityHelperRoute
 {
     protected static $component = 'com_socialcommunity';
     protected static $lookup;
@@ -30,7 +30,7 @@ abstract class SocialCommunityHelperRoute
      * This method route profile
      *
      * @param    int  $id
-     * 
+     *
      * @return string
      */
     public static function getProfileRoute($id = 0)
@@ -161,10 +161,8 @@ abstract class SocialCommunityHelperRoute
         }
 
         if ($needles) {
-
             foreach ($needles as $view => $ids) {
                 if (isset(self::$lookup[$view])) {
-
                     foreach ($ids as $id) {
                         if (isset(self::$lookup[$view][(int)$id])) {
                             return self::$lookup[$view][(int)$id];

@@ -5,8 +5,8 @@ jQuery(document).ready(function() {
 
     /** Image Tools **/
 
-    var aspectWidth  = scImageWidth * 3;
-    var aspectHeight = scImageHeight * 2;
+    var aspectWidth  = socialCommunityOptions.imageWidth * 3;
+    var aspectHeight = socialCommunityOptions.imageHeight * 2;
 
     // Set picture wrapper size.
     var $pictureWrapper = jQuery("#js-fixed-dragger-cropper");
@@ -18,7 +18,7 @@ jQuery(document).ready(function() {
     // Initialize the cropper if image exists (browser has been reloaded).
     var $image = $pictureWrapper.find("img");
     if ($image) {
-        initializeCropper($image, scImageWidth, scImageHeight, socialCommunityOptions.aspectRatio);
+        initializeCropper($image, socialCommunityOptions.imageWidth, socialCommunityOptions.imageHeight, socialCommunityOptions.aspectRatio);
     }
 
     // Prepare the token as an object.
@@ -53,7 +53,7 @@ jQuery(document).ready(function() {
                 });
                 $image.appendTo('#js-fixed-dragger-cropper');
 
-                initializeCropper($image, scImageWidth, scImageHeight, socialCommunityOptions.aspectRatio);
+                initializeCropper($image, socialCommunityOptions.imageWidth, socialCommunityOptions.imageHeight, socialCommunityOptions.aspectRatio);
             }
 
             // Hide ajax loader.
@@ -112,7 +112,7 @@ jQuery(document).ready(function() {
 
                 jQuery.isLoading({
                     text: Joomla.JText._('COM_SOCIALCOMMUNITY_CROPPING___'),
-                    'tpl': '<span class="isloading-wrapper %wrapper%"><img src="'+scUrl+'libraries/Prism/ui/images/loader_120x120.gif" width="120" height="120"/></span>'
+                    'tpl': '<span class="isloading-wrapper %wrapper%"><img src="'+socialCommunityOptions.url+'libraries/Prism/ui/images/loader_120x120.gif" width="120" height="120"/></span>'
                 });
 
                 jQuery("#js-image-tools").hide();
@@ -142,7 +142,7 @@ jQuery(document).ready(function() {
 
     });
 
-    function initializeCropper($image, scImageWidth, scImageHeight, aspectRatio) {
+    function initializeCropper($image, imageWidth, imageHeight, aspectRatio) {
 
         var options = {
             autoCropArea: 0.6, // Center 60%
@@ -152,8 +152,8 @@ jQuery(document).ready(function() {
             movable: false,
             resizable: true,
             zoomable: false,
-            minWidth: scImageWidth,
-            minHeight: scImageHeight,
+            minWidth: imageWidth,
+            minHeight: imageHeight,
             built: function() {
                 jQuery("#js-image-tools").show();
             }

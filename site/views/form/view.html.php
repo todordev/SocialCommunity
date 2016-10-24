@@ -72,7 +72,6 @@ class SocialCommunityViewForm extends JViewLegacy
         }
 
         switch ($this->layout) {
-
             case 'avatar':
                 $this->prepareAvatar();
                 break;
@@ -127,13 +126,6 @@ class SocialCommunityViewForm extends JViewLegacy
         $this->fileForCropping = (!$file) ? null : JUri::base() . $filesystemHelper->getTemporaryMediaFolderUri() . '/' . $file;
 
         $this->displayRemoveButton = 'none';
-
-        $js = '
-        var socialCommunityOptions = {
-            aspectRatio: '. $this->params->get('image_aspect_ratio', '') . '
-        }';
-
-        $this->document->addScriptDeclaration($js);
     }
 
     protected function prepareContact()
@@ -199,7 +191,6 @@ class SocialCommunityViewForm extends JViewLegacy
         JHtml::_('jquery.framework');
 
         switch ($this->layout) {
-
             case 'contact':
                 JHtml::_('Prism.ui.bootstrap3Typeahead');
 
@@ -224,18 +215,20 @@ class SocialCommunityViewForm extends JViewLegacy
                 JText::script('COM_SOCIALCOMMUNITY_QUESTION_REMOVE_IMAGE');
                 JText::script('COM_SOCIALCOMMUNITY_CROPPING___');
 
-                // Provide image size.
+                // Provide image options.
                 $js = '
-                    var scImageWidth  = ' . $this->params->get('image_width', 200) . ';
-                    var scImageHeight = ' . $this->params->get('image_height', 200) . ';
-                    var scUrl         = "' . JUri::base() . '"
-                ';
+                var socialCommunityOptions = {
+                    aspectRatio: '. $this->params->get('image_aspect_ratio', '""') . ',
+                    imageWidth: ' . $this->params->get('image_width', 200) . ',
+                    imageHeight: ' . $this->params->get('image_height', 200) . ',
+                    url: "' . JUri::base() . '"
+                }';
 
                 $this->document->addScriptDeclaration($js);
+
                 break;
 
             default: // Load scripts used on layout 'Basic'.
-
                 if ($this->params->get('include_chosen', 0)) {
                     JHtml::_('formbehavior.chosen', '#jform_gender');
                 }

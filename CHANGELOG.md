@@ -1,5 +1,8 @@
-Social Community Changelog
+SocialCommunity Changelog
 ---------
+
+###v2.2.1
+* Fixed an issue with functionality of uploading an avatar.
 
 ###v2.2
 * The namespaces of the classes in Socailcommunity library were changed.

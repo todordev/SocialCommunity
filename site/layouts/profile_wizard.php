@@ -36,25 +36,25 @@ switch($displayData->layout) {
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li <?php echo ($active['basic']) ? 'class="active"' : '';?>>
-                    <a href="<?php echo JRoute::_(SocialCommunityHelperRoute::getFormRoute('default'));?>">
+                    <a href="<?php echo JRoute::_(SocialcommunityHelperRoute::getFormRoute('default'));?>">
                     <?php echo JText::_('COM_SOCIALCOMMUNITY_BASIC'); ?>
                     </a>
                 </li>
 
                 <li <?php echo ($active['avatar']) ? 'class="active"' : '';?>>
-                    <a href="<?php echo JRoute::_(SocialCommunityHelperRoute::getFormRoute('avatar'));?>">
+                    <a href="<?php echo JRoute::_(SocialcommunityHelperRoute::getFormRoute('avatar'));?>">
                         <?php echo JText::_('COM_SOCIALCOMMUNITY_PICTURE'); ?>
                     </a>
                 </li>
 
                 <li <?php echo ($active['contact']) ? 'class="active"' : '';?>>
-                    <a href="<?php echo JRoute::_(SocialCommunityHelperRoute::getFormRoute('contact'));?>">
+                    <a href="<?php echo JRoute::_(SocialcommunityHelperRoute::getFormRoute('contact'));?>">
                         <?php echo JText::_('COM_SOCIALCOMMUNITY_CONTACT'); ?>
                     </a>
                 </li>
 
                 <li <?php echo ($active['social']) ? 'class="active"' : '';?>>
-                    <a href="<?php echo JRoute::_(SocialCommunityHelperRoute::getFormRoute('social'));?>">
+                    <a href="<?php echo JRoute::_(SocialcommunityHelperRoute::getFormRoute('social'));?>">
                         <?php echo JText::_('COM_SOCIALCOMMUNITY_SOCIAL_PROFILES'); ?>
                     </a>
                 </li>
