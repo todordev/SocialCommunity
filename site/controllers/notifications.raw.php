@@ -43,7 +43,6 @@ class SocialCommunityControllerNotifications extends JControllerLegacy
         $response = new Prism\Response\Json();
 
         try {
-
             $notifications = new Socialcommunity\Notification\Notifications(JFactory::getDbo());
 
             $options = array(
@@ -52,9 +51,8 @@ class SocialCommunityControllerNotifications extends JControllerLegacy
             );
 
             $notRead = $notifications->getNumber($options);
-
         } catch (Exception $e) {
-            JLog::add($e->getMessage());
+            JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             throw new Exception(JText::_('COM_CHALLENGES_ERROR_SYSTEM'));
         }
 

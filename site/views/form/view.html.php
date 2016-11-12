@@ -116,7 +116,7 @@ class SocialCommunityViewForm extends JViewLegacy
         $this->state  = $model->getState();
         $this->params = $this->state->get('params');
 
-        $filesystemHelper = new Prism\Filesystem\Helper($this->params);
+        $filesystemHelper  = new Prism\Filesystem\Helper($this->params);
         $this->mediaFolder = $filesystemHelper->getMediaFolderUri($this->userId);
 
         $this->item = $model->getItem($this->userId);

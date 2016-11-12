@@ -21,19 +21,18 @@ defined('_JEXEC') or die;
     	<?php echo JHtml::_('grid.sort',  'COM_SOCIALCOMMUNITY_COUNTRY_CODE', 'a.code', $this->listDirn, $this->listOrder); ?>
     </th>
     <th width="10%" class="center nowrap hidden-phone">
-    	<?php echo JHtml::_('grid.sort',  'COM_SOCIALCOMMUNITY_COUNTRY_CODE4', 'a.code4', $this->listDirn, $this->listOrder); ?>
+    	<?php echo JHtml::_('grid.sort',  'COM_SOCIALCOMMUNITY_LOCALE', 'a.locale', $this->listDirn, $this->listOrder); ?>
     </th>
     <th width="10%" class="center nowrap hidden-phone">
-    	<?php echo JHtml::_('grid.sort',  'COM_SOCIALCOMMUNITY_COUNTRY_LATITUDE', 'a.latitude', $this->listDirn, $this->listOrder); ?>
+    	<?php echo JHtml::_('grid.sort',  'COM_SOCIALCOMMUNITY_LATITUDE', 'a.latitude', $this->listDirn, $this->listOrder); ?>
     </th>
     <th width="10%" class="center nowrap hidden-phone">
-    	<?php echo JHtml::_('grid.sort',  'COM_SOCIALCOMMUNITY_COUNTRY_LONGITUDE', 'a.longitude', $this->listDirn, $this->listOrder); ?>
+    	<?php echo JHtml::_('grid.sort',  'COM_SOCIALCOMMUNITY_LONGITUDE', 'a.longitude', $this->listDirn, $this->listOrder); ?>
     </th>
-    <th width="20%" class="center nowrap hidden-phone">
-    	<?php echo JHtml::_('grid.sort',  'COM_SOCIALCOMMUNITY_COUNTRY_TIMEZONE', 'a.timezone', $this->listDirn, $this->listOrder); ?>
+    <th width="20%" class="nowrap hidden-phone">
+    	<?php echo JHtml::_('grid.sort',  'COM_SOCIALCOMMUNITY_TIMEZONE', 'a.timezone', $this->listDirn, $this->listOrder); ?>
     </th>
     <th width="3%" class="center nowrap hidden-phone">
         <?php echo JHtml::_('grid.sort',  'JGRID_HEADING_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
 </tr>
-	  

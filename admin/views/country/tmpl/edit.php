@@ -15,20 +15,14 @@ defined('_JEXEC') or die;
         <form enctype="multipart/form-data"  action="<?php echo JRoute::_('index.php?option=com_socialcommunity'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
         
             <fieldset>
-                
-                <div class="control-group">
-                    <div class="control-label"><?php echo $this->form->getLabel('name'); ?></div>
-    				<div class="controls"><?php echo $this->form->getInput('name'); ?></div>
-                </div>
-                <div class="control-group">
-                    <div class="control-label"><?php echo $this->form->getLabel('code'); ?></div>
-    				<div class="controls"><?php echo $this->form->getInput('code'); ?></div>
-                </div>
-                <div class="control-group">
-                    <div class="control-label"><?php echo $this->form->getLabel('id'); ?></div>
-    				<div class="controls"><?php echo $this->form->getInput('id'); ?></div>
-                </div>
-                
+                <?php echo $this->form->renderField('name'); ?>
+                <?php echo $this->form->renderField('code'); ?>
+                <?php echo $this->form->renderField('locale'); ?>
+                <?php echo $this->form->renderField('latitude'); ?>
+                <?php echo $this->form->renderField('longitude'); ?>
+                <?php echo $this->form->renderField('currency'); ?>
+                <?php echo $this->form->renderField('timezone'); ?>
+                <?php echo $this->form->renderField('id'); ?>
             </fieldset>
             
             <input type="hidden" name="task" value="" />

@@ -7,6 +7,9 @@
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
+use Joomla\Utilities\ArrayHelper;
+use Joomla\String\StringHelper;
+
 // no direct access
 defined('_JEXEC') or die;
 
@@ -28,14 +31,14 @@ class SocialCommunityModelImport extends JModelForm
      * @param   array   $data     An optional array of data for the form to interrogate.
      * @param   boolean $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return  JForm   A JForm object on success, false on failure
+     * @return  JForm|bool   A JForm object on success, false on failure
      * @since   1.6
      */
     public function getForm($data = array(), $loadData = true)
     {
         // Get the form.
         $form = $this->loadForm($this->option . '.import', 'import', array('control' => 'jform', 'load_data' => $loadData));
-        if (empty($form)) {
+        if (!$form) {
             return false;
         }
 
@@ -68,41 +71,33 @@ class SocialCommunityModelImport extends JModelForm
         $filePath = '';
 
         foreach ($dir as $fileinfo) {
-
             $currentFileName = JFile::stripExt($fileinfo->getFilename());
 
             if (!$fileinfo->isDot() and strcmp($fileName, $currentFileName) === 0) {
-                $filePath = $destFolder . DIRECTORY_SEPARATOR . JFile::makeSafe($fileinfo->getFilename());
+                $filePath = $destFolder .'/'. JFile::makeSafe($fileinfo->getFilename());
                 break;
             }
-
         }
 
         return $filePath;
     }
 
-    public function uploadFile($fileData, $type)
+    public function uploadFile($uploadedFileData, $type)
     {
         $app = JFactory::getApplication();
         /** @var $app JApplicationAdministrator */
 
         jimport('joomla.filesystem.archive');
 
-        $uploadedFile = Joomla\Utilities\ArrayHelper::getValue($fileData, 'tmp_name');
-        $uploadedName = Joomla\Utilities\ArrayHelper::getValue($fileData, 'name');
-        $errorCode    = Joomla\Utilities\ArrayHelper::getValue($fileData, 'error');
-
-        $source       = JPath::clean($app->get('tmp_path')) . DIRECTORY_SEPARATOR . JFile::makeSafe($uploadedName);
-
-        $file = new Prism\File\File();
+        $uploadedFile = ArrayHelper::getValue($uploadedFileData, 'tmp_name');
+        $uploadedName = ArrayHelper::getValue($uploadedFileData, 'name');
+        $errorCode    = ArrayHelper::getValue($uploadedFileData, 'error');
 
         // Prepare size validator.
-        $KB       = 1024 * 1024;
-        $fileSize = (int)$app->input->server->get('CONTENT_LENGTH');
+        $KB       = pow(1024, 2);
+        $fileSize = ArrayHelper::getValue($uploadedFileData, 'size', 0, 'int');
 
         $mediaParams   = JComponentHelper::getParams('com_media');
-        /** @var $mediaParams Joomla\Registry\Registry */
-
         $uploadMaxSize = $mediaParams->get('upload_maxsize') * $KB;
 
         // Prepare size validator.
@@ -111,35 +106,34 @@ class SocialCommunityModelImport extends JModelForm
         // Prepare server validator.
         $serverValidator = new Prism\File\Validator\Server($errorCode, array(UPLOAD_ERR_NO_FILE));
 
-        $file->addValidator($sizeValidator);
-        $file->addValidator($serverValidator);
+        $file = new Prism\File\File($uploadedFile);
+        $file
+            ->addValidator($sizeValidator)
+            ->addValidator($serverValidator);
 
         // Validate the file
         if (!$file->isValid()) {
             throw new RuntimeException($file->getError());
         }
 
-        // Prepare uploader object.
-        $uploader = new Prism\File\Uploader\Local($uploadedFile);
-        $uploader->setDestination($source);
+        // Upload the file.
+        $rootFolder      = JPath::clean($app->get('tmp_path'), '/');
+        $filesystemLocal = new Prism\Filesystem\Adapter\Local($rootFolder);
+        $sourceFile      = $filesystemLocal->upload($uploadedFileData);
 
-        // Upload the file
-        $file->setUploader($uploader);
-        $file->upload();
-
-        $fileName = basename($source);
+        $fileName        = basename($sourceFile);
 
         // Extract file if it is archive
-        $ext = JString::strtolower(JFile::getExt($fileName));
+        $ext = StringHelper::strtolower(JFile::getExt($fileName));
         if (strcmp($ext, 'zip') === 0) {
-            $destFolder = JPath::clean($app->get('tmp_path') . DIRECTORY_SEPARATOR . $type);
-            if (JFolder::exists($destFolder)) {
-                JFolder::delete($destFolder);
+            $destinationFolder = JPath::clean($app->get('tmp_path') .'/'. $type, '/');
+            if (JFolder::exists($destinationFolder)) {
+                JFolder::delete($destinationFolder);
             }
 
-            $filePath = $this->extractFile($source, $destFolder);
+            $filePath = $this->extractFile($sourceFile, $destinationFolder);
         } else {
-            $filePath = $source;
+            $filePath = $sourceFile;
         }
 
         return $filePath;
@@ -157,7 +151,7 @@ class SocialCommunityModelImport extends JModelForm
      */
     public function importLocations($file, $resetId = false, $minPopulation = 0)
     {
-        $ext = JString::strtolower(JFile::getExt($file));
+        $ext = StringHelper::strtolower(JFile::getExt($file));
 
         if (strcmp($ext, 'xml') === 0) {
             $this->importLocationsXml($file, $resetId);
@@ -169,7 +163,6 @@ class SocialCommunityModelImport extends JModelForm
     protected function importLocationsTxt($file, $resetId, $minPopulation)
     {
         if (JFile::exists($file)) {
-
             $db    = $this->getDbo();
 
             $items   = array();
@@ -177,14 +170,13 @@ class SocialCommunityModelImport extends JModelForm
 
             $i = 0;
             foreach (Prism\Utilities\FileHelper::getLine($file) as $key => $geodata) {
-
                 $item = mb_split("\t", $geodata);
 
                 // Check for missing ascii characters name
-                $name = JString::trim($item[2]);
+                $name = StringHelper::trim($item[2]);
                 if (!$name) {
                     // If missing ascii characters name, use utf-8 characters name
-                    $name = JString::trim($item[1]);
+                    $name = StringHelper::trim($item[1]);
                 }
 
                 // If missing name, skip the record
@@ -196,9 +188,9 @@ class SocialCommunityModelImport extends JModelForm
                     continue;
                 }
 
-                $id = (!$resetId) ? JString::trim($item[0]) : 'null';
+                $id = (!$resetId) ? StringHelper::trim($item[0]) : 'null';
 
-                $items[] = $id . ',' . $db->quote($name) . ',' . $db->quote(JString::trim($item[4])) . ',' . $db->quote(JString::trim($item[5])) . ',' . $db->quote(JString::trim($item[8])) . ',' . $db->quote(JString::trim($item[17]));
+                $items[] = $id . ',' . $db->quote($name) . ',' . $db->quote(StringHelper::trim($item[4])) . ',' . $db->quote(StringHelper::trim($item[5])) . ',' . $db->quote(StringHelper::trim($item[8])) . ',' . $db->quote(StringHelper::trim($item[17]));
                 $i++;
                 if ($i === 500) {
                     $i = 0;
@@ -245,9 +237,8 @@ class SocialCommunityModelImport extends JModelForm
 
             $i = 0;
             foreach ($content->location as $item) {
-
                 // Check for missing ascii characters name
-                $name = JString::trim($item->name);
+                $name = StringHelper::trim($item->name);
 
                 // If missing name, skip the record
                 if (!$name) {
@@ -255,12 +246,12 @@ class SocialCommunityModelImport extends JModelForm
                 }
 
                 // Reset ID
-                $id = (!empty($item->id) and !$resetId) ? JString::trim($item->id) : 'null';
+                $id = (!empty($item->id) and !$resetId) ? StringHelper::trim($item->id) : 'null';
 
                 $items[] =
-                    $id . ',' . $db->quote($name) . ',' . $db->quote(JString::trim($item->latitude)) . ',' .
-                    $db->quote(JString::trim($item->longitude)) . ',' . $db->quote(JString::trim($item->country_code)) . ',' .
-                    $db->quote(JString::trim($item->timezone));
+                    $id . ',' . $db->quote($name) . ',' . $db->quote(StringHelper::trim($item->latitude)) . ',' .
+                    $db->quote(StringHelper::trim($item->longitude)) . ',' . $db->quote(StringHelper::trim($item->country_code)) . ',' .
+                    $db->quote(StringHelper::trim($item->timezone));
 
                 $i++;
                 if ($i === 500) {
@@ -291,9 +282,7 @@ class SocialCommunityModelImport extends JModelForm
             }
 
             unset($content, $items, $item);
-
         }
-
     }
 
     /**
@@ -303,6 +292,8 @@ class SocialCommunityModelImport extends JModelForm
      *
      * @param string $file    A path to file
      * @param bool   $resetId Reset existing IDs with new ones.
+     *
+     * @throws \RuntimeException
      */
     public function importCountries($file, $resetId = false)
     {
@@ -310,7 +301,6 @@ class SocialCommunityModelImport extends JModelForm
         $content = new SimpleXMLElement($xmlstr);
 
         if (!empty($content)) {
-
             // Check for existed countries.
             $db    = JFactory::getDbo();
             $query = $db->getQuery(true);
@@ -322,7 +312,7 @@ class SocialCommunityModelImport extends JModelForm
             $result = $db->loadResult();
 
             if (!empty($result)) { // Update current countries and insert newest.
-                $this->updateCountries($content, $resetId);
+                $this->updateCountries($content);
             } else { // Insert new ones
                 $this->insertCountries($content, $resetId);
             }
@@ -337,20 +327,18 @@ class SocialCommunityModelImport extends JModelForm
         $db = $this->getDbo();
 
         foreach ($content->country as $item) {
-
-            $name = JString::trim($item->name);
-            $code = JString::trim($item->code);
+            $name = StringHelper::trim($item->name);
+            $code = StringHelper::trim($item->code);
             if (!$name or !$code) {
                 continue;
             }
 
             $id = (!$resetId) ? (int)$item->id : 'null';
 
-            $items[] = $id . ',' . $db->quote($name) . ',' . $db->quote($code) . ',' . $db->quote($item->code4) . ',' . $db->quote($item->latitude) . ',' . $db->quote($item->longitude) . ',' . $db->quote($item->currency) . ',' . $db->quote($item->timezone);
-
+            $items[] = $id . ',' . $db->quote($name) . ',' . $db->quote($code) . ',' . $db->quote($item->locale) . ',' . $db->quote($item->latitude) . ',' . $db->quote($item->longitude) . ',' . $db->quote($item->currency) . ',' . $db->quote($item->timezone);
         }
 
-        $columns = array('id', 'name', 'code', 'code4', 'latitude', 'longitude', 'currency', 'timezone');
+        $columns = array('id', 'name', 'code', 'locale', 'latitude', 'longitude', 'currency', 'timezone');
 
         $query = $db->getQuery(true);
 
@@ -361,7 +349,6 @@ class SocialCommunityModelImport extends JModelForm
 
         $db->setQuery($query);
         $db->execute();
-
     }
 
     /**
@@ -375,8 +362,7 @@ class SocialCommunityModelImport extends JModelForm
         JLoader::register('SocialCommunityTableCountry', JPATH_ADMINISTRATOR . '/components/com_socialcommunity/tables/country.php');
 
         foreach ($content->country as $item) {
-
-            $code = JString::trim($item->code);
+            $code = StringHelper::trim($item->code);
 
             $keys = array('code' => $code);
 
@@ -384,15 +370,15 @@ class SocialCommunityModelImport extends JModelForm
             $table->load($keys);
 
             if (!$table->get('id')) {
-                $table->set('name', JString::trim($item->name));
+                $table->set('name', StringHelper::trim($item->name));
                 $table->set('code', $code);
             }
 
-            $table->code4     = JString::trim($item->code4);
-            $table->latitude  = JString::trim($item->latitude);
-            $table->longitude = JString::trim($item->longitude);
-            $table->currency  = JString::trim($item->currency);
-            $table->timezone  = JString::trim($item->timezone);
+            $table->set('locale', StringHelper::trim($item->locale));
+            $table->set('latitude', StringHelper::trim($item->latitude));
+            $table->set('longitude', StringHelper::trim($item->longitude));
+            $table->set('currency', StringHelper::trim($item->currency));
+            $table->set('timezone', StringHelper::trim($item->timezone));
 
             $table->store();
         }
@@ -421,15 +407,13 @@ class SocialCommunityModelImport extends JModelForm
     protected function importSocialCommunityStates($content)
     {
         if (!empty($content)) {
-
             $states = array();
             $db     = JFactory::getDbo();
 
             // Prepare data
             foreach ($content->state as $item) {
-
                 // Check for missing state
-                $stateCode = JString::trim($item->state_code);
+                $stateCode = StringHelper::trim($item->state_code);
                 if (!$stateCode) {
                     continue;
                 }
@@ -437,12 +421,10 @@ class SocialCommunityModelImport extends JModelForm
                 $id = (int)$item->id;
 
                 $states[$stateCode][] = '(' . $db->quoteName('id') . '=' . (int)$id . ')';
-
             }
 
             // Import data
             foreach ($states as $stateCode => $ids) {
-
                 $query = $db->getQuery(true);
 
                 $query
@@ -467,7 +449,6 @@ class SocialCommunityModelImport extends JModelForm
         $db = $this->getDbo();
 
         switch ($resource) {
-
             case 'countries':
                 $db->truncateTable('#__itpsc_countries');
                 break;
@@ -475,7 +456,6 @@ class SocialCommunityModelImport extends JModelForm
             case 'locations':
                 $db->truncateTable('#__itpsc_locations');
                 break;
-
         }
     }
 }

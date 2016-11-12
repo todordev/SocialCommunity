@@ -16,14 +16,13 @@ defined('_JEXEC') or die;
             <?php echo JHtml::_('grid.id', $i, $item->id); ?>
         </td>
 		<td>
-			<a href="<?php echo JRoute::_("index.php?option=com_socialcommunity&view=country&layout=edit&id=" .(int)$item->id); ?>" ><?php echo $item->name; ?></a>
+			<a href="<?php echo JRoute::_('index.php?option=com_socialcommunity&view=country&layout=edit&id=' .(int)$item->id); ?>" ><?php echo $item->name; ?></a>
 		</td>
 		<td class="center"><?php echo $item->code; ?></td>
-		<td class="center hidden-phone"><?php echo $item->code4; ?></td>
+		<td class="center hidden-phone"><?php echo $item->locale; ?></td>
 		<td class="center hidden-phone"><?php echo $item->latitude; ?></td>
 		<td class="center hidden-phone"><?php echo $item->longitude; ?></td>
-		<td class="center hidden-phone"><?php echo $item->timezone; ?></td>
+		<td class="hidden-phone"><?php echo $item->timezone; ?></td>
         <td class="center hidden-phone"><?php echo $item->id;?></td>
 	</tr>
 <?php } ?>
-	  

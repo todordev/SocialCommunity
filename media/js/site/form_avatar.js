@@ -142,6 +142,10 @@ jQuery(document).ready(function() {
 
     });
 
+    jQuery("#js-btn-remove-image").on('click', function(){
+
+    });
+
     function initializeCropper($image, imageWidth, imageHeight, aspectRatio) {
 
         var options = {

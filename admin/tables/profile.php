@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-class SocialCommunityTableProfile extends JTable
+class SocialcommunityTableProfile extends JTable
 {
     /**
      * @param JDatabaseDriver $db

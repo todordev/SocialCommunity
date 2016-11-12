@@ -1,6 +1,11 @@
 SocialCommunity Changelog
 ---------
 
+###v2.2.2
+* It was made compatible with Prism Library v1.17.
+* Added option for image quality.
+* Fixed an issue "The system does not removed profile pictures."
+
 ###v2.2.1
 * Fixed an issue with functionality of uploading an avatar.
 

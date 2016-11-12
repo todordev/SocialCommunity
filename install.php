@@ -274,5 +274,8 @@ class pkg_socialCommunityInstallerScript
                 }
             }
         }
+
+        // Create profiles if orphans exist.
+        Socialcommunity\Profile\Helper::createProfiles();
     }
 }

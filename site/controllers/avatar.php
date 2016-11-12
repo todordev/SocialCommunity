@@ -28,18 +28,14 @@ class SocialCommunityControllerAvatar extends Prism\Controller\DefaultController
      * @param    string $prefix The class prefix. Optional.
      * @param    array  $config Configuration array for model. Optional.
      *
-     * @return   SocialCommunityModelAvatar    The model.
+     * @return   SocialCommunityModelAvatar|bool    The model.
      * @since    1.5
      */
     public function getModel($name = 'Avatar', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => false))
     {
-        $model = parent::getModel($name, $prefix, $config);
-        return $model;
+        return parent::getModel($name, $prefix, $config);
     }
 
-    /**
-     * Delete image
-     */
     public function removeImage()
     {
         // Check for request forgeries.
@@ -62,12 +58,10 @@ class SocialCommunityControllerAvatar extends Prism\Controller\DefaultController
         );
 
         try {
-
             $params = JComponentHelper::getParams('com_socialcommunity');
 
-            $filesystemHelper = new Prism\Filesystem\Helper($params);
+            $filesystemHelper    = new Prism\Filesystem\Helper($params);
 
-            jimport('Prism.libs.init');
             $storageFilesystem   = $filesystemHelper->getFilesystem();
             $mediaFolder         = $filesystemHelper->getMediaFolder($userId);
 
@@ -75,7 +69,7 @@ class SocialCommunityControllerAvatar extends Prism\Controller\DefaultController
             $model->removeImage($userId, $mediaFolder, $storageFilesystem);
 
         } catch (Exception $e) {
-            JLog::add($e->getMessage());
+            JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
 

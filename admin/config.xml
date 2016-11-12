@@ -11,15 +11,13 @@
     <fieldset name="media" label="COM_SOCIALCOMMUNITY_MEDIA_TITLE" description="COM_SOCIALCOMMUNITY_MEDIA_PARAMS">
         <field name="image_width" type="text" default="200" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_WIDTH_DESC" />
         <field name="image_height" type="text" default="200" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_HEIGHT_DESC" />
-        
         <field name="image_small_width" type="text" default="100" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_SMALL_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_SMALL_WIDTH_DESC" />
         <field name="image_small_height" type="text" default="100" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_SMALL_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_SMALL_HEIGHT_DESC" />
-        
         <field name="image_square_width" type="text" default="50" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_SQUARE_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_SQUARE_WIDTH_DESC" />
         <field name="image_square_height" type="text" default="50" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_SQUARE_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_SQUARE_HEIGHT_DESC" />
-        
         <field name="image_icon_width" type="text" default="24" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_ICON_WIDTH" description="COM_SOCIALCOMMUNITY_IMAGE_ICON_WIDTH_DESC" />
         <field name="image_icon_height" type="text" default="24" size="50" label="COM_SOCIALCOMMUNITY_IMAGE_ICON_HEIGHT" description="COM_SOCIALCOMMUNITY_IMAGE_ICON_HEIGHT_DESC" />
+        <field name="image_quality" type="text" default="80" label="COM_SOCIALCOMMUNITY_IMAGE_QUALITY" description="COM_SOCIALCOMMUNITY_IMAGE_QUALITY_DESC"/>
         <field name="image_aspect_ratio" type="list" default="" label="COM_SOCIALCOMMUNITY_ASPECT_RATIO" description="COM_SOCIALCOMMUNITY_ASPECT_RATIO_DESC">
             <option value="">COM_SOCIALCOMMUNITY_FREE</option>
             <option value="1/1">1/1</option>

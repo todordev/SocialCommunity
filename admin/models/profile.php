@@ -7,8 +7,14 @@
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
+use Joomla\Utilities\ArrayHelper;
+
 // no direct access
 defined('_JEXEC') or die;
+
+// Register Observers
+JLoader::register('SocialcommunityObserverProfile', SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR . '/tables/observers/profile.php');
+JObserverMapper::addObserverClassToClass('SocialcommunityObserverProfile', 'SocialcommunityTableProfile', array('typeAlias' => 'com_socialcommunity.profile'));
 
 /**
  * This model provides functionality for managing user profile.
@@ -25,10 +31,10 @@ class SocialCommunityModelProfile extends JModelAdmin
      * @param   string $prefix A prefix for the table class name. Optional.
      * @param   array  $config Configuration array for model. Optional.
      *
-     * @return  SocialCommunityTableProfile
+     * @return  SocialCommunityTableProfile|bool
      * @since   1.6
      */
-    public function getTable($type = 'Profile', $prefix = 'SocialCommunityTable', $config = array())
+    public function getTable($type = 'Profile', $prefix = 'SocialcommunityTable', $config = array())
     {
         return JTable::getInstance($type, $prefix, $config);
     }
@@ -36,7 +42,7 @@ class SocialCommunityModelProfile extends JModelAdmin
     /**
      * Method to get the record form.
      *
-     * @param   array   $data     An optional array of data for the form to interogate.
+     * @param   array   $data     An optional array of data for the form to interrogate.
      * @param   boolean $loadData True if the form is to load its own data (default case), false if not.
      *
      * @return  JForm|bool   A JForm object on success, false on failure
@@ -111,15 +117,16 @@ class SocialCommunityModelProfile extends JModelAdmin
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      * @throws \UnexpectedValueException
+     * @throws \Exception
      *
      * @return  int   Item ID
      */
     public function save($data)
     {
-        $id    = Joomla\Utilities\ArrayHelper::getValue($data, 'id', 0, 'int');
-        $name  = Joomla\Utilities\ArrayHelper::getValue($data, 'name', '', 'string');
-        $alias = Joomla\Utilities\ArrayHelper::getValue($data, 'alias', '', 'string');
-        $bio   = Joomla\Utilities\ArrayHelper::getValue($data, 'bio', '', 'string');
+        $id    = ArrayHelper::getValue($data, 'id', 0, 'int');
+        $name  = ArrayHelper::getValue($data, 'name', '', 'string');
+        $alias = ArrayHelper::getValue($data, 'alias', '', 'string');
+        $bio   = ArrayHelper::getValue($data, 'bio', '', 'string');
 
         if (!$bio) {
             $bio = null;
@@ -127,7 +134,7 @@ class SocialCommunityModelProfile extends JModelAdmin
 
         // Prepare gender.
         $allowedGender = array('male', 'female');
-        $gender        = trim(Joomla\Utilities\ArrayHelper::getValue($data, 'gender'));
+        $gender        = trim(ArrayHelper::getValue($data, 'gender'));
         if (!in_array($gender, $allowedGender, true)) {
             $gender = 'male';
         }
@@ -178,9 +185,9 @@ class SocialCommunityModelProfile extends JModelAdmin
     {
         // Prepare profiles.
         $profiles = array(
-            'facebook' => Joomla\Utilities\ArrayHelper::getValue($data, 'facebook'),
-            'twitter'  => Joomla\Utilities\ArrayHelper::getValue($data, 'twitter'),
-            'linkedin' => Joomla\Utilities\ArrayHelper::getValue($data, 'linkedin')
+            'facebook' => ArrayHelper::getValue($data, 'facebook'),
+            'twitter'  => ArrayHelper::getValue($data, 'twitter'),
+            'linkedin' => ArrayHelper::getValue($data, 'linkedin')
         );
 
         $allowedTypes = array('facebook', 'twitter', 'linkedin');
@@ -282,7 +289,7 @@ class SocialCommunityModelProfile extends JModelAdmin
         $app = JFactory::getApplication();
         /** @var $app JApplicationAdministrator */
         
-        $temporaryFolder = JPath::clean($app->get('tmp_path'));
+        $temporaryFolder = JPath::clean($app->get('tmp_path'), '/');
         
         // Move the files to the media folder.
         $temporaryAdapter    = new League\Flysystem\Adapter\Local($temporaryFolder);
@@ -338,7 +345,7 @@ class SocialCommunityModelProfile extends JModelAdmin
     /**
      * Upload an image
      *
-     * @param array $image Array with information about uploaded file.
+     * @param array $uploadedFileData Array with information about uploaded file.
      *
      * @throws \RuntimeException
      * @throws \LogicException
@@ -348,29 +355,27 @@ class SocialCommunityModelProfile extends JModelAdmin
      *
      * @return array
      */
-    public function uploadImage($image)
+    public function uploadImage(array $uploadedFileData)
     {
         $app = JFactory::getApplication();
         /** @var $app JApplicationAdministrator */
 
-        $uploadedFile = Joomla\Utilities\ArrayHelper::getValue($image, 'tmp_name');
-        $uploadedName = Joomla\Utilities\ArrayHelper::getValue($image, 'name');
-        $errorCode    = Joomla\Utilities\ArrayHelper::getValue($image, 'error');
+        $uploadedFile = ArrayHelper::getValue($uploadedFileData, 'tmp_name');
+        $uploadedName = ArrayHelper::getValue($uploadedFileData, 'name');
+        $errorCode    = ArrayHelper::getValue($uploadedFileData, 'error');
 
-        $params          = JComponentHelper::getParams($this->option);
+        $params          = JComponentHelper::getParams('com_socialcommunity');
         /** @var  $params Joomla\Registry\Registry */
 
-        $temporaryFolder = JPath::clean($app->get('tmp_path'));
+        $temporaryFolder = JPath::clean($app->get('tmp_path'), '/');
 
         // Joomla! media extension parameters
         /** @var  $mediaParams Joomla\Registry\Registry */
         $mediaParams   = JComponentHelper::getParams('com_media');
 
-        $file          = new Prism\File\File();
-
         // Prepare size validator.
-        $KB            = 1024 * 1024;
-        $fileSize      = (int)$app->input->server->get('CONTENT_LENGTH');
+        $KB            = pow(1024, 2);
+        $fileSize      = ArrayHelper::getValue($uploadedFileData, 'size', 0, 'int');
         $uploadMaxSize = $mediaParams->get('upload_maxsize') * $KB;
 
         // Prepare file size validator
@@ -390,6 +395,7 @@ class SocialCommunityModelProfile extends JModelAdmin
         $imageExtensions = explode(',', $mediaParams->get('image_extensions'));
         $imageValidator->setImageExtensions($imageExtensions);
 
+        $file = new Prism\File\File($uploadedFile);
         $file
             ->addValidator($sizeValidator)
             ->addValidator($imageValidator)
@@ -400,61 +406,57 @@ class SocialCommunityModelProfile extends JModelAdmin
             throw new RuntimeException($file->getError());
         }
 
-        // Generate temporary file name
-        $ext = JFile::makeSafe(JFile::getExt($image['name']));
-        $generatedName = Prism\Utilities\StringHelper::generateRandomString(16);
-        $originalFile  = JPath::clean($temporaryFolder . DIRECTORY_SEPARATOR . $generatedName . '.' . $ext);
+        // Upload the file.
+        $rootFolder      = JPath::clean($app->get('tmp_path'), '/');
+        $filesystemLocal = new Prism\Filesystem\Adapter\Local($rootFolder);
+        $sourceFile      = $filesystemLocal->upload($uploadedFileData);
 
-        if (!JFile::upload($uploadedFile, $originalFile)) {
+        if (!$sourceFile) {
             throw new \RuntimeException(\JText::_('COM_SOCIALCOMMUNITY_ERROR_FILE_CANT_BE_UPLOADED'));
         }
 
         // Generate file names for the image files.
         $generatedName = Prism\Utilities\StringHelper::generateRandomString(16);
-        $imageName  = $generatedName . '_image.png';
-        $smallName  = $generatedName . '_small.png';
-        $squareName = $generatedName . '_square.png';
-        $iconName   = $generatedName . '_icon.png';
 
         // Resize image
-        $image = new JImage();
-        $image->loadFile($originalFile);
-        if (!$image->isLoaded()) {
-            throw new RuntimeException(JText::sprintf('COM_SOCIALCOMMUNITY_ERROR_FILE_NOT_FOUND', $originalFile));
-        }
+        $image = new Prism\File\Image($sourceFile);
 
-        $imageFile  = JPath::clean($temporaryFolder . DIRECTORY_SEPARATOR . $imageName);
-        $smallFile  = JPath::clean($temporaryFolder . DIRECTORY_SEPARATOR . $smallName);
-        $squareFile = JPath::clean($temporaryFolder . DIRECTORY_SEPARATOR . $squareName);
-        $iconFile   = JPath::clean($temporaryFolder . DIRECTORY_SEPARATOR . $iconName);
+        $resizingOptions = new Joomla\Registry\Registry();
+        $resizingOptions->set('create_new', Prism\Constants::NO);
+        $resizingOptions->set('filename', $generatedName);
+        $resizingOptions->set('quality', $params->get('image_quality', Prism\Constants::QUALITY_VERY_HIGH));
 
         // Create profile picture
-        $width  = $params->get('image_width', 200);
-        $height = $params->get('image_height', 200);
-        $image->resize($width, $height, false);
-        $image->toFile($imageFile, IMAGETYPE_PNG);
+        $resizingOptions->set('width', $params->get('image_width', 200));
+        $resizingOptions->set('height', $params->get('image_height', 200));
+        $resizingOptions->set('suffix', '_image');
+        $fileData  = $image->resize($temporaryFolder, $resizingOptions);
+        $imageName = $fileData['filename'];
 
         // Create small profile picture
-        $width  = $params->get('small_width', 100);
-        $height = $params->get('small_height', 100);
-        $image->resize($width, $height, false);
-        $image->toFile($smallFile, IMAGETYPE_PNG);
+        $resizingOptions->set('width', $params->get('small_width', 100));
+        $resizingOptions->set('height', $params->get('small_height', 100));
+        $resizingOptions->set('suffix', '_small');
+        $fileData  = $image->resize($temporaryFolder, $resizingOptions);
+        $smallName = $fileData['filename'];
 
         // Create square picture
-        $width  = $params->get('square_width', 50);
-        $height = $params->get('square_height', 50);
-        $image->resize($width, $height, false);
-        $image->toFile($squareFile, IMAGETYPE_PNG);
+        $resizingOptions->set('width', $params->get('square_width', 50));
+        $resizingOptions->set('height', $params->get('square_height', 50));
+        $resizingOptions->set('suffix', '_square');
+        $fileData   = $image->resize($temporaryFolder, $resizingOptions);
+        $squareName = $fileData['filename'];
 
         // Create icon picture
-        $width  = $params->get('icon_width', 24);
-        $height = $params->get('icon_height', 24);
-        $image->resize($width, $height, false);
-        $image->toFile($iconFile, IMAGETYPE_PNG);
+        $resizingOptions->set('width', $params->get('icon_width', 24));
+        $resizingOptions->set('height', $params->get('icon_height', 24));
+        $resizingOptions->set('suffix', '_icon');
+        $fileData   = $image->resize($temporaryFolder, $resizingOptions);
+        $iconName = $fileData['filename'];
 
         // Remove the temporary file
-        if (JFile::exists($originalFile)) {
-            JFile::delete($originalFile);
+        if (JFile::exists($sourceFile)) {
+            JFile::delete($sourceFile);
         }
 
         return array(
@@ -475,6 +477,7 @@ class SocialCommunityModelProfile extends JModelAdmin
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
      * @throws \UnexpectedValueException
+     * @throws \Exception
      */
     public function removeImage($id, $filesystem, $mediaFolder)
     {

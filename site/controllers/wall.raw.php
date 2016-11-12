@@ -47,7 +47,7 @@ class SocialCommunityControllerWall extends JControllerLegacy
         $user    = JFactory::getUser();
         $userId  = $user->get('id');
 
-        $content = JString::trim(strip_tags($content));
+        $content = Joomla\String\StringHelper::trim(strip_tags($content));
         $content = JHtmlString::truncate($content, 140);
 
         if (!$userId) {
@@ -57,7 +57,6 @@ class SocialCommunityControllerWall extends JControllerLegacy
         $userTimeZone = (!$user->getParam('timezone')) ? null : $user->getParam('timezone');
 
         try {
-
             $date   = new JDate('now', $userTimeZone);
 
             $entity = new Socialcommunity\Wall\User\Post(JFactory::getDbo());
@@ -65,9 +64,8 @@ class SocialCommunityControllerWall extends JControllerLegacy
             $entity->setContent($content);
             $entity->setCreated($date->toSql(true));
             $entity->store();
-
         } catch (Exception $e) {
-            JLog::add($e->getMessage());
+            JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
 
@@ -106,7 +104,7 @@ class SocialCommunityControllerWall extends JControllerLegacy
 
         $response = new Prism\Response\Json();
 
-        $itemId = $this->input->getInt('id');
+        $itemId  = $this->input->getInt('id');
         $userId  = JFactory::getUser()->get('id');
 
         $validatorOwner = new Socialcommunity\Validator\Post\Owner(JFactory::getDbo(), $itemId, $userId);
@@ -121,14 +119,13 @@ class SocialCommunityControllerWall extends JControllerLegacy
         }
 
         try {
-
             $entity = new Socialcommunity\Wall\User\Post(JFactory::getDbo());
             $entity->setId($itemId);
             $entity->setUserId($userId);
 
             $entity->remove();
         } catch (Exception $e) {
-            JLog::add($e->getMessage());
+            JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
 

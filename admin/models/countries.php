@@ -30,7 +30,7 @@ class SocialCommunityModelCountries extends JModelList
                 'id', 'a.id',
                 'name', 'a.name',
                 'code', 'a.code',
-                'code4', 'a.code4',
+                'locale', 'a.locale',
                 'latitude', 'a.latitude',
                 'longitude', 'a.longitude',
                 'timezone', 'a.timezone',
@@ -91,7 +91,7 @@ class SocialCommunityModelCountries extends JModelList
         $query->select(
             $this->getState(
                 'list.select',
-                'a.id, a.name, a.code, a.code4, a.latitude, a.longitude, a.timezone'
+                'a.id, a.name, a.code, a.locale, a.latitude, a.longitude, a.timezone, a.currency'
             )
         );
         $query->from($db->quoteName('#__itpsc_countries', 'a'));
@@ -102,7 +102,6 @@ class SocialCommunityModelCountries extends JModelList
             if (stripos($search, 'id:') === 0) {
                 $query->where('a.id = ' . (int)substr($search, 3));
             } else {
-
                 $escaped = $db->escape($search, true);
                 $quoted  = $db->quote('%' . $escaped . '%', false);
                 $query->where('a.name LIKE ' . $quoted);

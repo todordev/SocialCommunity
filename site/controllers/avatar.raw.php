@@ -50,7 +50,7 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
 
         if (!$userId) {
             $response
-                ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILUREURE'))
+                ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
                 ->setText(JText::_('COM_SOCIALCOMMUNITY_ERROR_INVALID_PROFILE'))
                 ->failure();
 
@@ -59,8 +59,8 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
         }
 
         try {
-            $image = $this->input->files->get('profile_image', array(), 'array');
-            $file  = null;
+            $image    = $this->input->files->get('profile_image', array(), 'array');
+            $fileUrl  = null;
 
             // Upload image
             if (!empty($image['name'])) {
@@ -68,29 +68,31 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
 
                 $filesystemHelper = new Prism\Filesystem\Helper($params);
 
-                $model    = $this->getModel();
-                $fileData = $model->uploadImage($image, $filesystemHelper->getTemporaryMediaFolder(JPATH_BASE));
+                $model      = $this->getModel();
+                $sourceFile = $model->uploadImage($image, $filesystemHelper->getTemporaryMediaFolder(JPATH_ROOT));
 
-                if (!empty($fileData['filename'])) {
-                    $file = JUri::base() . $filesystemHelper->getTemporaryMediaFolderUri() . '/' . $fileData['filename'];
-                    $app->setUserState(Socialcommunity\Constants::TEMPORARY_IMAGE_CONTEXT, $fileData['filename']);
+                if ($sourceFile) {
+                    $filename = basename($sourceFile);
+                    $fileUrl  = JUri::base() . $filesystemHelper->getTemporaryMediaFolderUri() . '/' . $filename;
+                    $app->setUserState(Socialcommunity\Constants::TEMPORARY_IMAGE_CONTEXT, $filename);
                 }
             }
 
         } catch (Exception $e) {
+            JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
 
-        if (!$file) {
+        if (!$fileUrl) {
             $response
-                ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILUREURE'))
+                ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
                 ->setText(JText::_('COM_SOCIALCOMMUNITY_ERROR_FILE_CANNOT_BE_UPLOADED'))
                 ->failure();
         } else {
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_SUCCESS'))
                 ->setText(JText::_('COM_SOCIALCOMMUNITY_FILE_UPLOADED_SUCCESSFULLY'))
-                ->setData(array('image' => $file))
+                ->setData(array('image' => $fileUrl))
                 ->success();
         }
 
@@ -127,9 +129,8 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
                 $filesystemHelper = new Prism\Filesystem\Helper($params);
 
                 // Get the folder where the images will be stored
-                $temporaryFolder = $filesystemHelper->getTemporaryMediaFolder(JPATH_BASE);
-
-                $oldImage = JPath::clean($temporaryFolder . '/' . basename($oldImage));
+                $temporaryFolder = $filesystemHelper->getTemporaryMediaFolder(JPATH_ROOT);
+                $oldImage = JPath::clean($temporaryFolder .'/'. basename($oldImage), '/');
 
                 if (JFile::exists($oldImage)) {
                     JFile::delete($oldImage);
@@ -140,6 +141,7 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
             $app->setUserState(Socialcommunity\Constants::TEMPORARY_IMAGE_CONTEXT, null);
 
         } catch (Exception $e) {
+            JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
                 ->setText(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'))
@@ -217,7 +219,7 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
             );
 
             // Resize the picture.
-            $images            = $model->cropImage($temporaryFile, $options, $params);
+            $images              = $model->cropImage($temporaryFile, $options, $params);
 
             $temporaryAdapter    = new League\Flysystem\Adapter\Local($temporaryFolder);
             $temporaryFilesystem = new League\Flysystem\Filesystem($temporaryAdapter);
@@ -251,7 +253,7 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
             $app->close();
 
         } catch (Exception $e) {
-            JLog::add($e->getMessage(), JLog::DEBUG);
+            JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
 
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))

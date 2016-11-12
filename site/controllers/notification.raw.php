@@ -59,13 +59,12 @@ class SocialCommunityControllerNotification extends JControllerLegacy
         }
 
         try {
-
             $notification = new Socialcommunity\Notification\Notification(JFactory::getDbo());
             $notification->load($itemId);
             $notification->remove();
 
         } catch (Exception $e) {
-            JLog::add($e->getMessage());
+            JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
 

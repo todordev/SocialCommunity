@@ -42,8 +42,7 @@ class SocialCommunityViewProfiles extends JViewLegacy
         $this->option     = JFactory::getApplication()->input->get('option');
 
         // Create profiles if orphans exist.
-        $model            = $this->getModel();
-        $model->createProfiles();
+        Socialcommunity\Profile\Helper::createProfiles();
 
         $this->state      = $this->get('State');
         $this->items      = $this->get('Items');
@@ -119,12 +118,12 @@ class SocialCommunityViewProfiles extends JViewLegacy
     protected function addToolbar()
     {
         // Set toolbar items for the page
-        JToolBarHelper::title(JText::_('COM_SOCIALCOMMUNITY_PROFILES_MANAGER'));
-        JToolBarHelper::editList('profile.edit');
-        JToolBarHelper::divider();
-        JToolBarHelper::deleteList(JText::_('COM_SOCIALCOMMUNITY_DELETE_ITEMS_QUESTION'), 'profiles.delete');
-        JToolBarHelper::divider();
-        JToolBarHelper::custom('profiles.backToDashboard', 'dashboard', '', JText::_('COM_SOCIALCOMMUNITY_BACK_DASHBOARD'), false);
+        JToolbarHelper::title(JText::_('COM_SOCIALCOMMUNITY_PROFILES_MANAGER'));
+        JToolbarHelper::editList('profile.edit');
+        JToolbarHelper::divider();
+        JToolbarHelper::deleteList(JText::_('COM_SOCIALCOMMUNITY_DELETE_ITEMS_QUESTION'), 'profiles.delete');
+        JToolbarHelper::divider();
+        JToolbarHelper::custom('profiles.backToDashboard', 'dashboard', '', JText::_('COM_SOCIALCOMMUNITY_BACK_DASHBOARD'), false);
     }
 
     /**

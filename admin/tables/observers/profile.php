@@ -6,6 +6,9 @@
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
+
+use Joomla\Utilities\ArrayHelper;
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -20,7 +23,7 @@ defined('JPATH_PLATFORM') or die;
  * @link         http://docs.joomla.org/JTableObserver
  * @since        3.1.2
  */
-class SocialCommunityObserverProfile extends JTableObserver
+class SocialcommunityObserverProfile extends JTableObserver
 {
     /**
      * The pattern for this table's TypeAlias
@@ -37,6 +40,7 @@ class SocialCommunityObserverProfile extends JTableObserver
      * @param   JObservableInterface $observableObject The subject object to be observed
      * @param   array                $params           ( 'typeAlias' => $typeAlias )
      *
+     * @throws \InvalidArgumentException
      * @return  SocialCommunityObserverProfile
      *
      * @since   3.1.2
@@ -45,7 +49,7 @@ class SocialCommunityObserverProfile extends JTableObserver
     {
         $observer = new self($observableObject);
 
-        $observer->typeAliasPattern = Joomla\Utilities\ArrayHelper::getValue($params, 'typeAlias');
+        $observer->typeAliasPattern = ArrayHelper::getValue($params, 'typeAlias');
 
         return $observer;
     }
@@ -59,27 +63,24 @@ class SocialCommunityObserverProfile extends JTableObserver
      *
      * @since   3.1.2
      * @throws  UnexpectedValueException
+     * @throws  InvalidArgumentException
      */
     public function onBeforeDelete($pk)
     {
         $db = $this->table->getDbo();
 
-        jimport('Socialcommunity.profile');
-
         $profile = new Socialcommunity\Profile\Profile($db);
-        $profile->load($this->table->id);
+        $profile->load(['user_id' => (int)$this->table->get('user_id')]);
 
         if ($profile->getId()) {
-
-            $params       = JComponentHelper::getParams('com_socialcommunity');
+            $params      = JComponentHelper::getParams('com_socialcommunity');
             /** @var  $params Joomla\Registry\Registry */
 
             $filesystemHelper = new Prism\Filesystem\Helper($params);
-            $mediaFolder = $filesystemHelper->getMediaFolderUri($profile->getId());
+            $mediaFolder = $filesystemHelper->getMediaFolder($profile->getUserId());
             $filesystem  = $filesystemHelper->getFilesystem();
 
             $profile->removeImages($filesystem, $mediaFolder);
-
         }
     }
 }

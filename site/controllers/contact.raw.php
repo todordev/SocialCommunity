@@ -52,14 +52,12 @@ class SocialCommunityControllerContact extends JControllerLegacy
         $response = new Prism\Response\Json();
 
         try {
-
             $locations = new Socialcommunity\Location\Locations(JFactory::getDbo());
             $locations->load(array('search' => $query, 'country_id' => $countryId));
 
             $locationData = $locations->toOptions('id', 'name', 'country_code');
-
         } catch (Exception $e) {
-            JLog::add($e->getMessage());
+            JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
 

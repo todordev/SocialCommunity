@@ -7,6 +7,9 @@
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
+use Joomla\Utilities\ArrayHelper;
+use Joomla\Registry\Registry;
+
 // no direct access
 defined('_JEXEC') or die;
 
@@ -19,7 +22,7 @@ class SocialCommunityModelAvatar extends JModelLegacy
      * @param   string $prefix A prefix for the table class name. Optional.
      * @param   array  $config Configuration array for model. Optional.
      *
-     * @return  SocialCommunityTableProfile  A database object
+     * @return  SocialCommunityTableProfile|bool  A database object
      * @since   1.6
      */
     public function getTable($type = 'Profile', $prefix = 'SocialCommunityTable', $config = array())
@@ -73,31 +76,29 @@ class SocialCommunityModelAvatar extends JModelLegacy
     /**
      * Upload an image
      *
-     * @param array $image Array with information about uploaded file.
+     * @param array $uploadedFileData Array with information about uploaded file.
      * @param string $destination
      *
      * @throws RuntimeException
+     * @throws InvalidArgumentException
+     * @throws UnexpectedValueException
+     *
      * @return array
      */
-    public function uploadImage($image, $destination)
+    public function uploadImage($uploadedFileData, $destination)
     {
-        $app           = JFactory::getApplication();
-        /** @var $app JApplicationAdministrator */
-
-        $uploadedFile  = Joomla\Utilities\ArrayHelper::getValue($image, 'tmp_name');
-        $uploadedName  = Joomla\Utilities\ArrayHelper::getValue($image, 'name');
-        $errorCode     = Joomla\Utilities\ArrayHelper::getValue($image, 'error');
+        $uploadedFile  = ArrayHelper::getValue($uploadedFileData, 'tmp_name');
+        $uploadedName  = ArrayHelper::getValue($uploadedFileData, 'name');
+        $errorCode     = ArrayHelper::getValue($uploadedFileData, 'error');
 
         // Joomla! media extension parameters
         /** @var  $mediaParams Joomla\Registry\Registry */
         $mediaParams   = JComponentHelper::getParams('com_media');
 
-        $file          = new Prism\File\Image($image, $destination);
-
         // Prepare size validator.
-        $KB            = 1024 * 1024;
-        $fileSize      = (int)$app->input->server->get('CONTENT_LENGTH');
+        $KB            = pow(1024, 2);
         $uploadMaxSize = $mediaParams->get('upload_maxsize') * $KB;
+        $fileSize      = ArrayHelper::getValue($uploadedFileData, 'size', 0, 'int');
 
         // Prepare file size validator
         $sizeValidator = new Prism\File\Validator\Size($fileSize, $uploadMaxSize);
@@ -116,6 +117,7 @@ class SocialCommunityModelAvatar extends JModelLegacy
         $imageExtensions = explode(',', $mediaParams->get('image_extensions'));
         $imageValidator->setImageExtensions($imageExtensions);
 
+        $file = new Prism\File\File($uploadedFile);
         $file
             ->addValidator($sizeValidator)
             ->addValidator($imageValidator)
@@ -126,7 +128,15 @@ class SocialCommunityModelAvatar extends JModelLegacy
             throw new RuntimeException($file->getError());
         }
 
-        return $file->upload();
+        // Upload the file in temporary folder.
+        $filesystemLocal = new Prism\Filesystem\Adapter\Local($destination);
+        $sourceFile      = $filesystemLocal->upload($uploadedFileData);
+
+        if (!JFile::exists($sourceFile)) {
+            throw new RuntimeException('COM_SOCIALCOMMUNITY_ERROR_FILE_CANT_BE_UPLOADED');
+        }
+
+        return $sourceFile;
     }
 
     /**
@@ -143,74 +153,86 @@ class SocialCommunityModelAvatar extends JModelLegacy
     public function cropImage($file, $options, $params)
     {
         // Resize image
-        $image = new JImage();
-        $image->loadFile($file);
-        if (!$image->isLoaded()) {
-            throw new Exception(JText::sprintf('COM_SOCIALCOMMUNITY_ERROR_FILE_NOT_FOUND', $file));
-        }
-
-        $destinationFolder  = Joomla\Utilities\ArrayHelper::getValue($options, 'destination');
+        $image              = new \Prism\File\Image($file);
+        $destinationFolder  = ArrayHelper::getValue($options, 'destination');
 
         // Generate temporary file name
         $generatedName = Prism\Utilities\StringHelper::generateRandomString(24);
 
-        $profileName  = $generatedName . '_profile.png';
-        $smallName    = $generatedName . '_small.png';
-        $squareName   = $generatedName . '_square.png';
-        $iconName     = $generatedName . '_icon.png';
+        // Crop the image.
+        $imageOptions = new Registry;
+        $imageOptions->set('create_new', Prism\Constants::NO);
+        $imageOptions->set('filename', $generatedName);
+        $imageOptions->set('quality', $params->get('image_quality', Prism\Constants::QUALITY_VERY_HIGH));
 
-        $imageFile  = JPath::clean($destinationFolder . DIRECTORY_SEPARATOR . $profileName);
-        $smallFile  = JPath::clean($destinationFolder . DIRECTORY_SEPARATOR . $smallName);
-        $squareFile = JPath::clean($destinationFolder . DIRECTORY_SEPARATOR . $squareName);
-        $iconFile   = JPath::clean($destinationFolder . DIRECTORY_SEPARATOR . $iconName);
-
-        // Create profile image.
-        $width  = Joomla\Utilities\ArrayHelper::getValue($options, 'width', 200);
+        // Prepare width.
+        $width  = ArrayHelper::getValue($options, 'width', 200);
         $width  = ($width < 25) ? 50 : $width;
-        $height = Joomla\Utilities\ArrayHelper::getValue($options, 'height', 200);
+        $imageOptions->set('width', $width);
+
+        // Prepare height.
+        $height = ArrayHelper::getValue($options, 'height', 200);
         $height = ($height < 25) ? 50 : $height;
-        $left   = Joomla\Utilities\ArrayHelper::getValue($options, 'x', 0);
-        $top    = Joomla\Utilities\ArrayHelper::getValue($options, 'y', 0);
-        $image->crop($width, $height, $left, $top, false);
+        $imageOptions->set('height', $height);
+
+        // Prepare starting points x and y.
+        $left   = ArrayHelper::getValue($options, 'x', 0);
+        $imageOptions->set('x', $left);
+        $top    = ArrayHelper::getValue($options, 'y', 0);
+        $imageOptions->set('y', $top);
+
+        // Crop the image.
+        $fileData = $image->crop($destinationFolder, $imageOptions);
+        $image    = new Prism\File\Image($fileData['filepath']);
+        $croppedImageFilepath = $fileData['filepath'];
 
         // Resize to general size.
-        $width  = $params->get('image_width', 200);
+        $imageOptions->set('suffix', '_image');
+        $width  = ArrayHelper::getValue($options, 'resize_width', 200);
         $width  = ($width < 25) ? 50 : $width;
-        $height = $params->get('image_height', 200);
+        $imageOptions->set('width', $width);
+        $height = ArrayHelper::getValue($options, 'resize_height', 200);
         $height = ($height < 25) ? 50 : $height;
-        $image->resize($width, $height, false);
+        $imageOptions->set('height', $height);
 
-        // Store to file.
-        $image->toFile($imageFile, IMAGETYPE_PNG);
+        $fileData     = $image->resize($destinationFolder, $imageOptions);
+        $profileImage = $fileData['filename'];
 
         // Create small image.
-        $width  = $params->get('image_small_width', 100);
-        $height = $params->get('image_small_height', 100);
-        $image->resize($width, $height, false);
-        $image->toFile($smallFile, IMAGETYPE_PNG);
+        $imageOptions->set('suffix', '_small');
+        $imageOptions->set('width', $params->get('image_small_width', 100));
+        $imageOptions->set('height', $params->get('image_small_height', 100));
+        $fileData   = $image->resize($destinationFolder, $imageOptions);
+        $smallImage = $fileData['filename'];
 
         // Create square image.
-        $width  = $params->get('image_square_width', 50);
-        $height = $params->get('image_square_height', 50);
-        $image->resize($width, $height, false);
-        $image->toFile($squareFile, IMAGETYPE_PNG);
+        $imageOptions->set('suffix', '_square');
+        $imageOptions->set('width', $params->get('image_square_width', 50));
+        $imageOptions->set('height', $params->get('image_square_height', 50));
+        $fileData    = $image->resize($destinationFolder, $imageOptions);
+        $squareImage = $fileData['filename'];
 
         // Create icon image.
-        $width  = $params->get('image_icon_width', 25);
-        $height = $params->get('image_icon_height', 25);
-        $image->resize($width, $height, false);
-        $image->toFile($iconFile, IMAGETYPE_PNG);
+        $imageOptions->set('suffix', '_icon');
+        $imageOptions->set('width', $params->get('image_icon_width', 25));
+        $imageOptions->set('height', $params->get('image_icon_height', 25));
+        $fileData   = $image->resize($destinationFolder, $imageOptions);
+        $iconImage  = $fileData['filename'];
 
         $names = array(
-            'image_profile'  => $profileName,
-            'image_small'    => $smallName,
-            'image_square'   => $squareName,
-            'image_icon'     => $iconName
+            'image_profile'  => $profileImage,
+            'image_small'    => $smallImage,
+            'image_square'   => $squareImage,
+            'image_icon'     => $iconImage
         );
 
         // Remove the temporary file.
         if (JFile::exists($file)) {
             JFile::delete($file);
+        }
+
+        if (JFile::exists($croppedImageFilepath)) {
+            JFile::delete($croppedImageFilepath);
         }
 
         return $names;
@@ -231,12 +253,12 @@ class SocialCommunityModelAvatar extends JModelLegacy
     {
         // Resize image
         if (!$images) {
-            throw new Exception(JText::sprintf('COM_SOCIALCOMMUNITY_ERROR_FILES_NOT_FOUND_S', var_export($images, true)));
+            throw new RuntimeException(JText::sprintf('COM_SOCIALCOMMUNITY_ERROR_FILES_NOT_FOUND_S', var_export($images, true)));
         }
 
         foreach ($images as $fileName) {
             if (!$manager->has('temporary://'.$fileName)) {
-                throw new Exception(JText::sprintf('COM_SOCIALCOMMUNITY_ERROR_FILE_NOT_FOUND_S', $fileName));
+                throw new RuntimeException(JText::sprintf('COM_SOCIALCOMMUNITY_ERROR_FILE_NOT_FOUND_S', $fileName));
             }
 
             $manager->move('temporary://'.$fileName, 'storage://'. $mediaFolder .'/'. $fileName);
@@ -250,6 +272,11 @@ class SocialCommunityModelAvatar extends JModelLegacy
      * @param    int      $userId
      * @param    League\Flysystem\Filesystem  $filesystem
      * @param    string   $mediaFolder
+     *
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     * @throws UnexpectedValueException
+     * @throws \League\Flysystem\FileNotFoundException
      */
     public function storeImages($userId, $images, $filesystem, $mediaFolder)
     {

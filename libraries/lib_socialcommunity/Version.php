@@ -38,7 +38,7 @@ class Version
      *
      * @var integer
      */
-    public $devLevel = '2.1';
+    public $devLevel = '2.2';
 
     /**
      * Release Type
@@ -59,14 +59,14 @@ class Version
      *
      * @var string
      */
-    public $releaseDate = '24 October, 2016';
+    public $releaseDate = '12 November, 2016';
 
     /**
      * Minimum required version of Prism library.
      *
      * @var string
      */
-    public $requiredPrismVersion = '1.16';
+    public $requiredPrismVersion = '1.17';
 
     /**
      * License

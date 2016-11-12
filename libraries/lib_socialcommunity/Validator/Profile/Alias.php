@@ -64,7 +64,7 @@ class Alias implements ValidatorInterface
      */
     public function isValid()
     {
-        if (!$this->alias or (preg_match('/[^A-Z0-9]/i', $this->alias))) {
+        if (!$this->alias or (preg_match('/[^A-Z0-9\-]/i', $this->alias))) {
             return false;
         }
 

@@ -72,10 +72,10 @@ class SocialCommunityViewCountries extends JViewLegacy
         $this->sortFields = array(
             'a.name'      => JText::_('COM_SOCIALCOMMUNITY_NAME'),
             'a.code'      => JText::_('COM_SOCIALCOMMUNITY_COUNTRY_CODE'),
-            'a.code4'     => JText::_('COM_SOCIALCOMMUNITY_COUNTRY_CODE4'),
-            'a.latitude'  => JText::_('COM_SOCIALCOMMUNITY_COUNTRY_LATITUDE'),
-            'a.longitude' => JText::_('COM_SOCIALCOMMUNITY_COUNTRY_LONGITUDE'),
-            'a.timezone'  => JText::_('COM_SOCIALCOMMUNITY_COUNTRY_TIMEZONE'),
+            'a.locale'    => JText::_('COM_SOCIALCOMMUNITY_LOCALE'),
+            'a.latitude'  => JText::_('COM_SOCIALCOMMUNITY_LATITUDE'),
+            'a.longitude' => JText::_('COM_SOCIALCOMMUNITY_LONGITUDE'),
+            'a.timezone'  => JText::_('COM_SOCIALCOMMUNITY_TIMEZONE'),
             'a.id'        => JText::_('JGRID_HEADING_ID')
         );
     }

@@ -78,13 +78,15 @@ class SocialCommunityModelProfiles extends JModelList
     /**
      * Build an SQL query to load the list data.
      *
+     * @throws \RuntimeException
+     *
      * @return  JDatabaseQuery
      * @since   1.6
      */
     protected function getListQuery()
     {
         $db = $this->getDbo();
-        /** @var $db JDatabaseMySQLi */
+        /** @var $db JDatabaseDriver */
 
         // Create a new query object.
         $query = $db->getQuery(true);
@@ -127,39 +129,5 @@ class SocialCommunityModelProfiles extends JModelList
         $orderDirn = $this->getState('list.direction');
 
         return $orderCol . ' ' . $orderDirn;
-    }
-
-    /**
-     * This method updates the name of user in
-     * the Joomla! users table.
-     */
-    public function createProfiles()
-    {
-        $db    = $this->getDbo();
-        $query = $db->getQuery(true);
-
-        $query
-            ->select('a.id, a.name')
-            ->from($db->quoteName('#__users', 'a'))
-            ->leftJoin($db->quoteName('#__itpsc_profiles', 'b') . ' ON a.id = b.user_id')
-            ->where('b.user_id IS NULL');
-
-        $db->setQuery($query);
-
-        $results = $db->loadAssocList();
-
-        if ($results !== null and count($results) > 0) {
-
-            foreach ($results as $result) {
-                $profile = new Socialcommunity\Profile\Profile($db);
-
-                $profile->setUserId($result['id']);
-                $profile->setName($result['name']);
-                $profile->setAlias($result['name']);
-
-                $profile->store();
-            }
-        }
-
     }
 }

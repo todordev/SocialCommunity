@@ -46,7 +46,7 @@ class SocialCommunityControllerSocial extends Prism\Controller\Form\Frontend
         /** @var $form JForm */
 
         if (!$form) {
-            throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_FORM_LOADING'));
+            throw new RuntimeException(JText::_('COM_SOCIALCOMMUNITY_ERROR_FORM_LOADING'));
         }
 
         // Test if the data is valid.
@@ -59,10 +59,9 @@ class SocialCommunityControllerSocial extends Prism\Controller\Form\Frontend
         }
 
         try {
-
             $model->save($validData);
-
         } catch (Exception $e) {
+            JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
 

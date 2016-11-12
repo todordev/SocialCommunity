@@ -57,12 +57,11 @@ class SocialCommunityControllerBasic extends Prism\Controller\Form\Frontend
         }
 
         try {
-
             $validData['id'] = $userId;
 
             $model->save($validData);
-
         } catch (Exception $e) {
+            JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
 

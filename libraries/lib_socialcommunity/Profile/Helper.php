@@ -32,8 +32,7 @@ final class Helper
      */
     public static function safeAlias($alias, $userId = 0)
     {
-        $filter = new \JFilterInput;
-        $alias  = \JString::strtolower($filter->clean($alias, 'ALNUM'));
+        $alias  = StringHelper::stringUrlSafe($alias);
 
         // Check for valid alias.
         $aliasValidator = new Validator\Profile\Alias(\JFactory::getDbo(), $alias, $userId);
@@ -41,10 +40,42 @@ final class Helper
             if (!$alias) {
                 $alias = StringHelper::generateRandomString(16);
             } else {
-                $alias .=  mt_rand(10, 1000);
+                $alias .=  (string)mt_rand(10, 1000);
             }
         }
 
         return $alias;
+    }
+
+    /**
+     * Create user profiles of the orphan user records.
+     *
+     * @throws \RuntimeException
+     */
+    public static function createProfiles()
+    {
+        $db    = \JFactory::getDbo();
+        $query = $db->getQuery(true);
+
+        $query
+            ->select('a.id, a.name')
+            ->from($db->quoteName('#__users', 'a'))
+            ->leftJoin($db->quoteName('#__itpsc_profiles', 'b') . ' ON a.id = b.user_id')
+            ->where('b.user_id IS NULL');
+
+        $db->setQuery($query);
+        $results = (array)$db->loadAssocList();
+
+        foreach ($results as $result) {
+            $profile = new Profile($db);
+
+            $alias  = self::safeAlias($result['name']);
+
+            $profile->setUserId($result['id']);
+            $profile->setName($result['name']);
+            $profile->setAlias($alias);
+
+            $profile->store();
+        }
     }
 }

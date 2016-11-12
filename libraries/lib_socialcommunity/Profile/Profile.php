@@ -9,6 +9,8 @@
 
 namespace Socialcommunity\Profile;
 
+use Coinbase\Wallet\Exception\NotFoundException;
+use League\Flysystem\FileNotFoundException;
 use Prism;
 use Socialcommunity\Validator;
 use League\Flysystem\Filesystem;
@@ -85,6 +87,8 @@ class Profile extends Prism\Database\Table
      *
      * @param int|array $keys
      * @param array $options
+     *
+     * @throws \RuntimeException
      */
     public function load($keys, array $options = array())
     {
@@ -686,15 +690,16 @@ class Profile extends Prism\Database\Table
      *
      * $profile->removeImages($filesystem, $mediaFolder);
      * </code>
-     * 
+     *
+     * @throws FileNotFoundException
+     *
      * @param Filesystem $filesystem
      * @param string $mediaFolder
      */
     public function removeImages($filesystem, $mediaFolder)
     {
         // Delete profile images.
-        if ($this->image !== null and $this->image !== '') {
-
+        if ((string)$this->image !== '') {
             // Remove an image from the filesystem
             $files = array(
                 $mediaFolder .'/'. $this->image,
@@ -727,6 +732,8 @@ class Profile extends Prism\Database\Table
      *
      * $profile->removeActivities();
      * </code>
+     *
+     * @throws \RuntimeException
      */
     public function removeActivities()
     {
@@ -750,6 +757,8 @@ class Profile extends Prism\Database\Table
      *
      * $profile->removeNotifications();
      * </code>
+     *
+     * @throws \RuntimeException
      */
     public function removeNotifications()
     {
@@ -773,6 +782,8 @@ class Profile extends Prism\Database\Table
      *
      * $profile->removeSocialProfiles();
      * </code>
+     *
+     * @throws \RuntimeException
      */
     public function removeSocialProfiles()
     {
