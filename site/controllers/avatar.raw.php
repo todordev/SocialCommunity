@@ -191,8 +191,8 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
 
         // Get the filename from the session.
         $fileName           = basename($app->getUserState(Socialcommunity\Constants::TEMPORARY_IMAGE_CONTEXT));
-        $temporaryFolder    = $filesystemHelper->getTemporaryMediaFolder(JPATH_BASE);
-        $temporaryFile      = JPath::clean($temporaryFolder .'/'. $fileName);
+        $temporaryFolder    = $filesystemHelper->getTemporaryMediaFolder(JPATH_ROOT);
+        $temporaryFile      = JPath::clean($temporaryFolder .'/'. $fileName, '/');
 
         if (!$fileName or !JFile::exists($temporaryFile)) {
             $response
@@ -207,9 +207,6 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
         $imageUrl = '';
 
         try {
-            // Get the folder where the images will be stored
-            $params = JComponentHelper::getParams('com_socialcommunity');
-
             $options = array(
                 'width'    => $this->input->getFloat('width'),
                 'height'   => $this->input->getFloat('height'),

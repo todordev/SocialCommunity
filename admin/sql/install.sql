@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `#__itpsc_countries` (
   `id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
   `code` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code4` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'A code with 4 letters.',
+  `locale` char(5) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `latitude` float DEFAULT NULL,
   `longitude` float DEFAULT NULL,
   `currency` char(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
