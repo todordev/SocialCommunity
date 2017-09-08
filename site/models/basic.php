@@ -1,16 +1,16 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityModelBasic extends JModelForm
+class SocialcommunityModelBasic extends JModelForm
 {
     /**
      * Returns a reference to the a Table object, always creating it.
@@ -19,10 +19,10 @@ class SocialCommunityModelBasic extends JModelForm
      * @param   string $prefix A prefix for the table class name. Optional.
      * @param   array  $config Configuration array for model. Optional.
      *
-     * @return  SocialCommunityTableProfile  A database object
+     * @return  SocialcommunityTableProfile  A database object
      * @since   1.6
      */
-    public function getTable($type = 'Profile', $prefix = 'SocialCommunityTable', $config = array())
+    public function getTable($type = 'Profile', $prefix = 'SocialcommunityTable', $config = array())
     {
         return JTable::getInstance($type, $prefix, $config);
     }
@@ -46,7 +46,6 @@ class SocialCommunityModelBasic extends JModelForm
         // Load the parameters.
         $params = $app->getParams($this->option);
         $this->setState('params', $params);
-
     }
 
     /**
@@ -107,7 +106,6 @@ class SocialCommunityModelBasic extends JModelForm
         }
 
         if ($id > 0) {
-
             $db    = $this->getDbo();
             $query = $db->getQuery(true);
             $query
@@ -120,50 +118,5 @@ class SocialCommunityModelBasic extends JModelForm
         }
 
         return $item;
-    }
-
-    /**
-     * Method to save the form data.
-     *
-     * @param    array    $data    The form data.
-     *
-     * @return    mixed        The record id on success, null on failure.
-     * @since    1.6
-     */
-    public function save($data)
-    {
-        $id   = Joomla\Utilities\ArrayHelper::getValue($data, 'id', 0, 'int');
-        $name = JString::trim(Joomla\Utilities\ArrayHelper::getValue($data, 'name'));
-        $bio  = JString::trim(Joomla\Utilities\ArrayHelper::getValue($data, 'bio'));
-
-        if (!$bio) {
-            $bio = null;
-        }
-
-        // Prepare gender.
-        $allowedGender = array('male', 'female');
-        $gender        = JString::trim(Joomla\Utilities\ArrayHelper::getValue($data, 'gender'));
-        if (!in_array($gender, $allowedGender, true)) {
-            $gender = 'male';
-        }
-
-        // Prepare birthday
-        $birthday = SocialCommunityHelper::prepareBirthday($data);
-
-        // Load a record from the database
-        $row = $this->getTable();
-        $row->load(array('user_id' => $id));
-
-        $row->set('name', $name);
-        $row->set('bio', $bio);
-        $row->set('birthday', $birthday);
-        $row->set('gender', $gender);
-
-        $row->store(true);
-
-        // Update the name in Joomla! users table
-        SocialCommunityHelper::updateName($id, $name);
-
-        return $row->get('id');
     }
 }

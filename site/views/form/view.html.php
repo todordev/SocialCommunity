@@ -1,16 +1,16 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityViewForm extends JViewLegacy
+class SocialcommunityViewForm extends JViewLegacy
 {
     /**
      * @var JDocumentHtml
@@ -40,6 +40,9 @@ class SocialCommunityViewForm extends JViewLegacy
     protected $fileForCropping;
     protected $displayRemoveButton;
     protected $activeMenu;
+    protected $imageWidth;
+    protected $imageHeight;
+    protected $maxFilesize;
 
     protected $pageclass_sfx;
 
@@ -80,10 +83,6 @@ class SocialCommunityViewForm extends JViewLegacy
                 $this->prepareContact();
                 break;
 
-            case 'social':
-                $this->prepareSocialProfiles();
-                break;
-
             default: // Basic data for the profile.
                 $this->prepareBasic();
                 break;
@@ -100,7 +99,8 @@ class SocialCommunityViewForm extends JViewLegacy
 
     protected function prepareBasic()
     {
-        $model = JModelLegacy::getInstance('Basic', 'SocialCommunityModel', $config = array('ignore_request' => false));
+        $model = JModelLegacy::getInstance('Basic', 'SocialcommunityModel', $config = array('ignore_request' => false));
+        /** @var SocialcommunityModelBasic $model */
 
         $this->state  = $model->getState();
         $this->form   = $model->getForm();
@@ -111,7 +111,8 @@ class SocialCommunityViewForm extends JViewLegacy
 
     protected function prepareAvatar()
     {
-        $model = JModelLegacy::getInstance('Avatar', 'SocialCommunityModel', $config = array('ignore_request' => false));
+        $model = JModelLegacy::getInstance('Avatar', 'SocialcommunityModel', $config = array('ignore_request' => false));
+        /** @var SocialcommunityModelAvatar $model */
 
         $this->state  = $model->getState();
         $this->params = $this->state->get('params');
@@ -123,31 +124,29 @@ class SocialCommunityViewForm extends JViewLegacy
 
         $file = basename($this->app->getUserState(Socialcommunity\Constants::TEMPORARY_IMAGE_CONTEXT));
 
-        $this->fileForCropping = (!$file) ? null : JUri::base() . $filesystemHelper->getTemporaryMediaFolderUri() . '/' . $file;
+        $this->fileForCropping = (!$file) ? null : JUri::base() .$filesystemHelper->getTemporaryMediaFolderUri().'/'.$file;
 
         $this->displayRemoveButton = 'none';
+        $this->imageWidth  = $this->params->get('image_width', 200);
+        $this->imageHeight = $this->params->get('image_height', 200);
+
+        $mediaParams       = JComponentHelper::getParams('com_media');
+        $this->maxFilesize = Prism\Utilities\FileHelper::getMaximumFileSize($mediaParams->get('upload_maxsize', 10), 'MB');
+
+        // Remove the temporary pictures if they exists.
+        $model->removeTemporaryImage($this->app);
     }
 
     protected function prepareContact()
     {
-        $model = JModelLegacy::getInstance('Contact', 'SocialCommunityModel', $config = array('ignore_request' => false));
+        $model = JModelLegacy::getInstance('Contact', 'SocialcommunityModel', $config = array('ignore_request' => false));
+        /** @var SocialcommunityModelContact $model */
 
         $this->state  = $model->getState();
         $this->form   = $model->getForm();
         $this->params = $this->state->get('params');
 
         $this->item   = $model->getItem();
-    }
-
-    protected function prepareSocialProfiles()
-    {
-        $model = JModelLegacy::getInstance('Social', 'SocialCommunityModel', $config = array('ignore_request' => false));
-
-        $this->state  = $model->getState();
-        $this->form   = $model->getForm();
-        $this->params = $this->state->get('params');
-
-        $this->items = $model->getItems();
     }
 
     /**
@@ -192,7 +191,7 @@ class SocialCommunityViewForm extends JViewLegacy
 
         switch ($this->layout) {
             case 'contact':
-                JHtml::_('Prism.ui.bootstrap3Typeahead');
+                JHtml::_('Prism.ui.jQueryAutoComplete');
 
                 if ($this->params->get('include_chosen', 0)) {
                     JHtml::_('formbehavior.chosen', '#jform_country_id');
@@ -202,30 +201,26 @@ class SocialCommunityViewForm extends JViewLegacy
                 break;
 
             case 'avatar':
+                JHtml::_('Prism.ui.sweetAlert');
+                JHtml::_('Prism.ui.remodal');
                 JHtml::_('Prism.ui.cropper');
                 JHtml::_('Prism.ui.fileupload');
+                JHtml::_('Prism.ui.message');
                 JHtml::_('Prism.ui.pnotify');
-                JHtml::_('Prism.ui.joomlaHelper');
-                JHtml::_('Prism.ui.serializeJson');
-                JHtml::_('Prism.ui.isLoading');
+                JHtml::_('Bootstrap.popover');
 
                 $this->document->addScript('media/' . $this->option . '/js/site/form_avatar.js?v='.$version->getShortVersion());
 
                 // Load language string in JavaScript.
                 JText::script('COM_SOCIALCOMMUNITY_QUESTION_REMOVE_IMAGE');
+                JText::script('COM_SOCIALCOMMUNITY_YES_DELETE_IT');
+                JText::script('COM_SOCIALCOMMUNITY_CANCEL');
                 JText::script('COM_SOCIALCOMMUNITY_CROPPING___');
 
                 // Provide image options.
-                $js = '
-                var socialCommunityOptions = {
-                    aspectRatio: '. $this->params->get('image_aspect_ratio', '""') . ',
-                    imageWidth: ' . $this->params->get('image_width', 200) . ',
-                    imageHeight: ' . $this->params->get('image_height', 200) . ',
-                    url: "' . JUri::base() . '"
-                }';
-
-                $this->document->addScriptDeclaration($js);
-
+                $this->document->addScriptOptions('com_socialcommunity.avatar', [
+                    'aspectRatio' => $this->params->get('image_aspect_ratio', ''),
+                ]);
                 break;
 
             default: // Load scripts used on layout 'Basic'.

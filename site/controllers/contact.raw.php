@@ -1,22 +1,26 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
+
+use Prism\Database\Condition\Condition;
+use Prism\Database\Condition\Conditions;
+use Prism\Database\Request\Request;
 
 // no direct access
 defined('_JEXEC') or die;
 
 /**
- * SocialCommunity contact controller.
+ * Socialcommunity contact controller.
  *
- * @package     SocialCommunity
+ * @package     Socialcommunity
  * @subpackage  Components
  */
-class SocialCommunityControllerContact extends JControllerLegacy
+class SocialcommunityControllerContact extends JControllerLegacy
 {
     /**
      * Method to get a model object, loading it if required.
@@ -25,13 +29,12 @@ class SocialCommunityControllerContact extends JControllerLegacy
      * @param    string $prefix The class prefix. Optional.
      * @param    array  $config Configuration array for model. Optional.
      *
-     * @return   SocialCommunityModelContact    The model.
+     * @return   SocialcommunityModelContact|bool    The model.
      * @since    1.5
      */
-    public function getModel($name = 'Contact', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
+    public function getModel($name = 'Contact', $prefix = 'SocialcommunityModel', $config = array('ignore_request' => true))
     {
-        $model = parent::getModel($name, $prefix, $config);
-        return $model;
+        return parent::getModel($name, $prefix, $config);
     }
 
     /**
@@ -45,15 +48,29 @@ class SocialCommunityControllerContact extends JControllerLegacy
      */
     public function loadLocation()
     {
-        // Get the input
-        $query     = $this->input->get->getCmd('query');
-        $countryId = $this->input->get->getInt('country_id');
+        $query       = $this->input->get->getCmd('query');
+        $countryCode = $this->input->get->getCmd('country_code');
+
+        // Prepare conditions.
+        $conditionSearch = new Condition(['column' => 'name', 'value' => $query, 'operator'=> 'LIKE', 'table' => 'a']);
+        $conditions      = new Conditions();
+        $conditions->addSpecificCondition('search', $conditionSearch);
+
+        if ($countryCode) {
+            $conditionCountryCode = new Condition(['column' => 'country_code', 'value' => $countryCode, 'operator'=> '=', 'table' => 'a']);
+            $conditions->addSpecificCondition('country_code', $conditionCountryCode);
+        }
+
+        // Prepare database request.
+        $databaseRequest = new Request();
+        $databaseRequest->setConditions($conditions);
 
         $response = new Prism\Response\Json();
 
         try {
-            $locations = new Socialcommunity\Location\Locations(JFactory::getDbo());
-            $locations->load(array('search' => $query, 'country_id' => $countryId));
+            $mapper     = new Socialcommunity\Location\Mapper(new \Socialcommunity\Location\Gateway\JoomlaGateway(JFactory::getDbo()));
+            $repository = new Socialcommunity\Location\Repository($mapper);
+            $locations  = $repository->fetchCollection($databaseRequest);
 
             $locationData = $locations->toOptions('id', 'name', 'country_code');
         } catch (Exception $e) {
@@ -66,7 +83,6 @@ class SocialCommunityControllerContact extends JControllerLegacy
             ->success();
 
         echo $response;
-
         JFactory::getApplication()->close();
     }
 }

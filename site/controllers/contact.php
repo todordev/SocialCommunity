@@ -1,11 +1,15 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
+
+use Prism\Database\Condition\Condition;
+use Prism\Database\Condition\Conditions;
+use Prism\Database\Request\Request;
 
 // No direct access
 defined('_JEXEC') or die;
@@ -13,10 +17,10 @@ defined('_JEXEC') or die;
 /**
  * Form controller class.
  *
- * @package     SocialCommunity
+ * @package     Socialcommunity
  * @subpackage  Components
  */
-class SocialCommunityControllerContact extends Prism\Controller\Form\Frontend
+class SocialcommunityControllerContact extends Prism\Controller\Form\Frontend
 {
     public function save($key = null, $urlVar = null)
     {
@@ -40,7 +44,7 @@ class SocialCommunityControllerContact extends Prism\Controller\Form\Frontend
         );
 
         $model = $this->getModel();
-        /** @var $model SocialCommunityModelContact */
+        /** @var $model SocialcommunityModelContact */
 
         $form = $model->getForm($data, false);
         /** @var $form JForm */
@@ -51,17 +55,59 @@ class SocialCommunityControllerContact extends Prism\Controller\Form\Frontend
 
         // Test if the data is valid.
         $validData = $model->validate($form, $data);
-
-        // Check for errors.
         if ($validData === false) {
             $this->displayNotice($form->getErrors(), $redirectOptions);
             return;
         }
 
         try {
-            $validData['user_id'] = $userId;
+            // Store encrypted data.
+            $app     = \JFactory::getApplication();
 
-            $model->save($validData);
+            // Prepare conditions.
+            $conditionUserId = new Condition(['column' => 'user_id', 'value' => $userId, 'operator'=> '=', 'table' => 'a']);
+            $conditions = new Conditions();
+            $conditions->addCondition($conditionUserId);
+
+            // Prepare database request.
+            $databaseRequest = new Request();
+            $databaseRequest->setConditions($conditions);
+
+            $gateway    = new \Socialcommunity\Profile\Contact\Gateway\JoomlaGateway(\JFactory::getDbo());
+            $repository = new \Socialcommunity\Profile\Contact\Repository($gateway);
+
+            $contact    = $repository->fetch($databaseRequest);
+            if (!$contact->getId()) {
+                $contact->setUserId($userId);
+            }
+
+            $contact->setAddress($validData['address']);
+            $contact->setPhone($validData['phone']);
+
+            // Generate new secret key.
+            $password  = $app->get('secret').$userId;
+            $key       = \Defuse\Crypto\KeyProtectedByPassword::createRandomPasswordProtectedKey($password);
+            $secretKey = $key->saveToAsciiSafeString();
+
+            $cryptor = new \Socialcommunity\Profile\Contact\Cryptor($secretKey, $password);
+            $contact = $cryptor->encrypt($contact);
+
+            $contact->setSecretKey($secretKey);
+            $repository->store($contact);
+
+            // Store the data that is part of the profile and it is not encrypted.
+            $request = new \Socialcommunity\Profile\Command\Request\Contact();
+            $request
+                ->setUserId($userId)
+                ->setCountryCode($validData['country_code'])
+                ->setLocationId($validData['location_id'])
+                ->setWebsite($validData['website']);
+
+            $gateway = new \Socialcommunity\Profile\Command\Gateway\Joomla\StoreContact(JFactory::getDbo());
+            $command = new \Socialcommunity\Profile\Command\StoreContact($request);
+            $command->setGateway($gateway);
+            $command->handle();
+
         } catch (Exception $e) {
             JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));

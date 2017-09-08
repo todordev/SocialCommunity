@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -18,10 +18,13 @@ defined('_JEXEC') or die;
 	     <?php echo JHtml::_('grid.sort',  'COM_SOCIALCOMMUNITY_NAME', 'a.name', $this->listDirn, $this->listOrder); ?>
 	</th>
 	<th width="5%" class="nowrap center hidden-phone">&nbsp;</th>
+	<th width="5%" class="nowrap hidden-phone">
+        <?php echo JText::_('COM_SOCIALCOMMUNITY_SOCIAL_PROFILES'); ?>
+    </th>
 	<th width="10%" class="nowrap hidden-phone">
-	    <?php echo JText::_("COM_SOCIALCOMMUNITY_COUNTRY"); ?>
+	    <?php echo JText::_('COM_SOCIALCOMMUNITY_COUNTRY'); ?>
 	</th>
-	<th width="10%" class="nowrap center hidden-phone">
+	<th width="10%" class="nowrap hidden-phone">
 	     <?php echo JHtml::_('grid.sort',  'COM_SOCIALCOMMUNITY_REGISTERED', 'b.registerDate', $this->listDirn, $this->listOrder); ?>
 	</th>
 	<th width="1%" class="nowrap center hidden-phone">
@@ -31,4 +34,3 @@ defined('_JEXEC') or die;
          <?php echo JHtml::_('grid.sort',  'JGRID_HEADING_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
 </tr>
-	  

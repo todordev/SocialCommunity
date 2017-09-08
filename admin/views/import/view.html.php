@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -10,7 +10,7 @@
 // No direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityViewImport extends JViewLegacy
+class SocialcommunityViewImport extends JViewLegacy
 {
     /**
      * @var JDocumentHtml
@@ -62,7 +62,7 @@ class SocialCommunityViewImport extends JViewLegacy
         }
 
         // Add submenu
-        SocialCommunityHelper::addSubmenu($this->importType);
+        SocialcommunityHelper::addSubmenu($this->importType);
 
         // Prepare actions
         $this->addToolbar();
@@ -103,6 +103,6 @@ class SocialCommunityViewImport extends JViewLegacy
         JHtml::_('bootstrap.tooltip');
         JHtml::_('Prism.ui.bootstrap2FileInput');
 
-        $this->document->addScript('../media/' . $this->option . '/js/admin/' . JString::strtolower($this->getName()) . '.js');
+        $this->document->addScript('../media/' . $this->option . '/js/admin/' . strtolower($this->getName()) . '.js');
     }
 }

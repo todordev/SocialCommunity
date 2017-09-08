@@ -14,10 +14,10 @@
                rows="5"
                 />
 
-        <field name="country_id" type="sccountries" class="form-control"
+        <field name="country_code" type="sccountries" class="form-control"
                label="COM_SOCIALCOMMUNITY_COUNTRY"
                description="COM_SOCIALCOMMUNITY_FIELD_COUNTRY_DESC"
-               filter="int"
+               key="code"
         >
             <option value="">COM_SOCIALCOMMUNITY_SELECT_COUNTRY</option>
         </field>

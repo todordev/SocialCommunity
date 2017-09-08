@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -75,7 +75,7 @@ class pkg_socialCommunityInstallerScript
         }
 
         // Register Install Helper
-        JLoader::register('SocialCommunityInstallHelper', SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'install.php');
+        JLoader::register('SocialcommunityInstallHelper', SOCIALCOMMUNITY_PATH_COMPONENT_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'install.php');
 
         jimport('Prism.init');
         jimport('Socialcommunity.init');
@@ -91,19 +91,19 @@ class pkg_socialCommunityInstallerScript
 
         // Create images folder
         if (!JFolder::exists($mediaFolderPath)) {
-            SocialCommunityInstallHelper::createFolder($mediaFolderPath);
+            SocialcommunityInstallHelper::createFolder($mediaFolderPath);
         }
 
         // Create temporary images folder
         if (!JFolder::exists($temporaryMediaFolderPath)) {
-            SocialCommunityInstallHelper::createFolder($temporaryMediaFolderPath);
+            SocialcommunityInstallHelper::createFolder($temporaryMediaFolderPath);
         }
         
         // Start table with the information
-        SocialCommunityInstallHelper::startTable();
+        SocialcommunityInstallHelper::startTable();
 
         // Requirements
-        SocialCommunityInstallHelper::addRowHeading(JText::_('COM_SOCIALCOMMUNITY_MINIMUM_REQUIREMENTS'));
+        SocialcommunityInstallHelper::addRowHeading(JText::_('COM_SOCIALCOMMUNITY_MINIMUM_REQUIREMENTS'));
 
         // Display result about verification for existing folder
         $title = JText::_('COM_SOCIALCOMMUNITY_IMAGE_FOLDER');
@@ -113,7 +113,7 @@ class pkg_socialCommunityInstallerScript
         } else {
             $result = array('type' => 'success', 'text' => JText::_('JYES'));
         }
-        SocialCommunityInstallHelper::addRow($title, $result, $info);
+        SocialcommunityInstallHelper::addRow($title, $result, $info);
 
         // Display result about verification for writable folder
         $title = JText::_('COM_SOCIALCOMMUNITY_WRITABLE_FOLDER');
@@ -123,7 +123,7 @@ class pkg_socialCommunityInstallerScript
         } else {
             $result = array('type' => 'success', 'text' => JText::_('JYES'));
         }
-        SocialCommunityInstallHelper::addRow($title, $result, $info);
+        SocialcommunityInstallHelper::addRow($title, $result, $info);
 
         // Display result about verification for existing folder
         $title = JText::_('COM_SOCIALCOMMUNITY_TEMPORARY_IMAGE_FOLDER');
@@ -133,7 +133,7 @@ class pkg_socialCommunityInstallerScript
         } else {
             $result = array('type' => 'success', 'text' => JText::_('JYES'));
         }
-        SocialCommunityInstallHelper::addRow($title, $result, $info);
+        SocialcommunityInstallHelper::addRow($title, $result, $info);
 
         // Display result about verification for writable folder
         $title = JText::_('COM_SOCIALCOMMUNITY_TEMPORARY_WRITABLE_FOLDER');
@@ -143,7 +143,7 @@ class pkg_socialCommunityInstallerScript
         } else {
             $result = array('type' => 'success', 'text' => JText::_('JYES'));
         }
-        SocialCommunityInstallHelper::addRow($title, $result, $info);
+        SocialcommunityInstallHelper::addRow($title, $result, $info);
 
         // Display result about verification for GD library
         $title = JText::_('COM_SOCIALCOMMUNITY_GD_LIBRARY');
@@ -153,7 +153,7 @@ class pkg_socialCommunityInstallerScript
         } else {
             $result = array('type' => 'success', 'text' => JText::_('JON'));
         }
-        SocialCommunityInstallHelper::addRow($title, $result, $info);
+        SocialcommunityInstallHelper::addRow($title, $result, $info);
 
         // Display result about verification for cURL library
         $title = JText::_('COM_SOCIALCOMMUNITY_CURL_LIBRARY');
@@ -164,7 +164,7 @@ class pkg_socialCommunityInstallerScript
         } else {
             $result = array('type' => 'success', 'text' => JText::_('JON'));
         }
-        SocialCommunityInstallHelper::addRow($title, $result, $info);
+        SocialcommunityInstallHelper::addRow($title, $result, $info);
 
         // Display result about verification Magic Quotes
         $title = JText::_('COM_SOCIALCOMMUNITY_MAGIC_QUOTES');
@@ -175,7 +175,7 @@ class pkg_socialCommunityInstallerScript
         } else {
             $result = array('type' => 'success', 'text' => JText::_('JOFF'));
         }
-        SocialCommunityInstallHelper::addRow($title, $result, $info);
+        SocialcommunityInstallHelper::addRow($title, $result, $info);
 
         // Display result about verification FileInfo
         $title = JText::_('COM_SOCIALCOMMUNITY_FILEINFO');
@@ -186,7 +186,7 @@ class pkg_socialCommunityInstallerScript
         } else {
             $result = array('type' => 'success', 'text' => JText::_('JON'));
         }
-        SocialCommunityInstallHelper::addRow($title, $result, $info);
+        SocialcommunityInstallHelper::addRow($title, $result, $info);
 
         // Display result about verification PHP Intl
         $title = JText::_('COM_SOCIALCOMMUNITY_PHPINTL');
@@ -197,7 +197,7 @@ class pkg_socialCommunityInstallerScript
         } else {
             $result = array('type' => 'success', 'text' => JText::_('JON'));
         }
-        SocialCommunityInstallHelper::addRow($title, $result, $info);
+        SocialcommunityInstallHelper::addRow($title, $result, $info);
         
         // Display result about verification PHP Version.
         $title = JText::_('COM_SOCIALCOMMUNITY_PHP_VERSION');
@@ -207,7 +207,7 @@ class pkg_socialCommunityInstallerScript
         } else {
             $result = array('type' => 'success', 'text' => JText::_('JYES'));
         }
-        SocialCommunityInstallHelper::addRow($title, $result, $info);
+        SocialcommunityInstallHelper::addRow($title, $result, $info);
 
         // Display result about MySQL Version.
         $title = JText::_('COM_SOCIALCOMMUNITY_MYSQL_VERSION');
@@ -218,7 +218,7 @@ class pkg_socialCommunityInstallerScript
         } else {
             $result = array('type' => 'success', 'text' => JText::_('JYES'));
         }
-        SocialCommunityInstallHelper::addRow($title, $result, $info);
+        SocialcommunityInstallHelper::addRow($title, $result, $info);
 
         // Display result about verification of installed Prism Library
         $info  = '';
@@ -244,22 +244,22 @@ class pkg_socialCommunityInstallerScript
                 $result = array('type' => 'success', 'text' => $text);
             }
         }
-        SocialCommunityInstallHelper::addRow($title, $result, $info);
+        SocialcommunityInstallHelper::addRow($title, $result, $info);
 
         // Installed extensions
 
-        SocialCommunityInstallHelper::addRowHeading(JText::_('COM_SOCIALCOMMUNITY_INSTALLED_EXTENSIONS'));
+        SocialcommunityInstallHelper::addRowHeading(JText::_('COM_SOCIALCOMMUNITY_INSTALLED_EXTENSIONS'));
 
-        // SocialCommunity Library
+        // Socialcommunity Library
         $result = array('type' => 'success', 'text' => JText::_('COM_SOCIALCOMMUNITY_INSTALLED'));
-        SocialCommunityInstallHelper::addRow(JText::_('COM_SOCIALCOMMUNITY_SOCIALCOMMUNITY_LIBRARY'), $result, JText::_('COM_SOCIALCOMMUNITY_LIBRARY'));
+        SocialcommunityInstallHelper::addRow(JText::_('COM_SOCIALCOMMUNITY_SOCIALCOMMUNITY_LIBRARY'), $result, JText::_('COM_SOCIALCOMMUNITY_LIBRARY'));
 
         // User - Social Community New User
         $result = array('type' => 'success', 'text' => JText::_('COM_SOCIALCOMMUNITY_INSTALLED'));
-        SocialCommunityInstallHelper::addRow(JText::_('COM_SOCIALCOMMUNITY_USER_SOCIALCOMMUNITY_USER'), $result, JText::_('COM_SOCIALCOMMUNITY_PLUGIN'));
+        SocialcommunityInstallHelper::addRow(JText::_('COM_SOCIALCOMMUNITY_USER_SOCIALCOMMUNITY_USER'), $result, JText::_('COM_SOCIALCOMMUNITY_PLUGIN'));
 
         // End table with the information
-        SocialCommunityInstallHelper::endTable();
+        SocialcommunityInstallHelper::endTable();
 
         echo JText::sprintf('COM_SOCIALCOMMUNITY_MESSAGE_REVIEW_SAVE_SETTINGS', JRoute::_('index.php?option=com_socialcommunity'));
 
@@ -276,6 +276,8 @@ class pkg_socialCommunityInstallerScript
         }
 
         // Create profiles if orphans exist.
-        Socialcommunity\Profile\Helper::createProfiles();
+        $createProfilesCommand = new \Socialcommunity\Profile\Command\CreateProfiles();
+        $createProfilesCommand->setGateway(new \Socialcommunity\Profile\Command\Gateway\Joomla\CreateProfiles(JFactory::getDbo()));
+        $createProfilesCommand->handle();
     }
 }

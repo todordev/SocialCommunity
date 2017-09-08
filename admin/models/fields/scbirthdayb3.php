@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -17,7 +17,7 @@ JFormHelper::loadFieldClass('list');
 /**
  * Form Field class for the Joomla Framework.
  *
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @since        1.6
  */
@@ -42,7 +42,6 @@ class JFormFieldScBirthdayB3 extends JFormField
 
         // Prepare birthday
         if (!empty($this->value)) {
-
             $date = new Prism\Validator\Date($this->value);
 
             if (!$date->isValid()) {
@@ -56,16 +55,14 @@ class JFormFieldScBirthdayB3 extends JFormField
                 $birthdayMonth = $date->format('m');
                 $birthdayYear  = $date->format('Y');
             }
-
         }
-        
-        $months = new Socialcommunity\Filter\Months();
+
+        $months = Socialcommunity\Helper\Joomla::monthsToOptions();
 
         $html = array();
-
         $html[] = '<div class="' . $class . '">';
         $html[] = '    <input name="' . $this->name . '[day]"   value="' . $birthdayDay . '" id="birthday_day" class="col-md-3 '. $class .'" type="text" placeholder="' . JText::_('COM_SOCIALCOMMUNITY_DAY') . '" ' . $required . '>';
-        $html[] = JHTML::_('select.genericlist', $months->toOptions(), $this->name . '[month]', array('class' => 'col-md-3 ' . $class), 'text', 'value', $birthdayMonth, 'birthday_month');
+        $html[] = JHTML::_('select.genericlist', $months, $this->name . '[month]', array('class' => 'col-md-3 ' . $class), 'text', 'value', $birthdayMonth, 'birthday_month');
         $html[] = '    <input name="' . $this->name . '[year]"  value="' . $birthdayYear . '" id="birthday_year"  class="col-md-4 '. $class .'" type="text" placeholder="' . JText::_('COM_SOCIALCOMMUNITY_YEAR') . '" ' . $required . '>';
         $html[] = '</div>';
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Component
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -18,7 +18,7 @@ defined('JPATH_PLATFORM') or die;
  * The classes extending this class should not be instanciated directly, as they
  * are automatically instanciated by the JObserverMapper
  *
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Component
  * @link         http://docs.joomla.org/JTableObserver
  * @since        3.1.2
@@ -41,7 +41,7 @@ class SocialcommunityObserverProfile extends JTableObserver
      * @param   array                $params           ( 'typeAlias' => $typeAlias )
      *
      * @throws \InvalidArgumentException
-     * @return  SocialCommunityObserverProfile
+     * @return  SocialcommunityObserverProfile
      *
      * @since   3.1.2
      */
@@ -62,25 +62,41 @@ class SocialcommunityObserverProfile extends JTableObserver
      * @return  void
      *
      * @since   3.1.2
-     * @throws  UnexpectedValueException
-     * @throws  InvalidArgumentException
+     * @throws  \UnexpectedValueException
+     * @throws  \InvalidArgumentException
+     * @throws  \RuntimeException
      */
     public function onBeforeDelete($pk)
     {
         $db = $this->table->getDbo();
 
-        $profile = new Socialcommunity\Profile\Profile($db);
-        $profile->load(['user_id' => (int)$this->table->get('user_id')]);
+        $condition  = new \Prism\Database\Condition\Condition(['column' => 'user_id', 'operator' => '=', 'value' => (int)$this->table->get('user_id'), 'table' => 'a']);
+        $conditions = new \Prism\Database\Condition\Conditions;
+        $conditions->addCondition($condition);
 
+        $databaseRequest = new \Prism\Database\Request\Request();
+        $databaseRequest->setConditions($conditions);
+
+        $mapper     = new \Socialcommunity\Profile\Mapper(new \Socialcommunity\Profile\Gateway\JoomlaGateway($db));
+        $repository = new \Socialcommunity\Profile\Repository($mapper);
+
+        $profile = $repository->fetch($databaseRequest);
         if ($profile->getId()) {
-            $params      = JComponentHelper::getParams('com_socialcommunity');
+            $params = JComponentHelper::getParams('com_socialcommunity');
             /** @var  $params Joomla\Registry\Registry */
 
             $filesystemHelper = new Prism\Filesystem\Helper($params);
-            $mediaFolder = $filesystemHelper->getMediaFolder($profile->getUserId());
-            $filesystem  = $filesystemHelper->getFilesystem();
+            $mediaFolder      = $filesystemHelper->getMediaFolder($profile->getUserId());
+            $filesystem       = $filesystemHelper->getFilesystem();
 
-            $profile->removeImages($filesystem, $mediaFolder);
+            $profileImage               = new Socialcommunity\Value\Profile\Image;
+            $profileImage->image        = $profile->getImage();
+            $profileImage->image_icon   = $profile->getImageIcon();
+            $profileImage->image_small  = $profile->getImageSmall();
+            $profileImage->image_square = $profile->getImageSquare();
+
+            $deleteImageCommand = new \Socialcommunity\Profile\Command\DeleteImage($profileImage, $filesystem, $mediaFolder);
+            $deleteImageCommand->handle();
         }
     }
 }

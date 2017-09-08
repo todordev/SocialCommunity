@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -11,13 +11,13 @@
 defined('_JEXEC') or die;
 
 /**
- * SocialCommunity country controller class.
+ * Socialcommunity country controller class.
  *
- * @package        SocialCommunity
+ * @package        Socialcommunity
  * @subpackage     Components
  * @since          1.6
  */
-class SocialCommunityControllerCountry extends Prism\Controller\Form\Backend
+class SocialcommunityControllerCountry extends Prism\Controller\Form\Backend
 {
     public function save($key = null, $urlVar = null)
     {
@@ -32,7 +32,7 @@ class SocialCommunityControllerCountry extends Prism\Controller\Form\Backend
         );
 
         $model = $this->getModel();
-        /** @var $model SocialCommunityModelCountry */
+        /** @var $model SocialcommunityModelCountry */
 
         $form = $model->getForm($data, false);
         /** @var $form JForm */

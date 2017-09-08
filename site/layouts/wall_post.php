@@ -1,9 +1,9 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
     <div class="row">
         <div class="col-md-1">
             <a href="<?php echo $displayData->profileLink; ?>" rel="nofollow">
-                <img src="<?php echo $displayData->imageSquare; ?>" <?php echo $displayData->imageAlt;?> />
+                <img src="<?php echo $displayData->image; ?>" <?php echo $displayData->imageAlt;?> />
             </a>
         </div>
 
@@ -26,7 +26,7 @@ defined('_JEXEC') or die;
                 &nbsp;
                 <span class="sc-user-alias">@<?php echo $displayData->alias; ?></span>
                 &nbsp;
-                <span class="sc-post-created"><?php echo $displayData->created; ?></span>
+                <span class="sc-post-created"><?php echo $displayData->createdAt; ?></span>
             </h4>
             <p class="list-group-item-text"><?php echo $displayData->content; ?></p>
         </div>

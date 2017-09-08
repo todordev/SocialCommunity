@@ -1,20 +1,18 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Version
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 namespace Socialcommunity;
 
-defined('JPATH_PLATFORM') or die;
-
 /**
  * Information about package version.
  *
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Version
  */
 class Version
@@ -24,21 +22,21 @@ class Version
      *
      * @var string
      */
-    public $product = 'SocialCommunity';
+    public $product = 'Socialcommunity';
 
     /**
      * Main Release Level
      *
      * @var integer
      */
-    public $release = '2';
+    public $release = '3';
 
     /**
      * Sub Release Level
      *
      * @var integer
      */
-    public $devLevel = '2.2';
+    public $devLevel = '0';
 
     /**
      * Release Type
@@ -59,14 +57,14 @@ class Version
      *
      * @var string
      */
-    public $releaseDate = '12 November, 2016';
+    public $releaseDate = '08 September, 2017';
 
     /**
      * Minimum required version of Prism library.
      *
      * @var string
      */
-    public $requiredPrismVersion = '1.17';
+    public $requiredPrismVersion = '1.20';
 
     /**
      * License
@@ -80,7 +78,7 @@ class Version
      *
      * @var string
      */
-    public $copyright = '&copy; 2016 ITPrism. All rights reserved.';
+    public $copyright = '&copy; 2017 ITPrism. All rights reserved.';
 
     /**
      * URL

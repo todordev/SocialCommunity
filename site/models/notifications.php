@@ -1,9 +1,9 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
@@ -13,10 +13,10 @@ defined('_JEXEC') or die;
 /**
  * This class contains methods tha manage notifications.
  *
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  */
-class SocialCommunityModelNotifications extends JModelList
+class SocialcommunityModelNotifications extends JModelList
 {
     /**
      * Constructor.

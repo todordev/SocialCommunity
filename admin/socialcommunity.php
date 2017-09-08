@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -14,7 +14,7 @@ jimport('Prism.init');
 jimport('Socialcommunity.init');
 
 // Get an instance of the controller prefixed by HelloWorld
-$controller = JControllerLegacy::getInstance("SocialCommunity");
+$controller = JControllerLegacy::getInstance('Socialcommunity');
 
 // Perform the Request task
 $controller->execute(JFactory::getApplication()->input->getCmd('task'));

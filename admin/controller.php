@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -13,10 +13,10 @@ defined('_JEXEC') or die;
 /**
  * Default Controller
  *
- * @package         SocialCommunity
+ * @package         Socialcommunity
  * @subpackage      Components
  */
-class SocialCommunityController extends JControllerLegacy
+class SocialcommunityController extends JControllerLegacy
 {
     /**
      * Typical view method for MVC based architecture

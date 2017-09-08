@@ -8,15 +8,10 @@
                filter="trim"
                required="true"/>
 
-        <field name="code" type="text" class="en"
+        <field name="country_code" type="text" class="en"
                label="COM_SOCIALCOMMUNITY_COUNTRY_CODE"
                description="COM_SOCIALCOMMUNITY_COUNTRY_CODE_DESC"
                 />
-
-        <field name="locale" type="text" hint="en_GB"
-               label="COM_SOCIALCOMMUNITY_LOCALE"
-               description="COM_SOCIALCOMMUNITY_COUNTRY_LOCALE_DESC"
-        />
 
         <field name="latitude" type="text"
                label="COM_SOCIALCOMMUNITY_LATITUDE"
@@ -26,11 +21,6 @@
         <field name="longitude" type="text"
                label="COM_SOCIALCOMMUNITY_LONGITUDE"
                description="COM_SOCIALCOMMUNITY_LONGITUDE_DESC"
-        />
-
-        <field name="currency" type="text" hint="GBP"
-               label="COM_SOCIALCOMMUNITY_CURRENCY"
-               description="COM_SOCIALCOMMUNITY_COUNTRY_CURRENCY_DESC"
         />
 
         <field name="timezone" type="text" hint="Europe/London"

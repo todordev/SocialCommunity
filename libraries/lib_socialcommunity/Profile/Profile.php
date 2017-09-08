@@ -1,32 +1,31 @@
 <?php
 /**
- * @package      SocialCommunity
- * @subpackage   Profiles
+ * @package      Socialcommunity
+ * @subpackage   Profile
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 namespace Socialcommunity\Profile;
 
-use Coinbase\Wallet\Exception\NotFoundException;
-use League\Flysystem\FileNotFoundException;
-use Prism;
-use Socialcommunity\Validator;
-use League\Flysystem\Filesystem;
-use Defuse\Crypto\Crypto;
-
-defined('JPATH_PLATFORM') or die;
+use Joomla\Registry\Registry;
+use Prism\Domain\Entity;
+use Prism\Domain\EntityId;
+use Prism\Domain\EntityProperties;
+use Prism\Domain\Populator;
+use Prism\Domain\PropertiesMethods;
 
 /**
- * This is a class that provides functionality for managing profile.
+ * This class provides business logic for managing a profile.
  *
- * @package      SocialCommunity
- * @subpackage   Profiles
+ * @package      Socialcommunity
+ * @subpackage   Profile
  */
-class Profile extends Prism\Database\Table
+class Profile implements Entity, EntityProperties
 {
-    protected $id = 0;
+    use EntityId, Populator, PropertiesMethods;
+
     protected $name;
     protected $alias;
     protected $image;
@@ -34,265 +33,91 @@ class Profile extends Prism\Database\Table
     protected $image_square;
     protected $image_small;
     protected $bio;
-    protected $phone;
-    protected $address;
-    protected $birthday;
     protected $gender;
-    protected $user_id = 0;
-    protected $location_id = 0;
-    protected $country_id = 0;
+    protected $user_id;
+    protected $location_id;
+    protected $country_code;
     protected $website;
     protected $slug;
     protected $active = 0;
 
-    protected $secretKey;
-
-    static protected $instances = array();
+    /**
+     * @var Registry
+     */
+    protected $params;
 
     /**
-     * Create and initialize an object.
-     *
-     * <code>
-     * $userId = 1;
-     *
-     * $profile   = Socialcommunity\Profile\Profile::getInstance(\JFactory::getDbo(), $userId);
-     * </code>
-     *
-     * @param \JDatabaseDriver $db
-     * @param integer $id
-     * 
-     * @return Profile
+     * @var Birthday
      */
-    public static function getInstance(\JDatabaseDriver $db, $id)
-    {
-        if (!array_key_exists($id, self::$instances)) {
-            $item = new Profile($db);
-            $item->load($id);
-            
-            self::$instances[$id] = $item;
-        }
+    protected $birthday;
 
-        return self::$instances[$id];
+    public function __construct()
+    {
+        $this->birthday = new Birthday();
     }
 
-    /**
-     * Load notification record from database.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     * </code>
-     *
-     * @param int|array $keys
-     * @param array $options
-     *
-     * @throws \RuntimeException
-     */
-    public function load($keys, array $options = array())
+    public function bind(array $data, array $ignored = array())
     {
-        // Create a new query object.
-        $query = $this->db->getQuery(true);
+        $properties = get_object_vars($this);
 
-        $query
-            ->select(
-                'a.id, a.name, a.alias, a.image, a.image_icon, a.image_square, a.image_small, a.bio, a.phone, ' .
-                'a.address, a.birthday, a.gender, a.location_id, a.country_id, a.website, a.user_id, a.active, ' .
-                $query->concatenate(array('a.user_id', 'a.alias'), '-') . ' AS slug'
-            )
-            ->from($this->db->quoteName('#__itpsc_profiles', 'a'));
+        // Parse parameters of the object if they exists.
+        if (array_key_exists('params', $data) and !in_array('params', $ignored, true)) {
+            if ($data['params'] instanceof Registry) {
+                $this->params = $data['params'];
+            } else {
+                $this->params = new Registry($data['params']);
+            }
+            unset($data['params']);
+        }
 
-        // Filter by keys.
-        if (!is_array($keys)) {
-            $query->where('a.id = ' . (int)$keys);
-        } else {
-            foreach ($keys as $key => $value) {
-                $query->where($this->db->quoteName('a.'.$key) . ' = ' . $this->db->quote($value));
+        if (array_key_exists('birthday', $data) and !in_array('birthday', $ignored, true)) {
+            if ($data['birthday'] instanceof Birthday) {
+                $this->birthday = $data['birthday'];
+            } else {
+                $this->birthday = new Birthday(new \DateTime($data['birthday']));
+            }
+            unset($data['birthday']);
+        }
+
+        foreach ($data as $key => $value) {
+            if (array_key_exists($key, $properties) and !in_array($key, $ignored, true)) {
+                $this->$key = $value;
             }
         }
-
-        $this->db->setQuery($query);
-        $result = (array)$this->db->loadAssoc();
-
-        $this->bind($result);
-
-        // Decrypt phone and address.
-        if ($this->secretKey) {
-            $this->phone   = (!$this->phone) ? null : $this->db->quote(Crypto::decrypt($this->phone, $this->secretKey));
-            $this->address = (!$this->address) ? null : $this->db->quote(Crypto::decrypt($this->address, $this->secretKey));
-        }
     }
 
     /**
-     * Store data to database.
-     *
-     * <code>
-     * $data = array(
-     *    "user_id" => 1,
-     *    "name" => "John Dow"
-     * );
-     *
-     * $profile    = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->bind($data);
-     * $profile->store();
-     * </code>
-     */
-    public function store()
-    {
-        if (!$this->id) { // Insert
-            $this->insertObject();
-        } else { // Update
-            $this->updateObject();
-        }
-    }
-
-    protected function insertObject()
-    {
-        $image          = (!$this->image) ? 'NULL' : $this->db->quote($this->image);
-        $imageIcon      = (!$this->image_icon) ? 'NULL' : $this->db->quote($this->image_icon);
-        $imageSquare    = (!$this->image_square) ? 'NULL' : $this->db->quote($this->image_square);
-        $imageSmall     = (!$this->image_small) ? 'NULL' : $this->db->quote($this->image_small);
-        $bio            = (!$this->bio) ? 'NULL' : $this->db->quote($this->bio);
-        $gender         = (!in_array($this->gender, array('male', 'female'), true)) ? $this->db->quote('male') : $this->db->quote($this->gender);
-        $active         = ((int)$this->active === 0) ? 0 : 1;
-
-        // Prepare valid alias.
-        $this->alias = Helper::safeAlias($this->alias);
-
-        $query = $this->db->getQuery(true);
-
-        $query
-            ->insert($this->db->quoteName('#__itpsc_profiles'))
-            ->set($this->db->quoteName('name') . '=' . $this->db->quote($this->name))
-            ->set($this->db->quoteName('alias') . '=' . $this->db->quote($this->alias))
-            ->set($this->db->quoteName('image') . '=' . $image)
-            ->set($this->db->quoteName('image_icon') . '=' . $imageIcon)
-            ->set($this->db->quoteName('image_square') . '=' . $imageSquare)
-            ->set($this->db->quoteName('image_small') . '=' . $imageSmall)
-            ->set($this->db->quoteName('bio') . '=' . $bio)
-            ->set($this->db->quoteName('birthday') . '=' . $this->db->quote($this->birthday))
-            ->set($this->db->quoteName('gender') . '=' . $gender)
-            ->set($this->db->quoteName('website') . '=' . $this->db->quote($this->website))
-            ->set($this->db->quoteName('user_id') . '=' . (int)$this->user_id)
-            ->set($this->db->quoteName('active') . '=' . (int)$active)
-            ->set($this->db->quoteName('location_id') . '=' . (int)$this->location_id)
-            ->set($this->db->quoteName('country_id') . '=' . (int)$this->country_id);
-
-        // Encrypt phone and address.
-        if ($this->secretKey) {
-            $phone   = (!$this->phone)   ? null : $this->db->quote(Crypto::encrypt($this->phone, $this->secretKey));
-            $address = (!$this->address) ? null : $this->db->quote(Crypto::encrypt($this->address, $this->secretKey));
-
-            $query
-                ->set($this->db->quoteName('phone') . '=' . $phone)
-                ->set($this->db->quoteName('address') . '=' . $address);
-        }
-
-        $this->db->setQuery($query);
-        $this->db->execute();
-
-        $this->id = $this->db->insertid();
-    }
-
-    protected function updateObject()
-    {
-        $image = (!$this->image) ? 'NULL' : $this->db->quote($this->image);
-        $imageIcon   = (!$this->image_icon) ? 'NULL' : $this->db->quote($this->image_icon);
-        $imageSquare   = (!$this->image_square) ? 'NULL' : $this->db->quote($this->image_square);
-        $imageSmall   = (!$this->image_small) ? 'NULL' : $this->db->quote($this->image_small);
-        $bio   = (!$this->bio) ? 'NULL' : $this->db->quote($this->bio);
-        $gender   = (!in_array($this->gender, array('male', 'female'), true)) ? $this->db->quote('male') : $this->db->quote($this->gender);
-        $active   = ((int)$this->active === 0) ? 0 : 1;
-
-        // Prepare valid alias.
-        $this->alias = Helper::safeAlias($this->alias, $this->user_id);
-
-        $query = $this->db->getQuery(true);
-
-        $query
-            ->update($this->db->quoteName('#__itpsc_profiles'))
-            ->set($this->db->quoteName('name') . '=' . $this->db->quote($this->name))
-            ->set($this->db->quoteName('alias') . '=' . $this->db->quote($this->alias))
-            ->set($this->db->quoteName('image') . '=' . $image)
-            ->set($this->db->quoteName('image_icon') . '=' . $imageIcon)
-            ->set($this->db->quoteName('image_square') . '=' . $imageSquare)
-            ->set($this->db->quoteName('image_small') . '=' . $imageSmall)
-            ->set($this->db->quoteName('bio') . '=' . $bio)
-            ->set($this->db->quoteName('birthday') . '=' . $this->db->quote($this->birthday))
-            ->set($this->db->quoteName('gender') . '=' . $gender)
-            ->set($this->db->quoteName('website') . '=' . $this->db->quote($this->website))
-            ->set($this->db->quoteName('user_id') . '=' . (int)$this->user_id)
-            ->set($this->db->quoteName('active') . '=' . (int)$active)
-            ->set($this->db->quoteName('location_id') . '=' . (int)$this->location_id)
-            ->set($this->db->quoteName('country_id') . '=' . (int)$this->country_id)
-            ->where($this->db->quoteName('id') .'='. (int)$this->id);
-
-        // Encrypt phone and address.
-        if ($this->secretKey) {
-            $phone   = (!$this->phone)   ? null : $this->db->quote(Crypto::encrypt($this->phone, $this->secretKey));
-            $address = (!$this->address) ? null : $this->db->quote(Crypto::encrypt($this->address, $this->secretKey));
-
-            $query
-                ->set($this->db->quoteName('phone') . '=' . $phone)
-                ->set($this->db->quoteName('address') . '=' . $address);
-        }
-
-        $this->db->setQuery($query);
-        $this->db->execute();
-    }
-
-    /**
-     * Get an unique profile alias used in profile URI.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $slug = $profile->getSlug();
-     * </code>
+     * Return the name of the holder.
      *
      * @return string
      */
-    public function getSlug()
+    public function getName()
     {
-        return $this->slug;
+        return (string)$this->name;
     }
 
     /**
-     * Get record ID.
+     * Return bio of this profile.
      *
-     * <code>
-     * $userId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load(array('user_id' => $userId));
-     *
-     * if (!$profile->getId()) {
-     * ....
-     * }
-     * </code>
+     * @return string
+     */
+    public function getBio()
+    {
+        return (string)$this->bio;
+    }
+
+    /**
+     * Return the status of the profile.
      *
      * @return int
      */
-    public function getId()
+    public function getStatus()
     {
-        return (int)$this->id;
+        return (int)$this->active;
     }
 
     /**
-     * Get user ID.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * echo $profile->getUserId();
-     * </code>
+     * Return the user ID of the profile.
      *
      * @return int
      */
@@ -302,314 +127,7 @@ class Profile extends Prism\Database\Table
     }
 
     /**
-     * Set the user ID of the user.
-     *
-     * <code>
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->setUserId(1);
-     * </code>
-     *
-     * @param int $id
-     *
-     * @return self
-     */
-    public function setUserId($id)
-    {
-        $this->user_id = (int)$id;
-
-        return $this;
-    }
-
-    /**
-     * Get the name of the user.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $name = $profile->getName();
-     * </code>
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Set the name of the user.
-     *
-     * <code>
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->setName('John Dow');
-     * </code>
-     *
-     * @param string $name
-     *
-     * @return self
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get unique alias of the user.
-     *
-     * <code>
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $alias = $profile->getAlias();
-     * </code>
-     *
-     * @return string
-     */
-    public function getAlias()
-    {
-        return $this->alias;
-    }
-
-    /**
-     * Set the unique alias of the user.
-     *
-     * <code>
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->setAlias('john-dow');
-     * </code>
-     *
-     * @param string $alias
-     *
-     * @return self
-     */
-    public function setAlias($alias)
-    {
-        $this->alias = $alias;
-
-        return $this;
-    }
-
-    /**
-     * Return secret key used for encrypting or decrypting sensitive data.
-     *
-     * <code>
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * echo $profile->setSecretKey();
-     * </code>
-     *
-     * @return string
-     */
-    public function getSecretKey()
-    {
-        return $this->secretKey;
-    }
-
-    /**
-     * Set a secret key that will be used to encrypt or decrypt sensitive data.
-     *
-     * <code>
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->setSecretKey('secret_key');
-     * </code>
-     *
-     * @param string $key
-     *
-     * @return self
-     */
-    public function setSecretKey($key)
-    {
-        $this->secretKey = $key;
-
-        return $this;
-    }
-
-    /**
-     * Get a user picture.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $image = $profile->getImage();
-     * </code>
-     *
-     * @return string
-     */
-    public function getImage()
-    {
-        return $this->image;
-    }
-
-    /**
-     * Return profile icon.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $image = $profile->getImageIcon();
-     * </code>
-     *
-     * @return string
-     */
-    public function getImageIcon()
-    {
-        return $this->image_icon;
-    }
-
-    /**
-     * Return profile square image.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $image = $profile->getImageSquare();
-     * </code>
-     *
-     * @return string
-     */
-    public function getImageSquare()
-    {
-        return $this->image_square;
-    }
-
-    /**
-     * Return profile small image.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $image = $profile->getImageSmall();
-     * </code>
-     *
-     * @return string
-     */
-    public function getImageSmall()
-    {
-        return $this->image_small;
-    }
-
-    /**
-     * Return information about user ( biography )
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $bio = $profile->getBio();
-     * </code>
-     *
-     * @return string
-     */
-    public function getBio()
-    {
-        return $this->bio;
-    }
-
-    /**
-     * Return phone number of an user.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $phone = $profile->getPhone();
-     * </code>
-     *
-     * @return string
-     */
-    public function getPhone()
-    {
-        return $this->phone;
-    }
-
-    /**
-     * Return information about user address.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $address = $profile->getAddress();
-     * </code>
-     *
-     * @return string
-     */
-    public function getAddress()
-    {
-        return $this->address;
-    }
-
-    /**
-     * Return the date of user birthday.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $birthday = $profile->getBirthday();
-     * </code>
-     *
-     * @return string
-     */
-    public function getBirthday()
-    {
-        return $this->birthday;
-    }
-
-    /**
-     * Return user gender - male or female.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $gender = $profile->getGender();
-     * </code>
-     *
-     * @return string
-     */
-    public function getGender()
-    {
-        return $this->gender;
-    }
-
-    /**
-     * Return ID of user location.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $locationId = $profile->getLocationId();
-     * </code>
+     * Return the location ID of the profile.
      *
      * @return int
      */
@@ -619,58 +137,39 @@ class Profile extends Prism\Database\Table
     }
 
     /**
-     * Return ID of user country.
+     * Return the birthday of the user.
      *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $countryId = $profile->getCountryId();
-     * </code>
-     *
-     * @return int
+     * @return Birthday
      */
-    public function getCountryId()
+    public function getBirthday()
     {
-        return (int)$this->country_id;
+        return $this->birthday;
     }
 
     /**
-     * Return user website.
+     * set the birthday of the user.
      *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $website = $profile->getWebsite();
-     * </code>
-     *
-     * @return string
+     * @param \DateTime $birthday
      */
-    public function getWebsite()
+    public function setBirthday(\DateTime $birthday)
     {
-        return $this->website;
+        $this->birthday = new Birthday($birthday);
     }
 
     /**
-     * Check for active user profile.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * if (!$profile->isActive()) {
-     * ....
-     * }
-     * </code>
+     * Return the gender of the profile.
      *
      * @return string
+     */
+    public function getGender()
+    {
+        return (string)$this->gender;
+    }
+
+    /**
+     * Check if profile is active.
+     *
+     * @return bool
      */
     public function isActive()
     {
@@ -678,121 +177,108 @@ class Profile extends Prism\Database\Table
     }
 
     /**
-     * Remove user picture from database and filesystem.
-     *
-     * <code>
-     * $profileId   = 1;
-     * $mediaFolder = "images/profile/user300";
-     * $filesystem  = SocialCommunityHelper::getStorageFilesystem();
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $profile->removeImages($filesystem, $mediaFolder);
-     * </code>
-     *
-     * @throws FileNotFoundException
-     *
-     * @param Filesystem $filesystem
-     * @param string $mediaFolder
+     * @return string
      */
-    public function removeImages($filesystem, $mediaFolder)
+    public function getAlias()
     {
-        // Delete profile images.
-        if ((string)$this->image !== '') {
-            // Remove an image from the filesystem
-            $files = array(
-                $mediaFolder .'/'. $this->image,
-                $mediaFolder .'/'. $this->image_small,
-                $mediaFolder .'/'. $this->image_icon,
-                $mediaFolder .'/'. $this->image_square,
-            );
-
-            foreach ($files as $file) {
-                if ($filesystem->has($file)) {
-                    $filesystem->delete($file);
-                }
-            }
-
-            $this->image = null;
-            $this->image_small = null;
-            $this->image_icon = null;
-            $this->image_square = null;
-        }
+        return (string)$this->alias;
     }
 
     /**
-     * Remove user activities.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $profile->removeActivities();
-     * </code>
-     *
-     * @throws \RuntimeException
+     * @return string
      */
-    public function removeActivities()
+    public function getImage()
     {
-        $query = $this->db->getQuery(true);
-        $query
-            ->delete($this->db->quoteName('#__itpsc_activities'))
-            ->where($this->db->quoteName('user_id') .'='. (int)$this->user_id);
-
-        $this->db->setQuery($query);
-        $this->db->execute();
+        return (string)$this->image;
     }
 
     /**
-     * Remove user notifications.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $profile->removeNotifications();
-     * </code>
-     *
-     * @throws \RuntimeException
+     * @return string
      */
-    public function removeNotifications()
+    public function getImageIcon()
     {
-        $query = $this->db->getQuery(true);
-        $query
-            ->delete($this->db->quoteName('#__itpsc_notifications'))
-            ->where($this->db->quoteName('user_id') .'='. (int)$this->user_id);
-
-        $this->db->setQuery($query);
-        $this->db->execute();
+        return (string)$this->image_icon;
     }
 
     /**
-     * Remove the records of user social profiles.
-     *
-     * <code>
-     * $profileId = 1;
-     *
-     * $profile   = new Socialcommunity\Profile\Profile(\JFactory::getDbo());
-     * $profile->load($profileId);
-     *
-     * $profile->removeSocialProfiles();
-     * </code>
-     *
-     * @throws \RuntimeException
+     * @return string
      */
-    public function removeSocialProfiles()
+    public function getImageSquare()
     {
-        $query = $this->db->getQuery(true);
-        $query
-            ->delete($this->db->quoteName('#__itpsc_socialprofiles'))
-            ->where($this->db->quoteName('user_id') .'='. (int)$this->user_id);
+        return (string)$this->image_square;
+    }
 
-        $this->db->setQuery($query);
-        $this->db->execute();
+    /**
+     * @return string
+     */
+    public function getImageSmall()
+    {
+        return (string)$this->image_small;
+    }
+
+    /**
+     * @return Registry
+     */
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountryCode()
+    {
+        return (string)$this->country_code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWebsite()
+    {
+        return (string)$this->website;
+    }
+
+    /**
+     * @param string $image
+     */
+    public function setImage($image)
+    {
+        $this->image = (string)$image;
+    }
+
+    /**
+     * @param string $imageIcon
+     */
+    public function setImageIcon($imageIcon)
+    {
+        $this->image_icon = (string)$imageIcon;
+    }
+
+    /**
+     * @param string $imageSquare
+     */
+    public function setImageSquare($imageSquare)
+    {
+        $this->image_square = (string)$imageSquare;
+    }
+
+    /**
+     * @param string $imageSmall
+     */
+    public function setImageSmall($imageSmall)
+    {
+        $this->image_small = (string)$imageSmall;
+    }
+
+    /**
+     * Return profile slug.
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }

@@ -1,16 +1,16 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityViewProfile extends JViewLegacy
+class SocialcommunityViewProfile extends JViewLegacy
 {
     /**
      * @var JDocumentHtml
@@ -58,20 +58,20 @@ class SocialCommunityViewProfile extends JViewLegacy
         $this->app       = JFactory::getApplication();
         $this->option    = $this->app->input->get('option');
 
-        /** @var $model SocialCommunityModelProfile */
         $model           = $this->getModel();
+        /** @var $model SocialcommunityModelProfile */
 
         $this->state     = $model->getState();
-        $this->item      = $model->getItem();
-
         $this->params    = $this->state->get('params');
 
+        $this->targetId  = $this->state->get($this->option . '.target.id');
         $this->visitorId = $this->state->get($this->option . '.visitor.id');
         $this->isOwner   = $this->state->get($this->option . '.visitor.is_owner');
-        $this->targetId  = $this->state->get($this->option . '.target.user_id');
 
-        // If I am not logged in, and I try to load profile page without user ID as a parameter,
-        // I must load the layout of registration and login form.
+        $this->item      = $model->getItem($this->targetId, $this->isOwner);
+
+        // If I am not logged in, and I am trying to load a profile page without user ID as a parameter,
+        // I will have to load the layout of registration and login form.
         if (!$this->visitorId and !$this->item) {
             $this->setLayout('registration');
         }
@@ -95,28 +95,26 @@ class SocialCommunityViewProfile extends JViewLegacy
                 $filesystemHelper  = new Prism\Filesystem\Helper($this->params);
                 $this->mediaFolder = $filesystemHelper->getMediaFolderUri($this->item->user_id);
 
-                // Display details layout if
+                // Display layout Details if
+                // - the wall has been disabled.
                 // - visitor is not registered and there is target ID.
                 // - visitor is registered but he is not the owner of the profile.
-                if ((!$this->visitorId and $this->targetId) or ($this->visitorId and !$this->isOwner)) {
-                    $this->setLayout('details'); // Details page.
+                if (Prism\Constants::DISABLED === (int)$this->params->get('profile_wall', Prism\Constants::DISABLED)) {
+                    $this->setLayout('default'); // Details page.
+                } elseif ((!$this->visitorId && $this->targetId) || ($this->visitorId && !$this->isOwner)) {
+                    $this->setLayout('default'); // Details page.
                 } else {
-                    $this->setLayout('default'); // Profile owner's wall.
+                    $this->setLayout('wall'); // Profile owner's wall.
                 }
 
-                // If the wall has been disabled, display profile details.
-                if (!$this->params->get('profile_wall', Prism\Constants::ENABLED)) {
-                    $this->setLayout('details'); // Details page.
-                }
-
-                $pluginContext     = 'com_socialcommunity.profile';
+                $pluginContext  = 'com_socialcommunity.profile';
 
                 switch ($this->getLayout()) {
-                    case 'default':
+                    case 'wall':
                         $pluginContext .= '.wall';
 
-                        // If I am logged in and I try to load profile page,
-                        // but I do not provide valid profile ID,
+                        // If I am logged in and I am trying to load a profile page,
+                        // and I do not provide valid profile ID,
                         // I have to display error message.
                         if (!$this->item and $this->visitor->id > 0) {
                             $menu     = $this->app->getMenu();
@@ -128,13 +126,11 @@ class SocialCommunityViewProfile extends JViewLegacy
                         }
 
                         $this->prepareWall();
-
                         break;
 
-                    default: // details
+                    default: // Details
                         $pluginContext .= '.details';
                         $this->prepareDetails();
-
                         break;
                 }
 
@@ -143,7 +139,7 @@ class SocialCommunityViewProfile extends JViewLegacy
 
                 // Events
                 $dispatcher        = JEventDispatcher::getInstance();
-                $this->item->event = new stdClass();
+                $this->item->event = new stdClass;
                 $offset            = 0;
 
                 $results = $dispatcher->trigger('onContentBeforeDisplay', array($pluginContext, &$this->item, &$this->params, $offset));
@@ -183,6 +179,8 @@ class SocialCommunityViewProfile extends JViewLegacy
 
     /**
      * Prepare the wall of on user profile.
+     *
+     * @throws \RuntimeException
      */
     protected function prepareWall()
     {
@@ -191,18 +189,21 @@ class SocialCommunityViewProfile extends JViewLegacy
 
         JHtml::_('jquery.framework');
         JHtml::_('Prism.ui.pnotify');
-        JHtml::_('Prism.ui.joomlaHelper');
+        JHtml::_('Prism.ui.message');
         JHtml::_('Prism.ui.bootstrapMaxLength');
-        $this->document->addScript('media/com_socialcommunity/js/site/wall.js');
+        JHtml::_('Prism.ui.iziModal');
+        JHtml::_('Prism.ui.vue');
 
+        $this->document->addScript('media/com_socialcommunity/js/site/profile.js');
+        $this->document->addScriptOptions('com_socialcommunity.profile', [
+            'token' => JSession::getFormToken()
+        ]);
+
+        JText::script('COM_SOCIALCOMMUNITY_EDIT');
+        JText::script('COM_SOCIALCOMMUNITY_DELETE');
         JText::script('COM_SOCIALCOMMUNITY_WARNING');
         JText::script('COM_SOCIALCOMMUNITY_LENGTH_POST_D');
-
-        $this->wallPosts = new Socialcommunity\Wall\User\Posts(JFactory::getDbo());
-        $this->wallPosts->load(array('user_id' => $this->item->user_id));
-
-        $user = JFactory::getUser();
-        $this->timezone = $user->getParam('timezone');
+        JText::script('COM_SOCIALCOMMUNITY_QUESTION_REMOVE_POST');
     }
 
     /**
@@ -211,13 +212,13 @@ class SocialCommunityViewProfile extends JViewLegacy
      */
     protected function prepareDetails()
     {
-        $this->documentTitle = JText::sprintf('COM_SOCIALCOMMUNITY_PROFILE_PAGE_S', $this->escape($this->item->name));
+        $this->documentTitle   = JText::sprintf('COM_SOCIALCOMMUNITY_PROFILE_PAGE_S', $this->escape($this->item->name));
         $this->breadcrumbTitle = $this->escape($this->item->name);
     }
 
     protected function prepareNoProfile()
     {
-        $this->documentTitle = JText::_('COM_SOCIALCOMMUNITY_NO_PROFILE_PAGE');
+        $this->documentTitle   = JText::_('COM_SOCIALCOMMUNITY_NO_PROFILE_PAGE');
         $this->breadcrumbTitle = JText::_('COM_SOCIALCOMMUNITY_NO_PAGE');
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -10,7 +10,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityModelCountry extends JModelAdmin
+class SocialcommunityModelCountry extends JModelAdmin
 {
     /**
      * Returns a reference to the a Table object, always creating it.
@@ -22,7 +22,7 @@ class SocialCommunityModelCountry extends JModelAdmin
      * @return  JTable  A database object
      * @since   1.6
      */
-    public function getTable($type = 'Country', $prefix = 'SocialCommunityTable', $config = array())
+    public function getTable($type = 'Country', $prefix = 'SocialcommunityTable', $config = array())
     {
         return JTable::getInstance($type, $prefix, $config);
     }
@@ -79,10 +79,8 @@ class SocialCommunityModelCountry extends JModelAdmin
         $id        = Joomla\Utilities\ArrayHelper::getValue($data, 'id');
         $name      = Joomla\Utilities\ArrayHelper::getValue($data, 'name');
         $code      = Joomla\Utilities\ArrayHelper::getValue($data, 'code');
-        $locale    = Joomla\Utilities\ArrayHelper::getValue($data, 'locale');
         $latitude  = Joomla\Utilities\ArrayHelper::getValue($data, 'latitude');
         $longitude = Joomla\Utilities\ArrayHelper::getValue($data, 'longitude');
-        $currency  = Joomla\Utilities\ArrayHelper::getValue($data, 'currency');
         $timezone  = Joomla\Utilities\ArrayHelper::getValue($data, 'timezone');
 
         // Load a record from the database
@@ -91,10 +89,8 @@ class SocialCommunityModelCountry extends JModelAdmin
 
         $row->set('name', $name);
         $row->set('code', $code);
-        $row->set('locale', $locale);
         $row->set('latitude', $latitude);
         $row->set('longitude', $longitude);
-        $row->set('currency', $currency);
         $row->set('timezone', $timezone);
 
         $row->store();

@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -10,7 +10,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityViewLocation extends JViewLegacy
+class SocialcommunityViewLocation extends JViewLegacy
 {
     /**
      * @var JDocumentHtml
@@ -81,6 +81,6 @@ class SocialCommunityViewLocation extends JViewLegacy
 
         JHtml::_('formbehavior.chosen', 'select');
 
-        $this->document->addScript(JURI::root() . 'media/' . $this->option . '/js/admin/' . JString::strtolower($this->getName()) . '.js');
+        $this->document->addScript(JURI::root() . 'media/' . $this->option . '/js/admin/' . strtolower($this->getName()) . '.js');
     }
 }

@@ -1,29 +1,31 @@
 <?php
 /**
- * @package      SocialCommunity\Notification
+ * @package      Socialcommunity\Notification
  * @subpackage   Validators
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 namespace Socialcommunity\Validator\Notification;
 
 use Prism\Validator\ValidatorInterface;
-
-defined('JPATH_BASE') or die;
+use Socialcommunity\Validator\Notification\Gateway\OwnerGateway;
 
 /**
  * This class provides functionality for validation notification owner.
  *
- * @package      SocialCommunity\Notification
+ * @package      Socialcommunity\Notification
  * @subpackage   Validators
  */
 class Owner implements ValidatorInterface
 {
-    protected $db;
+    /**
+     * @var OwnerGateway
+     */
+    protected $gateway;
 
-    protected $id;
+    protected $notificationId;
     protected $userId;
 
     /**
@@ -33,18 +35,26 @@ class Owner implements ValidatorInterface
      * $notificationId = 1;
      * $userId = 2;
      *
-     * $owner = new Socialcommunity\Validator\Notification\Owner(JFactory::getDbo(), $notificationId, $userId);
+     * $validatorOwner = new Socialcommunity\Validator\Notification\Owner($notificationId, $userId);
      * </code>
      *
-     * @param \JDatabaseDriver $db Database object.
-     * @param int             $id Notification ID.
-     * @param int             $userId    User ID.
+     * @param int  $notificationId
+     * @param int  $userId
      */
-    public function __construct(\JDatabaseDriver $db, $id, $userId)
+    public function __construct($notificationId, $userId)
     {
-        $this->db        = $db;
-        $this->id        = $id;
-        $this->userId    = $userId;
+        $this->notificationId   = $notificationId;
+        $this->userId           = $userId;
+    }
+
+    /**
+     * Set database gateway.
+     *
+     * @param OwnerGateway $gateway
+     */
+    public function setGateway(OwnerGateway $gateway)
+    {
+        $this->gateway = $gateway;
     }
 
     /**
@@ -54,8 +64,10 @@ class Owner implements ValidatorInterface
      * $notificationId = 1;
      * $userId = 2;
      *
-     * $owner = new Socialcommunity\Validator\Notification\Owner(JFactory::getDbo(), $notificationId, $userId);
-     * if(!$owner->isValid()) {
+     * $validatorOwner = new Socialcommunity\Validator\Notification\Owner($notificationId, $userId);
+     * $validatorOwner->setGateway(new Socialcommunity\Validator\Notification\Gateway\Joomla\Owner(JFactory::getDbo());
+     *
+     * if(!$validatorOwner->isValid()) {
      * ......
      * }
      * </code>
@@ -64,15 +76,6 @@ class Owner implements ValidatorInterface
      */
     public function isValid()
     {
-        $query = $this->db->getQuery(true);
-
-        $query
-            ->select('COUNT(*)')
-            ->from($this->db->quoteName('#__itpsc_notifications', 'a'))
-            ->where('a.id = ' . (int)$this->id)
-            ->where('a.user_id = ' . (int)$this->userId);
-
-        $this->db->setQuery($query, 0, 1);
-        return (bool)$this->db->loadResult();
+        return $this->gateway->isOwner($this->notificationId, $this->userId);
     }
 }

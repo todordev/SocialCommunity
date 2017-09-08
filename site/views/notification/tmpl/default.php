@@ -3,7 +3,7 @@
  * @package      Gamification
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
@@ -14,15 +14,15 @@ defined('_JEXEC') or die;?>
         <h1><?php echo $this->escape($this->params->get('page_heading')); ?></h1>
     <?php } ?>
 
-    <?php if (!empty($this->item)) { ?>
+    <?php if ($this->item) { ?>
         <div class="media gfy-notification">
-            <?php if (!empty($this->item->image)) { ?>
+            <?php if (!empty($this->item->getImage())) { ?>
             <div class="media-left">
-                <img class="media-object" src="<?php echo $this->item->image; ?>">
+                <img class="media-object" src="<?php echo $this->item->getImage(); ?>">
             </div>
             <?php } ?>
             <div class="media-body">
-                <p><?php echo $this->escape($this->item->content); ?></p>
+                <p><?php echo $this->escape($this->item->getContent()); ?></p>
             </div>
         </div>
     <?php } ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 /**
  * Get a list of items
  */
-class SocialCommunityModelCountries extends JModelList
+class SocialcommunityModelCountries extends JModelList
 {
     /**
      * Constructor.
@@ -30,7 +30,6 @@ class SocialCommunityModelCountries extends JModelList
                 'id', 'a.id',
                 'name', 'a.name',
                 'code', 'a.code',
-                'locale', 'a.locale',
                 'latitude', 'a.latitude',
                 'longitude', 'a.longitude',
                 'timezone', 'a.timezone',
@@ -91,7 +90,7 @@ class SocialCommunityModelCountries extends JModelList
         $query->select(
             $this->getState(
                 'list.select',
-                'a.id, a.name, a.code, a.locale, a.latitude, a.longitude, a.timezone, a.currency'
+                'a.id, a.name, a.code, a.latitude, a.longitude, a.timezone'
             )
         );
         $query->from($db->quoteName('#__itpsc_countries', 'a'));

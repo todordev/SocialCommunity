@@ -1,5 +1,0 @@
-cfg.name=socialcommunity
-cfg.versionDir=v2.3
-cfg.buildDir=packages
-cfg.sourceDir=/path/...
-cfg.pkgDir=/path/.../pkg_socialcommunity

@@ -79,10 +79,10 @@
                filter="trim"
                />
 
-        <field name="country_id" type="sccountries"
+        <field name="country_code" type="sccountries"
                label="COM_SOCIALCOMMUNITY_COUNTRY"
                description="COM_SOCIALCOMMUNITY_FIELD_COUNTRY_DESC"
-               filter="int"
+               key="code"
                />
 
         <field name="website" type="url" class="input-xxlarge"
@@ -92,28 +92,6 @@
                />
 
         <field name="location_id" type="hidden" filter="int" />
-
-    </fieldset>
-
-    <fieldset name="social">
-
-        <field name="facebook" type="text"
-               label="COM_SOCIALCOMMUNITY_FACEBOOK"
-               description="COM_SOCIALCOMMUNITY_FIELD_FACEBOOK_DESC"
-               filter="trim"
-               />
-
-        <field name="twitter" type="text"
-               label="COM_SOCIALCOMMUNITY_TWITTER"
-               description="COM_SOCIALCOMMUNITY_FIELD_TWITTER_DESC"
-               filter="trim"
-               />
-
-        <field name="linkedin" type="text"
-               label="COM_SOCIALCOMMUNITY_LINKEDIN"
-               description="COM_SOCIALCOMMUNITY_FIELD_LINKEDIN_DESC"
-               filter="trim"
-               />
 
     </fieldset>
 </form>

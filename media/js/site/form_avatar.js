@@ -1,76 +1,102 @@
 jQuery(document).ready(function() {
 
     // Get the loader.
-    var $loader  = jQuery("#js-thumb-fileupload-loader");
+    let $uploadLoader   = jQuery("#js-avatar-loader");
+    let $btnImageRemove = jQuery('#js-btn-remove-image');
+    let formToken       = jQuery("#js-form-token").attr('name');
+
+    // Initialize the modal plugin.
+    let $modal   = jQuery("#js-modal-wrapper").remodal({
+        hashTracking: false,
+        closeOnConfirm: false,
+        closeOnCancel: false,
+        closeOnEscape: false,
+        closeOnOutsideClick: false
+    });
 
     /** Image Tools **/
 
-    var aspectWidth  = socialCommunityOptions.imageWidth * 3;
-    var aspectHeight = socialCommunityOptions.imageHeight * 2;
+    let cropperInitialized  = false;
+
+    let scOptions    = Joomla.getOptions('com_socialcommunity.avatar');
+    let aspectRatios = {
+        '1/1': 1,
+        '2/3': 2/3,
+        '4/3': 4/3,
+        '16/9': 16/9
+    };
+    let aspectRatio = (scOptions.aspectRatio) ? aspectRatios[scOptions.aspectRatio] : '';
 
     // Set picture wrapper size.
-    var $pictureWrapper = jQuery("#js-fixed-dragger-cropper");
-    $pictureWrapper.css({
-        width: aspectWidth,
-        height: aspectHeight
-    });
+    let $pictureWrapper = jQuery("#js-fixed-dragger-cropper");
+    let $cropperImage   = jQuery("#js-cropper-img");
+    let $image          = jQuery("#js-avatar-img");
 
-    // Initialize the cropper if image exists (browser has been reloaded).
-    var $image = $pictureWrapper.find("img");
-    if ($image) {
-        initializeCropper($image, socialCommunityOptions.imageWidth, socialCommunityOptions.imageHeight, socialCommunityOptions.aspectRatio);
-    }
+    let $modalLoader    = jQuery("#js-modal-loader");
 
     // Prepare the token as an object.
-    var tokenObject = jQuery("#js-image-tools-form").serializeJSON();
+    let token        = {};
+    token[formToken] = 1;
 
-    // Upload image.
+    // Upload an image.
+    let formData = jQuery.fn.extend({}, {task: 'avatar.upload', format: 'raw'}, token);
     jQuery('#js-thumb-fileupload').fileupload({
         dataType: 'text json',
-        formData: tokenObject,
+        formData: formData,
         singleFileUploads: true,
         send: function() {
-            $loader.show();
+            $uploadLoader.show();
         },
         fail: function() {
-            $loader.hide();
+            $uploadLoader.hide();
         },
         done: function (event, response) {
 
             if(!response.result.success) {
-                PrismUIHelper.displayMessageFailure(response.result.title, response.result.text);
+                Prism.message.show(response.result.message);
             } else {
 
-                if ($image) {
-                    $image.cropper("destroy");
-                    $image.remove();
+                if (cropperInitialized) {
+                    $cropperImage.cropper("replace", response.result.data.url);
+                } else {
+                    $cropperImage.attr("src", response.result.data.url);
+
+                    // Calculate Wrapper Size.
+                    let wrapper = calculateWrapperSize(response.result.data);
+
+                    $cropperImage.cropper({
+                        viewMode: 3,
+                        aspectRatio: aspectRatio,
+                        autoCropArea: 0.6, // Center 60%
+                        multiple: false,
+                        dragCrop: false,
+                        dashed: false,
+                        movable: false,
+                        resizable: true,
+                        zoomable: false,
+                        minContainerWidth: wrapper.width,
+                        minContainerHeight: wrapper.height,
+                        built: function() {
+                            cropperInitialized = true;
+                        }
+                    });
+
+                    changeCropperSize(wrapper);
                 }
 
-                // Create new image.
-                $image = jQuery('<img/>', {
-                    src: response.result.data.image,
-                    class: 'img-polaroid center-block'
-                });
-                $image.appendTo('#js-fixed-dragger-cropper');
-
-                initializeCropper($image, socialCommunityOptions.imageWidth, socialCommunityOptions.imageHeight, socialCommunityOptions.aspectRatio);
+                $modal.open();
             }
 
             // Hide ajax loader.
-            $loader.hide();
+            $uploadLoader.hide();
         }
     });
 
-    // Set event to the button "Cancel".
+    // Initialize the button that crops the image.
     jQuery("#js-crop-btn-cancel").on("click", function() {
 
-        $image.cropper("destroy");
-        $image.remove();
-
-        jQuery("#js-image-tools").hide();
-
-        // Add the token.
-        var fields = PrismUIHelper.extend({format: 'raw', task: 'avatar.cancelImageCrop'}, tokenObject);
+        // Prepare fields.
+        let fields = jQuery.fn.extend({}, {task: 'avatar.cancelImageCrop', 'format': 'raw'}, token);
 
         jQuery.ajax({
             url: "index.php?option=com_socialcommunity",
@@ -78,30 +104,27 @@ jQuery(document).ready(function() {
             data: fields,
             dataType: "text json",
             beforeSend : function() {
-                // Show ajax loader.
-                $loader.show();
+                $modalLoader.show();
             }
         }).done(function(){
-            // Hide ajax loader.
-            $loader.hide();
+            $modalLoader.hide();
+            $modal.close();
         });
     });
 
-    // Set event to the button "Crop Image".
     jQuery("#js-crop-btn").on("click", function(event) {
-
-        var croppedData = $image.cropper("getData");
+        let croppedData = $cropperImage.cropper("getData");
 
         // Prepare data.
-        var data = {
+        let data = {
             width: Math.round(croppedData.width),
             height: Math.round(croppedData.height),
             x: Math.round(croppedData.x),
             y: Math.round(croppedData.y)
         };
 
-        // Add the token.
-        var fields = PrismUIHelper.extend({format: 'raw', task: 'avatar.cropImage'}, data, tokenObject);
+        // Prepare fields.
+        let fields = jQuery.fn.extend({task: 'avatar.cropImage', format: 'raw'}, data, token);
 
         jQuery.ajax({
             url: "index.php?option=com_socialcommunity",
@@ -109,65 +132,84 @@ jQuery(document).ready(function() {
             data: fields,
             dataType: "text json",
             beforeSend : function() {
-
-                jQuery.isLoading({
-                    text: Joomla.JText._('COM_SOCIALCOMMUNITY_CROPPING___'),
-                    'tpl': '<span class="isloading-wrapper %wrapper%"><img src="'+socialCommunityOptions.url+'libraries/Prism/ui/images/loader_120x120.gif" width="120" height="120"/></span>'
-                });
-
-                jQuery("#js-image-tools").hide();
-
+                $modalLoader.show();
             }
 
         }).done(function(response) {
 
-            if(!response.success) {
-                PrismUIHelper.displayMessageFailure(response.title, response.text);
-            } else {
+            if(response.success) {
+                $modalLoader.hide();
+                $modal.close();
 
-                if ($image) {
-                    $image.cropper("destroy");
-                    $image.remove();
-                }
-
-                jQuery("#js-avatar-img").attr("src", response.data);
+                $image.attr("src", response.data.src);
 
                 // Display the button "Remove Image".
-                jQuery("#js-btn-remove-image").show();
-
-                jQuery.isLoading("hide");
+                $btnImageRemove.show();
+            } else {
+                Prism.message.show(response.message);
             }
-
         });
-
     });
 
-    jQuery("#js-btn-remove-image").on('click', function(){
+    // Initialize the button that deletes an image.
+    $btnImageRemove.on('click', function(event){
+        event.preventDefault();
 
+        swal({
+            text: Joomla.JText._('COM_SOCIALCOMMUNITY_QUESTION_REMOVE_IMAGE'),
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: Joomla.JText._('COM_SOCIALCOMMUNITY_YES_DELETE_IT'),
+            cancelButtonColor: '#d33',
+            cancelButtonText: Joomla.JText._('COM_SOCIALCOMMUNITY_CANCEL')
+        }).then(function () {
+            let formData = jQuery.fn.extend({}, {task: 'avatar.removeImage', format: 'raw'}, token);
+
+            jQuery.ajax({
+                url: "index.php?option=com_socialcommunity",
+                type: "POST",
+                data: formData,
+                dataType: "text json",
+                beforeSend: function () {
+                    $uploadLoader.show();
+                }
+            }).done(function (response) {
+                $uploadLoader.hide();
+                $image.attr('src', response.data.url);
+                $btnImageRemove.hide();
+                Prism.message.show(response.message);
+            });
+        });
     });
 
-    function initializeCropper($image, imageWidth, imageHeight, aspectRatio) {
+    function calculateWrapperSize(fileData) {
+        let imageWidth    = parseInt(fileData.width);
+        let imageHeight   = parseInt(fileData.height);
 
-        var options = {
-            autoCropArea: 0.6, // Center 60%
-            multiple: false,
-            dragCrop: false,
-            dashed: false,
-            movable: false,
-            resizable: true,
-            zoomable: false,
-            minWidth: imageWidth,
-            minHeight: imageHeight,
-            built: function() {
-                jQuery("#js-image-tools").show();
-            }
+        let wrapper = {
+            width: imageWidth,
+            height: imageHeight
         };
 
-        if (aspectRatio) {
-            options.aspectRatio = aspectRatio;
+        if (imageWidth > 600) {
+            let x = (imageWidth/600).toFixed(3);
+            wrapper.width = Math.round(imageWidth / x);
         }
 
-        $image.cropper(options);
+        if (imageHeight > 400) {
+            let y = (imageHeight/400).toFixed(3);
+            wrapper.height = Math.round(imageHeight / y);
+        }
+
+        return wrapper;
+    }
+
+    function changeCropperSize(wrapper) {
+        $pictureWrapper.css({
+            width: wrapper.width,
+            height: wrapper.height
+        });
     }
 
 });

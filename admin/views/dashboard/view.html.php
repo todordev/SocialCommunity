@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -10,7 +10,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityViewDashboard extends JViewLegacy
+class SocialcommunityViewDashboard extends JViewLegacy
 {
     /**
      * @var JDocumentHtml
@@ -61,7 +61,7 @@ class SocialCommunityViewDashboard extends JViewLegacy
     protected function addSidebar()
     {
         // Add submenu
-        SocialCommunityHelper::addSubmenu($this->getName());
+        SocialcommunityHelper::addSubmenu($this->getName());
 
         $this->sidebar = JHtmlSidebar::render();
     }

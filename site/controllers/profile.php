@@ -1,9 +1,9 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
@@ -11,12 +11,12 @@
 defined('_JEXEC') or die;
 
 /**
- * SocialCommunity profile controller
+ * Socialcommunity profile controller
  *
- * @package     SocialCommunity
+ * @package     Socialcommunity
  * @subpackage  Components
  */
-class SocialCommunityControllerProfile extends JControllerForm
+class SocialcommunityControllerProfile extends JControllerForm
 {
     /**
      * Method to get a model object, loading it if required.
@@ -25,10 +25,10 @@ class SocialCommunityControllerProfile extends JControllerForm
      * @param    string $prefix The class prefix. Optional.
      * @param    array  $config Configuration array for model. Optional.
      *
-     * @return   SocialCommunityModelProfile   The model.
+     * @return   SocialcommunityModelProfile   The model.
      * @since    1.5
      */
-    public function getModel($name = 'Profile', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
+    public function getModel($name = 'Profile', $prefix = 'SocialcommunityModel', $config = array('ignore_request' => true))
     {
         $model = parent::getModel($name, $prefix, $config);
         return $model;

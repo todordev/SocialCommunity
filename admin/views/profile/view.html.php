@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -10,7 +10,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityViewProfile extends JViewLegacy
+class SocialcommunityViewProfile extends JViewLegacy
 {
     /**
      * @var JDocumentHtml
@@ -45,7 +45,7 @@ class SocialCommunityViewProfile extends JViewLegacy
 
         $this->params = $this->state->get('params');
 
-        if (!$this->item->id) {
+        if ($this->item === null or !$this->item->id) {
             $app = JFactory::getApplication();
             $app->enqueueMessage(JText::_('COM_SOCIALCOMMUNITY_NO_PROFILE'), 'notice');
             $app->redirect(JRoute::_('index.php?option=com_socialcommunity&view=profiles', false));
@@ -85,7 +85,7 @@ class SocialCommunityViewProfile extends JViewLegacy
         JToolbarHelper::save('profile.save');
 
         if (!$isNew) {
-            JToolbarHelper::cancel('profile.cancel', 'JTOOLBAR_CANCEL');
+            JToolbarHelper::cancel('profile.cancel');
         } else {
             JToolbarHelper::cancel('profile.cancel', 'JTOOLBAR_CLOSE');
         }
@@ -95,6 +95,7 @@ class SocialCommunityViewProfile extends JViewLegacy
      * Method to set up the document properties
      *
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function setDocument()
     {
@@ -106,7 +107,7 @@ class SocialCommunityViewProfile extends JViewLegacy
 
         JHtml::_('formbehavior.chosen', '#jform_country_id');
 
-        JHtml::_('Prism.ui.bootstrap2Typeahead');
+        JHtml::_('Prism.ui.jQueryAutoComplete');
 
         // Add scripts
         $this->document->addScript('../media/' . $this->option . '/js/admin/' . strtolower($this->getName()) . '.js');

@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -13,10 +13,10 @@ defined('_JEXEC') or die;
 /**
  * Get a list of items
  *
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  */
-class SocialCommunityModelProfiles extends JModelList
+class SocialcommunityModelProfiles extends JModelList
 {
     /**
      * Constructor.
@@ -102,7 +102,7 @@ class SocialCommunityModelProfiles extends JModelList
         );
         $query->from($db->quoteName('#__itpsc_profiles', 'a'));
         $query->leftJoin($db->quoteName('#__users', 'b') . ' ON a.user_id = b.id');
-        $query->leftJoin($db->quoteName('#__itpsc_countries', 'c') . ' ON a.country_id = c.id');
+        $query->leftJoin($db->quoteName('#__itpsc_countries', 'c') . ' ON a.country_code = c.code');
 
         // Filter by search in title
         $search = $this->getState('filter.search');

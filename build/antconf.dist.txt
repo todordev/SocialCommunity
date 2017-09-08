@@ -1,0 +1,5 @@
+cfg.name=socialcommunity
+cfg.version=v3.0
+cfg.joomlaVersion=J3.7
+cfg.buildDir=packages
+cfg.sourceDir=../../

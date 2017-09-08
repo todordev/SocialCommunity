@@ -1,25 +1,29 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
+
+use Prism\Database\Condition\Condition;
+use Prism\Database\Condition\Conditions;
+use Prism\Database\Request\Request;
 
 // No direct access
 defined('_JEXEC') or die;
 
-jimport('Prism.libs.GuzzleHttp.init');
-jimport('Prism.libs.Aws.init');
+jimport('Prism.vendor.GuzzleHttp.init');
+jimport('Prism.vendor.Aws.init');
 
 /**
  * Avatar controller class.
  *
- * @package     SocialCommunity
+ * @package     Socialcommunity
  * @subpackage  Components
  */
-class SocialCommunityControllerAvatar extends JControllerLegacy
+class SocialcommunityControllerAvatar extends JControllerLegacy
 {
     /**
      * Method to get a model object, loading it if required.
@@ -28,13 +32,12 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
      * @param    string $prefix The class prefix. Optional.
      * @param    array  $config Configuration array for model. Optional.
      *
-     * @return   SocialCommunityModelAvatar    The model.
+     * @return   SocialcommunityModelAvatar|bool    The model.
      * @since    1.5
      */
-    public function getModel($name = 'Avatar', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => false))
+    public function getModel($name = 'Avatar', $prefix = 'SocialcommunityModel', $config = array('ignore_request' => false))
     {
-        $model = parent::getModel($name, $prefix, $config);
-        return $model;
+        return parent::getModel($name, $prefix, $config);
     }
 
     public function upload()
@@ -51,17 +54,17 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
         if (!$userId) {
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
-                ->setText(JText::_('COM_SOCIALCOMMUNITY_ERROR_INVALID_PROFILE'))
+                ->setContent(JText::_('COM_SOCIALCOMMUNITY_ERROR_INVALID_PROFILE'))
                 ->failure();
 
             echo $response;
             $app->close();
         }
 
-        try {
-            $image    = $this->input->files->get('profile_image', array(), 'array');
-            $fileUrl  = null;
+        $fileDataResponse  = null;
+        $image    = $this->input->files->get('profile_image', array(), 'array');
 
+        try {
             // Upload image
             if (!empty($image['name'])) {
                 $params = JComponentHelper::getParams('com_socialcommunity');
@@ -69,12 +72,18 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
                 $filesystemHelper = new Prism\Filesystem\Helper($params);
 
                 $model      = $this->getModel();
-                $sourceFile = $model->uploadImage($image, $filesystemHelper->getTemporaryMediaFolder(JPATH_ROOT));
+                $fileData   = $model->uploadImage($image, $filesystemHelper->getTemporaryMediaFolder(JPATH_ROOT));
 
-                if ($sourceFile) {
-                    $filename = basename($sourceFile);
-                    $fileUrl  = JUri::base() . $filesystemHelper->getTemporaryMediaFolderUri() . '/' . $filename;
+                if (array_key_exists('filename', $fileData) and $fileData['filename'] !== '') {
+                    $filename = basename($fileData['filename']);
+                    $fileUrl  = JUri::base() . $filesystemHelper->getTemporaryMediaFolderUri() .'/'. $filename;
                     $app->setUserState(Socialcommunity\Constants::TEMPORARY_IMAGE_CONTEXT, $filename);
+
+                    $fileDataResponse = array(
+                        'url'    => $fileUrl,
+                        'width'  => $fileData['attributes']['width'],
+                        'height' => $fileData['attributes']['height']
+                    );
                 }
             }
 
@@ -83,18 +92,78 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
         }
 
-        if (!$fileUrl) {
+        if (!$fileDataResponse) {
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
-                ->setText(JText::_('COM_SOCIALCOMMUNITY_ERROR_FILE_CANNOT_BE_UPLOADED'))
+                ->setContent(JText::_('COM_SOCIALCOMMUNITY_ERROR_FILE_CANNOT_BE_UPLOADED'))
                 ->failure();
         } else {
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_SUCCESS'))
-                ->setText(JText::_('COM_SOCIALCOMMUNITY_FILE_UPLOADED_SUCCESSFULLY'))
-                ->setData(array('image' => $fileUrl))
+                ->setContent(JText::_('COM_SOCIALCOMMUNITY_FILE_UPLOADED_SUCCESSFULLY'))
+                ->setData($fileDataResponse)
                 ->success();
         }
+
+        echo $response;
+        $app->close();
+    }
+
+    public function removeImage()
+    {
+        // Check for request forgeries.
+        JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
+        $app = JFactory::getApplication();
+        /** @var $app JApplicationSite */
+
+        $response = new Prism\Response\Json();
+
+        $userId = (int)JFactory::getUser()->get('id');
+
+        // Prepare conditions.
+        $conditionUserId = new Condition(['column' => 'user_id', 'value' => $userId, 'operator'=> '=', 'table' => 'a']);
+        $conditions = new Conditions();
+        $conditions->addCondition($conditionUserId);
+
+        // Prepare database request.
+        $databaseRequest = new Request();
+        $databaseRequest->setConditions($conditions);
+
+        // Check for registered user
+        $mapper     = new \Socialcommunity\Profile\Mapper(new \Socialcommunity\Profile\Gateway\JoomlaGateway(JFactory::getDbo()));
+        $repository = new \Socialcommunity\Profile\Repository($mapper);
+
+        $profile    = $repository->fetch($databaseRequest);
+        if (!$profile->getId()) {
+            $response
+                ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
+                ->setContent(JText::_('COM_SOCIALCOMMUNITY_ERROR_INVALID_PROFILE'))
+                ->failure();
+
+            echo $response;
+            $app->close();
+        }
+
+        try {
+            $params = JComponentHelper::getParams('com_socialcommunity');
+
+            $filesystemHelper    = new Prism\Filesystem\Helper($params);
+            $storageFilesystem   = $filesystemHelper->getFilesystem();
+            $mediaFolder         = $filesystemHelper->getMediaFolder($userId);
+
+            $model = $this->getModel();
+            $model->removeImage($profile, $storageFilesystem, $mediaFolder);
+
+        } catch (Exception $e) {
+            JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
+            throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
+        }
+
+        $response
+            ->setContent(JText::_('COM_SOCIALCOMMUNITY_IMAGE_DELETED'))
+            ->setData(['url' => JUri::root().'media/com_socialcommunity/images/no_profile_200x200.png'])
+            ->success();
 
         echo $response;
         $app->close();
@@ -114,7 +183,7 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
         if (!$userId) {
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
-                ->setText(JText::_('COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN'))
+                ->setContent(JText::_('COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN'))
                 ->failure();
 
             echo $response;
@@ -144,7 +213,7 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
             JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
-                ->setText(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'))
+                ->setContent(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'))
                 ->failure();
 
             echo $response;
@@ -153,7 +222,7 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
 
         $response
             ->setTitle(JText::_('COM_SOCIALCOMMUNITY_SUCCESS'))
-            ->setText(JText::_('COM_SOCIALCOMMUNITY_FILE_REMOVED_SUCCESSFULLY'))
+            ->setContent(JText::_('COM_SOCIALCOMMUNITY_FILE_REMOVED_SUCCESSFULLY'))
             ->success();
 
         echo $response;
@@ -170,11 +239,25 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
 
         $response = new Prism\Response\Json();
 
-        $userId = JFactory::getUser()->get('id');
-        if (!$userId) {
+        $userId     = (int)JFactory::getUser()->get('id');
+
+        // Prepare conditions.
+        $conditionUserId = new Condition(['column' => 'user_id', 'value' => $userId, 'operator'=> '=', 'table' => 'a']);
+        $conditions = new Conditions();
+        $conditions->addCondition($conditionUserId);
+
+        // Prepare database request.
+        $databaseRequest = new Request();
+        $databaseRequest->setConditions($conditions);
+
+        $mapper     = new \Socialcommunity\Profile\Mapper(new \Socialcommunity\Profile\Gateway\JoomlaGateway(JFactory::getDbo()));
+        $repository = new \Socialcommunity\Profile\Repository($mapper);
+
+        $profile    = $repository->fetch($databaseRequest);
+        if (!$profile->getId()) {
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
-                ->setText(JText::_('COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN'))
+                ->setContent(JText::_('COM_SOCIALCOMMUNITY_ERROR_NOT_LOG_IN'))
                 ->failure();
 
             echo $response;
@@ -197,7 +280,7 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
         if (!$fileName or !JFile::exists($temporaryFile)) {
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
-                ->setText(JText::_('COM_SOCIALCOMMUNITY_ERROR_FILE_DOES_NOT_EXIST'))
+                ->setContent(JText::_('COM_SOCIALCOMMUNITY_ERROR_FILE_DOES_NOT_EXIST'))
                 ->failure();
 
             echo $response;
@@ -231,8 +314,7 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
             $mediaFolder       = $filesystemHelper->getMediaFolder($userId);
 
             $model->moveImages($images, $manager, $mediaFolder);
-
-            $model->storeImages($userId, $images, $storageFilesystem, $mediaFolder);
+            $model->storeImages($profile, $images, $storageFilesystem, $mediaFolder);
 
             // Prepare URL to the image.
             $imageName  = basename(Joomla\Utilities\ArrayHelper::getValue($images, 'image_profile'));
@@ -243,7 +325,7 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
         } catch (RuntimeException $e) {
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
-                ->setText($e->getMessage())
+                ->setContent($e->getMessage())
                 ->failure();
 
             echo $response;
@@ -254,7 +336,7 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
 
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
-                ->setText(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'))
+                ->setContent(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'))
                 ->failure();
 
             echo $response;
@@ -263,8 +345,8 @@ class SocialCommunityControllerAvatar extends JControllerLegacy
 
         $response
             ->setTitle(JText::_('COM_SOCIALCOMMUNITY_SUCCESS'))
-            ->setText(JText::_('COM_SOCIALCOMMUNITY_IMAGE_SAVED'))
-            ->setData($imageUrl)
+            ->setContent(JText::_('COM_SOCIALCOMMUNITY_IMAGE_SAVED'))
+            ->setData(['src' => $imageUrl])
             ->success();
 
         echo $response;

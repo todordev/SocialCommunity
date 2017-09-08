@@ -1,51 +1,33 @@
-jQuery(document).ready(function($) {
+jQuery(document).ready(function() {
 
-    // Load locations from the server
-    var $inputTypeahead = jQuery('#jform_location_preview');
-    $inputTypeahead.typeahead({
-        minLength: 3,
-        hint: false
-    }, {
-        source: function(query, syncResults, asyncResults) {
+    let $locationElement = jQuery('#jform_location_preview');
+    let $locationIdElement = jQuery('#jform_location_id');
 
-            var country_id = jQuery('#jform_country_id').val();
+    let $countryCodeElement = jQuery('#jform_country_code');
 
-            var fields = {
-                query: query,
-                format: 'raw',
-                task: 'contact.loadLocation',
-                country_id: country_id
-            };
+    let fields = {
+        'task': 'contact.loadLocation',
+        'format': 'raw'
+    };
 
-            jQuery.ajax({
-                url: "index.php?option=com_socialcommunity",
-                type: "GET",
-                data: fields,
-                dataType: "text json",
-                async: true,
-                beforeSend : function() {
-                    // Show ajax loader.
-                    //$loader.show();
-                }
-            }).done(function(response){
-                // Hide ajax loader.
-                //$loader.hide();
-
-                if (response.success === false) {
-                    return false;
-                }
-
-                return asyncResults(response.data);
-            });
-
+    $locationElement.autocomplete({
+        serviceUrl: '/index.php?option=com_socialcommunity',
+        params: fields,
+        minChars: 3,
+        onSearchStart: function(query) {
+            query.country_code = $countryCodeElement.val();
         },
-        async: true,
-        limit: 10,
-        display: "text",
-        name: "value"
-    });
+        onSelect: function (suggestion) {
+            $locationIdElement.val(suggestion.data);
+        },
+        transformResult: function(response) {
+            let r = JSON.parse(response);
 
-    $inputTypeahead.bind('typeahead:select', function(event, suggestion) {
-        jQuery("#jform_location_id").attr("value", suggestion.value);
+            return {
+                suggestions: jQuery.map(r.data, function(dataItem) {
+                    return { value: dataItem.text, data: dataItem.value};
+                })
+            };
+        }
     });
 });

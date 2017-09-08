@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -17,7 +17,7 @@ JFormHelper::loadFieldClass('list');
 /**
  * Form Field class for the Joomla Framework.
  *
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @since        1.6
  */
@@ -33,12 +33,13 @@ class JFormFieldScBirthdayB2 extends JFormField
 
     protected function getInput()
     {
+        $birthdayDay = '';
+
         $class    = !empty($this->class) ? $this->class : '';
         $required = $this->required ? ' required aria-required="true"' : '';
 
         // Prepare birthday
         if (!empty($this->value)) {
-
             $date = new Prism\Validator\Date($this->value);
 
             if (!$date->isValid()) {
@@ -54,13 +55,12 @@ class JFormFieldScBirthdayB2 extends JFormField
             }
         }
 
-        $months = new Socialcommunity\Filter\Months();
+        $months = Socialcommunity\Helper\Joomla::monthsToOptions();
         
         $html = array();
-
         $html[] = '<div class="controls controls-row ' . $class . '">';
         $html[] = '    <input name="' . $this->name . '[day]"   value="' . $birthdayDay . '" id="birthday_day"   class="span3" type="text" placeholder="' . JText::_('COM_SOCIALCOMMUNITY_DAY') . '" ' . $required . '>';
-        $html[] = JHTML::_('select.genericlist', $months->toOptions(), $this->name . '[month]', array('class' => 'span3 ' . $class), 'text', 'value', $birthdayMonth, 'birthday_month');
+        $html[] = JHTML::_('select.genericlist', $months, $this->name . '[month]', array('class' => 'span3 ' . $class), 'text', 'value', $birthdayMonth, 'birthday_month');
         $html[] = '    <input name="' . $this->name . '[year]"  value="' . $birthdayYear . '" id="birthday_year"  class="span4" type="text" placeholder="' . JText::_('COM_SOCIALCOMMUNITY_YEAR') . '" ' . $required . '>';
         $html[] = '</div>';
 

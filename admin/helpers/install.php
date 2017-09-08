@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
  * This class contains methods used
  * in the installation process of the extension.
  */
-class SocialCommunityInstallHelper
+class SocialcommunityInstallHelper
 {
     public static function startTable()
     {

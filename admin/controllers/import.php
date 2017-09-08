@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -10,17 +10,15 @@
 // no direct access
 defined('_JEXEC') or die;
 
-jimport('itprism.controller.form.backend');
-
 /**
- * SocialCommunity import controller.
+ * Socialcommunity import controller.
  *
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  */
-class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
+class SocialcommunityControllerImport extends Prism\Controller\Form\Backend
 {
-    public function getModel($name = 'Import', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
+    public function getModel($name = 'Import', $prefix = 'SocialcommunityModel', $config = array('ignore_request' => true))
     {
         $model = parent::getModel($name, $prefix, $config);
         return $model;
@@ -39,7 +37,7 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         );
 
         $model = $this->getModel();
-        /** @var $model SocialCommunityModelImport */
+        /** @var $model SocialcommunityModelImport */
 
         $form = $model->getForm($data, false);
         /** @var $form JForm */
@@ -64,21 +62,11 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         }
 
         try {
-
             $filePath = $model->uploadFile($fileData, 'locations');
 
-            $resetId   = Joomla\Utilities\ArrayHelper::getValue($data, 'reset_id', false, 'bool');
-            $removeOld = Joomla\Utilities\ArrayHelper::getValue($data, 'remove_old', false, 'bool');
-
             $minPopulation = Joomla\Utilities\ArrayHelper::getValue($data, 'minimum_population', 0, 'int');
-
-            if ($removeOld) {
-                $model->removeAll('locations');
-            }
-            $model->importLocations($filePath, $resetId, $minPopulation);
-
+            $model->importLocations($filePath, $minPopulation);
         } catch (RuntimeException $e) {
-
             $this->displayError(JString::substr($e->getMessage(), 0, 255), $redirectOptions);
             return;
 
@@ -103,7 +91,7 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         );
 
         $model = $this->getModel();
-        /** @var $model SocialCommunityModelImport */
+        /** @var $model SocialcommunityModelImport */
 
         $form = $model->getForm($data, false);
         /** @var $form JForm */
@@ -159,7 +147,7 @@ class SocialCommunityControllerImport extends Prism\Controller\Form\Backend
         );
 
         $model = $this->getModel();
-        /** @var $model SocialCommunityModelImport */
+        /** @var $model SocialcommunityModelImport */
 
         $form = $model->getForm($data, false);
         /** @var $form JForm */

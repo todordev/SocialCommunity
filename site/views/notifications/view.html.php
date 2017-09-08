@@ -1,16 +1,16 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityViewNotifications extends JViewLegacy
+class SocialcommunityViewNotifications extends JViewLegacy
 {
     /**
      * @var JDocumentHtml
@@ -88,9 +88,9 @@ class SocialCommunityViewNotifications extends JViewLegacy
         // Scripts
         JHtml::_('behavior.tooltip');
         JHtml::_('Prism.ui.pnotify');
-        JHtml::_('Prism.ui.joomlaHelper');
+        JHtml::_('Prism.ui.message');
 
-        $this->document->addScript('media/' . $this->option . '/js/site/' . JString::strtolower($this->getName()) . '.js');
+        $this->document->addScript('media/' . $this->option . '/js/site/' . strtolower($this->getName()) . '.js');
     }
 
     private function prepearePageHeading()

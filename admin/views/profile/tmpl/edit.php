@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -39,14 +39,6 @@ defined('_JEXEC') or die;
         <div class="row-fluid">
             <div class="span12">
             <?php echo $this->loadTemplate('contact');?>
-            </div>
-        </div>
-        <?php echo JHtml::_('bootstrap.endTab'); ?>
-        
-        <?php echo JHtml::_('bootstrap.addTab', 'profile-data', 'social', JText::_('COM_SOCIALCOMMUNITY_SOCIAL')); ?>
-        <div class="row-fluid">
-            <div class="span12">
-            <?php echo $this->loadTemplate('social'); ?>
             </div>
         </div>
         <?php echo JHtml::_('bootstrap.endTab'); ?>

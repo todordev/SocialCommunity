@@ -2,37 +2,39 @@ window.addEvent('domready', function(){
 
 	// Validation script
     Joomla.submitbutton = function(task){
-        if (task == 'profile.cancel' || document.formvalidator.isValid(document.id('adminForm'))) {
+        if (task === 'profile.cancel' || document.formvalidator.isValid(document.id('adminForm'))) {
             Joomla.submitform(task, document.getElementById('adminForm'));
         }
     };
 
-    // Load locations from the server
-    jQuery('#jform_location_preview').typeahead({
-        ajax : {
-            url: "index.php?option=com_socialcommunity&format=raw&task=profile.loadLocation",
-            method: "get",
-            triggerLength: 3,
-            displayField: 'text',
-            valueField: 'value',
-            preDispatch: function(query) {
-                return {
-                    search: query,
-                    country_id: jQuery('#jform_country_id').val()
-                }
-            },
-            preProcess: function (response) {
+    let $locationElement    = jQuery('#jform_location_preview');
+    let $locationIdElement  = jQuery('#jform_location_id');
 
-                if (response.success === false) {
-                    return false;
-                }
+    let $countryCodeElement = jQuery('#jform_country_code');
 
-                return response.data;
-            }
+    let fields = {
+        'task': 'profile.loadLocation',
+        'format': 'raw'
+    };
+
+    $locationElement.autocomplete({
+        serviceUrl: 'index.php?option=com_socialcommunity',
+        params: fields,
+        minChars: 3,
+        onSearchStart: function(query) {
+            query.country_code = $countryCodeElement.val();
         },
-        onSelect: function(item) {
-            jQuery("#jform_location_id").attr("value", item.value);
-        }
+        onSelect: function (suggestion) {
+            $locationIdElement.val(suggestion.data);
+        },
+        transformResult: function(response) {
+            let r = JSON.parse(response);
 
+            return {
+                suggestions: jQuery.map(r.data, function(dataItem) {
+                    return { value: dataItem.text, data: dataItem.value};
+                })
+            };
+        }
     });
 });

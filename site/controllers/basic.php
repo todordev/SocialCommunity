@@ -1,11 +1,14 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
+
+use Joomla\String\StringHelper as JStringHelper;
+use Joomla\Utilities\ArrayHelper;
 
 // No direct access
 defined('_JEXEC') or die;
@@ -13,10 +16,10 @@ defined('_JEXEC') or die;
 /**
  * Form controller class.
  *
- * @package     SocialCommunity
+ * @package     Socialcommunity
  * @subpackage  Components
  */
-class SocialCommunityControllerBasic extends Prism\Controller\Form\Frontend
+class SocialcommunityControllerBasic extends Prism\Controller\Form\Frontend
 {
     public function save($key = null, $urlVar = null)
     {
@@ -34,11 +37,11 @@ class SocialCommunityControllerBasic extends Prism\Controller\Form\Frontend
 
         $data            = $this->input->post->get('jform', array(), 'array');
         $redirectOptions = array(
-            'view' => 'form',
+            'view' => 'form'
         );
 
         $model = $this->getModel();
-        /** @var $model SocialCommunityModelBasic */
+        /** @var $model SocialcommunityModelBasic */
 
         $form = $model->getForm($data, false);
         /** @var $form JForm */
@@ -49,17 +52,46 @@ class SocialCommunityControllerBasic extends Prism\Controller\Form\Frontend
 
         // Test if the data is valid.
         $validData = $model->validate($form, $data);
-
-        // Check for errors.
         if ($validData === false) {
             $this->displayNotice($form->getErrors(), $redirectOptions);
             return;
         }
 
-        try {
-            $validData['id'] = $userId;
+        // Prepare birthday
+        $validData['birthday'] = \Socialcommunity\Profile\Helper\Helper::prepareBirthday($data['birthday']);
+        if (!$validData['birthday']) {
+            $this->displayNotice(JText::_('COM_SOCIALCOMMUNITY_INVALID_BIRTHDAY'), $redirectOptions);
+            return;
+        }
 
-            $model->save($validData);
+        // Prepare gender.
+        $validData['gender'] = JStringHelper::trim(ArrayHelper::getValue($data, 'gender'));
+        if (!in_array($validData['gender'], ['male', 'female'], true)) {
+            $validData['gender'] = 'male';
+        }
+
+        $validData['user_id'] = $userId;
+
+        try {
+            // Store basic profile data.
+            $basicRequest = new \Socialcommunity\Profile\Command\Request\Basic();
+            $basicRequest
+                ->setUserId($userId)
+                ->setName($validData['name'])
+                ->setBio($validData['bio'])
+                ->setBirthday($validData['birthday'])
+                ->setGender($validData['gender']);
+
+            $gateway = new \Socialcommunity\Profile\Command\Gateway\Joomla\StoreBasic(JFactory::getDbo());
+            $command = new \Socialcommunity\Profile\Command\StoreBasic($basicRequest);
+            $command->setGateway($gateway);
+            $command->handle();
+
+            // Update user account name.
+            $gateway = new \Socialcommunity\Account\Command\Gateway\Joomla\UpdateName(JFactory::getDbo());
+            $command = new \Socialcommunity\Account\Command\UpdateName($basicRequest);
+            $command->setGateway($gateway);
+            $command->handle();
         } catch (Exception $e) {
             JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));

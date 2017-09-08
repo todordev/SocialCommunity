@@ -1,16 +1,22 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
+
+use \Socialcommunity\Notification\Command\Gateway\Joomla\UpdateStatus as UpdateStatusGateway;
+use \Socialcommunity\Notification\Command\UpdateStatus as UpdateStatusCommand;
+use \Prism\Database\Condition\Condition;
+use \Prism\Database\Condition\Conditions;
+use \Prism\Database\Request\Request;
 
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityViewNotification extends JViewLegacy
+class SocialcommunityViewNotification extends JViewLegacy
 {
     /**
      * @var JDocumentHtml
@@ -42,26 +48,38 @@ class SocialCommunityViewNotification extends JViewLegacy
 
     public function display($tpl = null)
     {
-        $this->app = JFactory::getApplication();
-        
+        $this->app    = JFactory::getApplication();
         $this->option = $this->app->input->get('option');
 
         $itemId = $this->app->input->getUint('id');
         $userId = JFactory::getUser()->get('id');
 
-        $model = $this->getModel();
-
-        // Initialise variables
-        $this->item   = $model->getItem($itemId, $userId);
         $this->state  = $this->get('State');
         $this->params = $this->state->get('params');
 
-        $notification = new Socialcommunity\Notification\Notification(JFactory::getDbo());
-        $notification->load(array('id' => $itemId, 'user_id' => $userId));
+        // Prepare conditions.
+        $conditionId = new Condition(['column' => 'id', 'value' => $userId, 'operator'=> '=', 'table' => 'a']);
+        $conditionUserId = new Condition(['column' => 'user_id', 'value' => $userId, 'operator'=> '=', 'table' => 'a']);
+        $conditions = new Conditions();
+        $conditions
+            ->addCondition($conditionId)
+            ->addCondition($conditionUserId);
+
+        // Prepare database request.
+        $databaseRequest = new Request();
+        $databaseRequest->setConditions($conditions);
+
+        $mapper     = new \Socialcommunity\Notification\Mapper(new \Socialcommunity\Notification\Gateway\JoomlaGateway(JFactory::getDbo()));
+        $repository = new \Socialcommunity\Notification\Repository($mapper);
+        $notification = $repository->fetch($databaseRequest);
 
         if ($notification->getId() and !$notification->isRead()) {
-            $notification->updateStatus(Prism\Constants::READ);
+            $command = new UpdateStatusCommand($itemId, Prism\Constants::READ);
+            $command->setGateway(new UpdateStatusGateway(JFactory::getDbo()));
+            $command->handle();
         }
+
+        $this->item = $notification;
 
         $this->prepareDocument();
 
@@ -95,13 +113,14 @@ class SocialCommunityViewNotification extends JViewLegacy
         if ($this->params->get('robots')) {
             $this->document->setMetaData('robots', $this->params->get('robots'));
         }
+
+        $pathway = $this->app->getPathway();
+        $pathway->addItem(JText::_('COM_SOCIALCOMMUNITY_NOTIFICATION'));
     }
 
     private function preparePageHeading()
     {
-        // Prepare page heading
         $this->params->def('page_heading', JText::_('COM_SOCIALCOMMUNITY_NOTIFICATION_DEFAULT_PAGE_TITLE'));
-
     }
 
     private function preparePageTitle()

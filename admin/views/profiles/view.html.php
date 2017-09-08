@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -10,7 +10,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityViewProfiles extends JViewLegacy
+class SocialcommunityViewProfiles extends JViewLegacy
 {
     /**
      * @var JDocumentHtml
@@ -42,11 +42,18 @@ class SocialCommunityViewProfiles extends JViewLegacy
         $this->option     = JFactory::getApplication()->input->get('option');
 
         // Create profiles if orphans exist.
-        Socialcommunity\Profile\Helper::createProfiles();
+        $createProfilesCommand = new \Socialcommunity\Profile\Command\CreateProfiles();
+        $createProfilesCommand->setGateway(new \Socialcommunity\Profile\Command\Gateway\Joomla\CreateProfiles(JFactory::getDbo()));
+        $createProfilesCommand->handle();
 
         $this->state      = $this->get('State');
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
+
+        // Prepare social profiles.
+        $helperBus = new Prism\Helper\HelperBus($this->items);
+        $helperBus->addCommand(new Socialcommunity\Helper\Joomla\PrepareSocialProfilesHelper());
+        $helperBus->handle();
 
         // Load the component parameters.
         $params           = $this->state->get('params');
@@ -92,7 +99,7 @@ class SocialCommunityViewProfiles extends JViewLegacy
     protected function addSidebar()
     {
         // Add submenu
-        SocialCommunityHelper::addSubmenu($this->getName());
+        SocialcommunityHelper::addSubmenu($this->getName());
         
         JHtmlSidebar::setAction('index.php?option=' . $this->option . '&view=' . $this->getName());
 
@@ -123,7 +130,7 @@ class SocialCommunityViewProfiles extends JViewLegacy
         JToolbarHelper::divider();
         JToolbarHelper::deleteList(JText::_('COM_SOCIALCOMMUNITY_DELETE_ITEMS_QUESTION'), 'profiles.delete');
         JToolbarHelper::divider();
-        JToolbarHelper::custom('profiles.backToDashboard', 'dashboard', '', JText::_('COM_SOCIALCOMMUNITY_BACK_DASHBOARD'), false);
+        JToolbarHelper::custom('profiles.backToDashboard', 'dashboard', '', JText::_('COM_SOCIALCOMMUNITY_DASHBOARD'), false);
     }
 
     /**

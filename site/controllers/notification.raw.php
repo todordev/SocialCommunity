@@ -1,22 +1,27 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
+use \Socialcommunity\Notification\Gateway\JoomlaGateway;
+use \Socialcommunity\Notification\Mapper;
+use \Socialcommunity\Notification\Repository;
+use \Socialcommunity\Notification\Notification;
+
 /**
- * SocialCommunity notification controller.
+ * Socialcommunity notification controller.
  *
- * @package     SocialCommunity
+ * @package     Socialcommunity
  * @subpackage  Components
  */
-class SocialCommunityControllerNotification extends JControllerLegacy
+class SocialcommunityControllerNotification extends JControllerLegacy
 {
     /**
      * Method to get a model object, loading it if required.
@@ -28,7 +33,7 @@ class SocialCommunityControllerNotification extends JControllerLegacy
      * @return    object    The model.
      * @since    1.5
      */
-    public function getModel($name = 'Notification', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => false))
+    public function getModel($name = 'Notification', $prefix = 'SocialcommunityModel', $config = array('ignore_request' => false))
     {
         $model = parent::getModel($name, $prefix, $config);
         return $model;
@@ -47,11 +52,12 @@ class SocialCommunityControllerNotification extends JControllerLegacy
 
         $response = new Prism\Response\Json();
 
-        $validatorOwner = new Socialcommunity\Validator\Notification\Owner(JFactory::getDbo(), $itemId, $userId);
+        $validatorOwner = new Socialcommunity\Validator\Notification\Owner($itemId, $userId);
+        $validatorOwner->setGateway(new \Socialcommunity\Validator\Notification\Gateway\Joomla\Owner(JFactory::getDbo()));
         if (!$validatorOwner->isValid()) {
             $response
                 ->setTitle(JText::_('COM_SOCIALCOMMUNITY_FAILURE'))
-                ->setText(JText::_('COM_SOCIALCOMMUNITY_ERROR_INVALID_NOTIFICATION'))
+                ->setContent(JText::_('COM_SOCIALCOMMUNITY_ERROR_INVALID_NOTIFICATION'))
                 ->failure();
 
             echo $response;
@@ -59,10 +65,12 @@ class SocialCommunityControllerNotification extends JControllerLegacy
         }
 
         try {
-            $notification = new Socialcommunity\Notification\Notification(JFactory::getDbo());
-            $notification->load($itemId);
-            $notification->remove();
+            $mapper       = new Mapper(new JoomlaGateway(JFactory::getDbo()));
+            $repository   = new Repository($mapper);
+            $notification = new Notification();
+            $notification->setId($itemId);
 
+            $repository->delete($notification);
         } catch (Exception $e) {
             JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             throw new Exception(JText::_('COM_SOCIALCOMMUNITY_ERROR_SYSTEM'));
@@ -70,7 +78,7 @@ class SocialCommunityControllerNotification extends JControllerLegacy
 
         $response
             ->setTitle(JText::_('COM_SOCIALCOMMUNITY_SUCCESS'))
-            ->setText(JText::_('COM_SOCIALCOMMUNITY_NOTIFICATION_REMOVED_SUCCESSFULLY'))
+            ->setContent(JText::_('COM_SOCIALCOMMUNITY_NOTIFICATION_REMOVED_SUCCESSFULLY'))
             ->success();
 
         echo $response;

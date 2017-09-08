@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fieldset name="socialprofiles">
+        <field name="facebook" type="text" class="form-control"
+               label="COM_SOCIALCOMMUNITY_FACEBOOK"
+               description="COM_SOCIALCOMMUNITY_FIELD_FACEBOOK_DESC"
+               filter="trim"
+               readonly="true"
+                />
+
+        <field name="twitter" type="text" class="form-control"
+               label="COM_SOCIALCOMMUNITY_TWITTER"
+               description="COM_SOCIALCOMMUNITY_FIELD_TWITTER_DESC"
+               filter="trim"
+               readonly="true"
+                />
+
+        <field name="googleplus" type="text" class="form-control"
+               label="COM_SOCIALCOMMUNITY_GOOGLE_PLUS"
+               description="COM_SOCIALCOMMUNITY_FIELD_GOOGLE_PLUS_DESC"
+               filter="trim"
+               readonly="true"
+                />
+
+    </fieldset>
+
+</form>

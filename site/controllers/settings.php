@@ -1,9 +1,9 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
@@ -11,12 +11,12 @@
 defined('_JEXEC') or die;
 
 /**
- * SocialCommunity profile controller
+ * Socialcommunity profile controller
  *
- * @package     SocialCommunity
+ * @package     Socialcommunity
  * @subpackage  Components
  */
-class SocialCommunityControllerSettings extends Prism\Controller\Form\Frontend
+class SocialcommunityControllerSettings extends Prism\Controller\Form\Frontend
 {
     /**
      * Method to get a model object, loading it if required.
@@ -25,10 +25,10 @@ class SocialCommunityControllerSettings extends Prism\Controller\Form\Frontend
      * @param    string $prefix The class prefix. Optional.
      * @param    array  $config Configuration array for model. Optional.
      *
-     * @return   SocialCommunityModelSettings   The model.
+     * @return   SocialcommunityModelSettings   The model.
      * @since    1.5
      */
-    public function getModel($name = 'Settings', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
+    public function getModel($name = 'Settings', $prefix = 'SocialcommunityModel', $config = array('ignore_request' => true))
     {
         $model = parent::getModel($name, $prefix, $config);
         return $model;
@@ -54,7 +54,7 @@ class SocialCommunityControllerSettings extends Prism\Controller\Form\Frontend
         );
 
         $model = $this->getModel();
-        /** @var $model SocialCommunityModelBasic */
+        /** @var $model SocialcommunityModelBasic */
 
         $form = $model->getForm($data, false);
         /** @var $form JForm */

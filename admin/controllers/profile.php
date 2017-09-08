@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -10,17 +10,17 @@
 // No direct access
 defined('_JEXEC') or die();
 
-jimport('Prism.libs.GuzzleHttp.init');
-jimport('Prism.libs.Aws.init');
+jimport('Prism.vendor.GuzzleHttp.init');
+jimport('Prism.vendor.Aws.init');
 
 /**
- * SocialCommunity profile controller class.
+ * Socialcommunity profile controller class.
  *
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @since        1.6
  */
-class SocialCommunityControllerProfile extends Prism\Controller\Form\Backend
+class SocialcommunityControllerProfile extends Prism\Controller\Form\Backend
 {
     /**
      * Proxy method that returns the model.
@@ -29,9 +29,9 @@ class SocialCommunityControllerProfile extends Prism\Controller\Form\Backend
      * @param string $prefix
      * @param array  $config
      *
-     * @return SocialCommunityModelProfile
+     * @return SocialcommunityModelProfile
      */
-    public function getModel($name = 'Profile', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
+    public function getModel($name = 'Profile', $prefix = 'SocialcommunityModel', $config = array('ignore_request' => true))
     {
         $model = parent::getModel($name, $prefix, $config);
         return $model;
@@ -51,7 +51,7 @@ class SocialCommunityControllerProfile extends Prism\Controller\Form\Backend
         );
 
         $model = $this->getModel();
-        /** @var $model SocialCommunityModelProfile */
+        /** @var $model SocialcommunityModelProfile */
 
         $form = $model->getForm($data, false);
         /** @var $form JForm */
@@ -95,22 +95,27 @@ class SocialCommunityControllerProfile extends Prism\Controller\Form\Backend
     }
 
     /**
-     * Delete image
+     * Delete the profile image.
+     *
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
     public function removeImage()
     {
         // Check for request forgeries.
         JSession::checkToken('get') or jexit(JText::_('JINVALID_TOKEN'));
 
-        $itemId = $this->input->getInt('id', 0);
-        $profile = new Socialcommunity\Profile\Profile(JFactory::getDbo());
-        $profile->load($itemId);
+        $itemId = $this->input->get->getUint('id');
 
         $redirectOptions = array(
             'view' => 'profile',
             'id'   => $itemId
         );
 
+        $mapper     = new \Socialcommunity\Profile\Mapper(new \Socialcommunity\Profile\Gateway\JoomlaGateway(JFactory::getDbo()));
+        $repository = new \Socialcommunity\Profile\Repository($mapper);
+
+        $profile    = $repository->fetchById($itemId);
         if (!$profile->getId()) {
             $this->displayNotice(JText::_('COM_SOCIALCOMMUNITY_INVALID_PROFILE'), $redirectOptions);
             return;
@@ -119,14 +124,12 @@ class SocialCommunityControllerProfile extends Prism\Controller\Form\Backend
         try {
             $params = JComponentHelper::getParams('com_socialcommunity');
 
-            $filesystemHelper = new Prism\Filesystem\Helper($params);
-
-            jimport('Prism.libs.init');
+            $filesystemHelper    = new Prism\Filesystem\Helper($params);
             $storageFilesystem   = $filesystemHelper->getFilesystem();
             $mediaFolder         = $filesystemHelper->getMediaFolder($profile->getUserId());
 
             $model = $this->getModel();
-            $model->removeImage($itemId, $storageFilesystem, $mediaFolder);
+            $model->removeImage($profile, $storageFilesystem, $mediaFolder);
 
         } catch (Exception $e) {
             JLog::add($e->getMessage());

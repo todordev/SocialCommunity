@@ -1,16 +1,16 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityModelNotification extends JModelItem
+class SocialcommunityModelNotification extends JModelItem
 {
     protected $item = array();
 
@@ -28,50 +28,5 @@ class SocialCommunityModelNotification extends JModelItem
         // Load the component parameters.
         $params = $app->getParams($this->option);
         $this->setState('params', $params);
-    }
-
-    /**
-     * Method to get an object.
-     *
-     * @param    int  $id  The id of the object to get.
-     * @param    int  $userId  User ID.
-     *
-     * @return    mixed    Object on success, false on failure.
-     */
-    public function getItem($id, $userId)
-    {
-        // If missing ID, I have to return null, because there is no item.
-        if (!$id or !$userId) {
-            return null;
-        }
-
-        $storedId = $this->getStoreId($id);
-
-        if (!array_key_exists($storedId, $this->item)) {
-
-            $this->item[$storedId] = null;
-
-            // Get a level row instance.
-            $table = JTable::getInstance('Notification', 'SocialCommunityTable');
-            /** @var $table SocialCommunityTableNotification */
-
-            $keys = array(
-                'id' => $id,
-                'user_id' => $userId
-            );
-
-            // Attempt to load the row.
-            if ($table->load($keys)) {
-
-                $properties = $table->getProperties();
-                $properties = Joomla\Utilities\ArrayHelper::toObject($properties);
-
-                $this->item[$storedId] = $properties;
-            } else {
-                $this->item[$storedId] = null;
-            }
-        }
-
-        return $this->item[$storedId];
     }
 }

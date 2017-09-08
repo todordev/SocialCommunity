@@ -1,27 +1,29 @@
 <?php
 /**
- * @package      SocialCommunity\Profile
- * @subpackage   Validators
+ * @package      Socialcommunity\Validator
+ * @subpackage   Profile
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 namespace Socialcommunity\Validator\Profile;
 
 use Prism\Validator\ValidatorInterface;
-
-defined('JPATH_BASE') or die;
+use Socialcommunity\Validator\Profile\Gateway\AliasGateway;
 
 /**
  * This class provides functionality for validation notification owner.
  *
- * @package      SocialCommunity\Profile
- * @subpackage   Validators
+ * @package      Socialcommunity\Validator
+ * @subpackage   Profile
  */
 class Alias implements ValidatorInterface
 {
-    protected $db;
+    /**
+     * @var AliasGateway
+     */
+    protected $gateway;
 
     protected $user_id;
     protected $alias;
@@ -33,18 +35,27 @@ class Alias implements ValidatorInterface
      * $userId = 1;
      * $alias = 'john-dow';
      *
-     * $owner = new Socialcommunity\Validator\Profile\Alias(JFactory::getDbo(), $alias, $userId);
+     * $profileAlias = new Socialcommunity\Validator\Profile\Alias($alias, $userId);
+     * $profileAlias->setGateway(new Socialcommunity\Validator\Profile\Gateway\Joomla\Alias(\JFactory::getDbo()));
      * </code>
      *
-     * @param \JDatabaseDriver $db Database object.
      * @param string          $alias
      * @param int             $userId
      */
-    public function __construct(\JDatabaseDriver $db, $alias, $userId = 0)
+    public function __construct($alias, $userId = 0)
     {
-        $this->db        = $db;
         $this->user_id   = $userId;
         $this->alias     = $alias;
+    }
+
+    /**
+     * Set database gateway.
+     *
+     * @param AliasGateway $gateway
+     */
+    public function setGateway(AliasGateway $gateway)
+    {
+        $this->gateway = $gateway;
     }
 
     /**
@@ -54,33 +65,26 @@ class Alias implements ValidatorInterface
      * $userId = 1;
      * $alias = 'john-dow';
      *
-     * $owner = new Socialcommunity\Validator\Profile\Alias(JFactory::getDbo(), $alias, $userId);
-     * if(!$owner->isValid()) {
+     * $profileAlias = new Socialcommunity\Validator\Profile\Alias($alias, $userId);
+     * $profileAlias->setGateway(new Socialcommunity\Validator\Profile\Gateway\Joomla\Alias(\JFactory::getDbo()));
+     *
+     * if($profileAlias->isValid()) {
      * ......
      * }
      * </code>
      *
      * @return bool
+     *
+     * @throws \RuntimeException
      */
     public function isValid()
     {
-        if (!$this->alias or (preg_match('/[^A-Z0-9\-]/i', $this->alias))) {
+        if (!$this->alias or preg_match('/[^A-Z0-9\-]/i', $this->alias)) {
             return false;
         }
 
-        $query = $this->db->getQuery(true);
-        $query
-            ->select('COUNT(*)')
-            ->from($this->db->quoteName('#__itpsc_profiles', 'a'))
-            ->where('a.alias = ' . $this->db->quote($this->alias));
+        $result = $this->gateway->isExists($this->alias, $this->user_id);
 
-        if ($this->user_id > 0) {
-            $query->where('a.user_id != ' . (int)$this->user_id);
-        }
-
-        $this->db->setQuery($query, 0, 1);
-
-        $result = $this->db->loadResult();
         return (bool)!$result;
     }
 }

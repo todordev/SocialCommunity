@@ -3,20 +3,22 @@
  * @package      Gamification Platform
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
+use \Socialcommunity\Notification\Service\Gateway\Joomla\Counter;
+
 /**
- * SocialCommunity notifications controller.
+ * Socialcommunity notifications controller.
  *
  * @package     Gamification Platform
  * @subpackage  Components
  */
-class SocialCommunityControllerNotifications extends JControllerLegacy
+class SocialcommunityControllerNotifications extends JControllerLegacy
 {
     /**
      * Method to get a model object, loading it if required.
@@ -25,10 +27,10 @@ class SocialCommunityControllerNotifications extends JControllerLegacy
      * @param    string $prefix The class prefix. Optional.
      * @param    array  $config Configuration array for model. Optional.
      *
-     * @return   SocialCommunityModelNotifications    The model.
+     * @return   SocialcommunityModelNotifications    The model.
      * @since    1.5
      */
-    public function getModel($name = 'Notifications', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => false))
+    public function getModel($name = 'Notifications', $prefix = 'SocialcommunityModel', $config = array('ignore_request' => false))
     {
         $model = parent::getModel($name, $prefix, $config);
 
@@ -43,14 +45,13 @@ class SocialCommunityControllerNotifications extends JControllerLegacy
         $response = new Prism\Response\Json();
 
         try {
-            $notifications = new Socialcommunity\Notification\Notifications(JFactory::getDbo());
-
             $options = array(
                 'user_id' => JFactory::getUser()->get('id'),
                 'status'  => Prism\Constants::NOT_READ
             );
 
-            $notRead = $notifications->getNumber($options);
+            $counter = new Socialcommunity\Notification\Service\Counter(new Counter(JFactory::getDbo()));
+            $notRead = $counter->getNotificationsNumber($options);
         } catch (Exception $e) {
             JLog::add($e->getMessage(), JLog::ERROR, 'com_socialcommunity');
             throw new Exception(JText::_('COM_CHALLENGES_ERROR_SYSTEM'));

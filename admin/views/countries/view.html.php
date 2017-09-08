@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -10,7 +10,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityViewCountries extends JViewLegacy
+class SocialcommunityViewCountries extends JViewLegacy
 {
     /**
      * @var JDocumentHtml
@@ -72,7 +72,6 @@ class SocialCommunityViewCountries extends JViewLegacy
         $this->sortFields = array(
             'a.name'      => JText::_('COM_SOCIALCOMMUNITY_NAME'),
             'a.code'      => JText::_('COM_SOCIALCOMMUNITY_COUNTRY_CODE'),
-            'a.locale'    => JText::_('COM_SOCIALCOMMUNITY_LOCALE'),
             'a.latitude'  => JText::_('COM_SOCIALCOMMUNITY_LATITUDE'),
             'a.longitude' => JText::_('COM_SOCIALCOMMUNITY_LONGITUDE'),
             'a.timezone'  => JText::_('COM_SOCIALCOMMUNITY_TIMEZONE'),
@@ -86,7 +85,7 @@ class SocialCommunityViewCountries extends JViewLegacy
     protected function addSidebar()
     {
         // Add submenu
-        SocialCommunityHelper::addSubmenu($this->getName());
+        SocialcommunityHelper::addSubmenu($this->getName());
 
         $this->sidebar = JHtmlSidebar::render();
     }
@@ -110,10 +109,6 @@ class SocialCommunityViewCountries extends JViewLegacy
         // Import
         $link = JRoute::_('index.php?option=com_socialcommunity&view=import&type=countries');
         $bar->appendButton('Link', 'upload', JText::_('COM_SOCIALCOMMUNITY_IMPORT'), $link);
-
-        // Export
-        $link = JRoute::_('index.php?option=com_socialcommunity&task=export.download&format=raw&type=countries');
-        $bar->appendButton('Link', 'download', JText::_('COM_SOCIALCOMMUNITY_EXPORT'), $link);
 
         JToolbarHelper::divider();
         JToolbarHelper::deleteList(JText::_('COM_SOCIALCOMMUNITY_DELETE_ITEMS_QUESTION'), 'countries.delete');

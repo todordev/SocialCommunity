@@ -1,9 +1,9 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
@@ -23,13 +23,8 @@ defined('_JEXEC') or die;?>
         <div class="panel panel-default" id="js-sc-note-element<?php echo $item->id; ?>">
             <div class="panel-heading">
                 <div class="row">
-                    <div class="col-md-11 gray-light4">
+                    <div class="col-md-12 gray-light4">
                         <?php echo JHtml::_('date', $item->created, JText::_('DATE_FORMAT_LC2')); ?>
-                    </div>
-                    <div class="col-md-1">
-                        <button data-element-id="<?php echo (int)$item->id; ?>" class="btn btn-xs btn-danger js-sc-btn-remove-notification">
-                            <i class="fa fa-times"></i>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -49,6 +44,15 @@ defined('_JEXEC') or die;?>
                     </div>
                     <div class="col-md-1">
                         <img src="<?php echo (!$item->status) ? 'media/com_socialcommunity/images/status_active.png' : 'media/com_socialcommunity/images/status_inactive.png'; ?>"/>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-md-2">
+                        <button data-element-id="<?php echo (int)$item->id; ?>" class="btn btn-xs btn-danger js-sc-btn-remove-notification">
+                            <i class="fa fa-trash"></i>
+                        </button>
                     </div>
                 </div>
             </div>

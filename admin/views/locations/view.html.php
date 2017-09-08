@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -10,7 +10,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityViewLocations extends JViewLegacy
+class SocialcommunityViewLocations extends JViewLegacy
 {
     /**
      * @var JDocumentHtml
@@ -70,13 +70,11 @@ class SocialCommunityViewLocations extends JViewLegacy
         }
 
         $this->sortFields = array(
-            'a.published'    => JText::_('JSTATUS'),
             'a.name'         => JText::_('COM_SOCIALCOMMUNITY_NAME'),
             'a.country_code' => JText::_('COM_SOCIALCOMMUNITY_COUNTRY_CODE'),
-            'a.time_zone'    => JText::_('COM_SOCIALCOMMUNITY_TIMEZONE'),
+            'a.timezone'     => JText::_('COM_SOCIALCOMMUNITY_TIMEZONE'),
             'a.id'           => JText::_('JGRID_HEADING_ID')
         );
-
     }
 
     /**
@@ -85,15 +83,7 @@ class SocialCommunityViewLocations extends JViewLegacy
     protected function addSidebar()
     {
         // Add submenu
-        SocialCommunityHelper::addSubmenu($this->getName());
-        
-        JHtmlSidebar::setAction('index.php?option=' . $this->option . '&view=' . $this->getName());
-
-        JHtmlSidebar::addFilter(
-            JText::_('JOPTION_SELECT_PUBLISHED'),
-            'filter_state',
-            JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('archived' => false, 'trash' => false)), 'value', 'text', $this->state->get('filter.state'), true)
-        );
+        SocialcommunityHelper::addSubmenu($this->getName());
 
         $this->sidebar = JHtmlSidebar::render();
     }
@@ -116,15 +106,8 @@ class SocialCommunityViewLocations extends JViewLegacy
 
         // Import
         $link = JRoute::_('index.php?option=com_socialcommunity&view=import&type=locations');
-        $bar->appendButton('Link', 'upload', JText::_('COM_SOCIALCOMMUNITY_IMPORT_LOCATIONS'), $link);
+        $bar->appendButton('Link', 'upload', JText::_('COM_SOCIALCOMMUNITY_IMPORT'), $link);
 
-        // Export
-        $link = JRoute::_('index.php?option=com_socialcommunity&task=export.download&format=raw&type=locations');
-        $bar->appendButton('Link', 'download', JText::_('COM_SOCIALCOMMUNITY_EXPORT_LOCATIONS'), $link);
-
-        JToolbarHelper::divider();
-        JToolbarHelper::publishList('locations.publish');
-        JToolbarHelper::unpublishList('locations.unpublish');
         JToolbarHelper::divider();
         JToolbarHelper::deleteList(JText::_('COM_SOCIALCOMMUNITY_DELETE_ITEMS_QUESTION'), 'locations.delete');
         JToolbarHelper::divider();

@@ -1,19 +1,22 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
 
 use Joomla\Utilities\ArrayHelper;
 use Joomla\Registry\Registry;
+use Socialcommunity\Profile\Profile;
+use League\Flysystem\Filesystem;
+use Socialcommunity\Value\Profile\Image as ProfileImage;
 
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityModelAvatar extends JModelLegacy
+class SocialcommunityModelAvatar extends JModelLegacy
 {
     /**
      * Returns a reference to the a Table object, always creating it.
@@ -22,10 +25,10 @@ class SocialCommunityModelAvatar extends JModelLegacy
      * @param   string $prefix A prefix for the table class name. Optional.
      * @param   array  $config Configuration array for model. Optional.
      *
-     * @return  SocialCommunityTableProfile|bool  A database object
+     * @return  SocialcommunityTableProfile|bool  A database object
      * @since   1.6
      */
-    public function getTable($type = 'Profile', $prefix = 'SocialCommunityTable', $config = array())
+    public function getTable($type = 'Profile', $prefix = 'SocialcommunityTable', $config = array())
     {
         return JTable::getInstance($type, $prefix, $config);
     }
@@ -77,7 +80,7 @@ class SocialCommunityModelAvatar extends JModelLegacy
      * Upload an image
      *
      * @param array $uploadedFileData Array with information about uploaded file.
-     * @param string $destination
+     * @param string $destinationFolder
      *
      * @throws RuntimeException
      * @throws InvalidArgumentException
@@ -85,7 +88,7 @@ class SocialCommunityModelAvatar extends JModelLegacy
      *
      * @return array
      */
-    public function uploadImage($uploadedFileData, $destination)
+    public function uploadImage($uploadedFileData, $destinationFolder)
     {
         $uploadedFile  = ArrayHelper::getValue($uploadedFileData, 'tmp_name');
         $uploadedName  = ArrayHelper::getValue($uploadedFileData, 'name');
@@ -117,10 +120,17 @@ class SocialCommunityModelAvatar extends JModelLegacy
         $imageExtensions = explode(',', $mediaParams->get('image_extensions'));
         $imageValidator->setImageExtensions($imageExtensions);
 
+        // Prepare image size validator.
+        $params             = JComponentHelper::getParams('com_socialcommunity');
+        $imageSizeValidator = new Prism\File\Validator\Image\Size($uploadedFile);
+        $imageSizeValidator->setMinWidth($params->get('image_width', 200));
+        $imageSizeValidator->setMinHeight($params->get('image_height', 200));
+
         $file = new Prism\File\File($uploadedFile);
         $file
             ->addValidator($sizeValidator)
             ->addValidator($imageValidator)
+            ->addValidator($imageSizeValidator)
             ->addValidator($serverValidator);
 
         // Validate the file
@@ -129,14 +139,19 @@ class SocialCommunityModelAvatar extends JModelLegacy
         }
 
         // Upload the file in temporary folder.
-        $filesystemLocal = new Prism\Filesystem\Adapter\Local($destination);
-        $sourceFile      = $filesystemLocal->upload($uploadedFileData);
+        $options = new Registry(array(
+            'filename_length'  => 16,
+            'image_type'       => \JFile::getExt($uploadedName)
+        ));
 
-        if (!JFile::exists($sourceFile)) {
+        $file     = new Prism\File\Image($uploadedFile);
+        $fileData = $file->toFile($destinationFolder, $options);
+
+        if (!JFile::exists($fileData['filepath'])) {
             throw new RuntimeException('COM_SOCIALCOMMUNITY_ERROR_FILE_CANT_BE_UPLOADED');
         }
 
-        return $sourceFile;
+        return $fileData;
     }
 
     /**
@@ -157,7 +172,7 @@ class SocialCommunityModelAvatar extends JModelLegacy
         $destinationFolder  = ArrayHelper::getValue($options, 'destination');
 
         // Generate temporary file name
-        $generatedName = Prism\Utilities\StringHelper::generateRandomString(24);
+        $generatedName = Prism\Utilities\StringHelper::generateRandomString(16);
 
         // Crop the image.
         $imageOptions = new Registry;
@@ -268,9 +283,9 @@ class SocialCommunityModelAvatar extends JModelLegacy
     /**
      * Method to save the images in profile record.
      *
+     * @param    Profile  $profile
      * @param    array    $images
-     * @param    int      $userId
-     * @param    League\Flysystem\Filesystem  $filesystem
+     * @param    Filesystem  $filesystem
      * @param    string   $mediaFolder
      *
      * @throws InvalidArgumentException
@@ -278,75 +293,115 @@ class SocialCommunityModelAvatar extends JModelLegacy
      * @throws UnexpectedValueException
      * @throws \League\Flysystem\FileNotFoundException
      */
-    public function storeImages($userId, $images, $filesystem, $mediaFolder)
+    public function storeImages($profile, $images, Filesystem $filesystem, $mediaFolder)
     {
-        // Load a record from the database
-        $row = $this->getTable();
-        $row->load(array('user_id' => $userId));
+        if ($profile->getId() and count($images) > 0) {
+            // Delete old profile images.
+            $profileImage               = new ProfileImage;
+            $profileImage->image        = $profile->getImage();
+            $profileImage->image_icon   = $profile->getImageIcon();
+            $profileImage->image_small  = $profile->getImageSmall();
+            $profileImage->image_square = $profile->getImageSquare();
 
-        if ($row->get('image') !== '' and $filesystem->has($mediaFolder .'/'. $row->get('image'))) {
-            $filesystem->delete($mediaFolder .'/'. $row->get('image'));
+            $this->deleteImage($profileImage, $filesystem, $mediaFolder);
+
+            // Store the new profile image.
+            $profileImage               = new ProfileImage;
+            $profileImage->profile_id   = (int)$profile->getId();
+            $profileImage->image        = $images['image_profile'];
+            $profileImage->image_icon   = $images['image_icon'];
+            $profileImage->image_small  = $images['image_small'];
+            $profileImage->image_square = $images['image_square'];
+
+            $commandUpdateImage = new \Socialcommunity\Profile\Command\UpdateImage($profileImage);
+            $commandUpdateImage->setGateway(new \Socialcommunity\Profile\Command\Gateway\Joomla\UpdateImage(JFactory::getDbo()));
+            $commandUpdateImage->handle();
         }
-
-        if ($row->get('image_small') !== '' and $filesystem->has($mediaFolder .'/'. $row->get('image_small'))) {
-            $filesystem->delete($mediaFolder .'/'. $row->get('image_small'));
-        }
-
-        if ($row->get('image_square') !== '' and $filesystem->has($mediaFolder .'/'. $row->get('image_square'))) {
-            $filesystem->delete($mediaFolder .'/'. $row->get('image_square'));
-        }
-
-        if ($row->get('image_icon') !== '' and $filesystem->has($mediaFolder .'/'. $row->get('image_icon'))) {
-            $filesystem->delete($mediaFolder .'/'. $row->get('image_icon'));
-        }
-
-        $row->set('image', $images['image_profile']);
-        $row->set('image_small', $images['image_small']);
-        $row->set('image_square', $images['image_square']);
-        $row->set('image_icon', $images['image_icon']);
-
-        $row->store();
     }
 
     /**
-     * Delete the profile picture of the user.
+     * Delete the profile picture.
      *
-     * @param int $userId
+     * @param Profile $profile
+     * @param Filesystem  $filesystem
      * @param string $mediaFolder
-     * @param League\Flysystem\Filesystem  $filesystem
      *
      * @throws Exception
      */
-    public function removeImage($userId, $mediaFolder, $filesystem)
+    public function removeImage($profile, Filesystem $filesystem, $mediaFolder)
     {
-        $row = $this->getTable();
-        $row->load(array(
-            'user_id' => $userId
-        ));
+        if ($profile->getId() > 0) {
+            // Remove old profile image.
+            $profileImage               = new ProfileImage;
+            $profileImage->image        = $profile->getImage();
+            $profileImage->image_icon   = $profile->getImageIcon();
+            $profileImage->image_small  = $profile->getImageSmall();
+            $profileImage->image_square = $profile->getImageSquare();
 
-        if ((int)$row->get('id') > 0) {
-            // Delete the profile pictures.
-            if ($row->get('image') !== '' and $filesystem->has($mediaFolder .'/'. $row->get('image'))) {
-                $filesystem->delete($mediaFolder .'/'. $row->get('image'));
-            }
+            $this->deleteImage($profileImage, $filesystem, $mediaFolder);
 
-            if ($row->get('image_small') !== '' and $filesystem->has($mediaFolder .'/'. $row->get('image_small'))) {
-                $filesystem->delete($mediaFolder .'/'. $row->get('image_small'));
-            }
+            // Initialize the value object of the profile image.
+            $profileImage             = new ProfileImage;
+            $profileImage->profile_id = $profile->getId();
 
-            if ($row->get('image_square') !== '' and $filesystem->has($mediaFolder .'/'. $row->get('image_square'))) {
-                $filesystem->delete($mediaFolder .'/'. $row->get('image_square'));
-            }
-
-            if ($row->get('image_icon') !== '' and $filesystem->has($mediaFolder .'/'. $row->get('image_icon'))) {
-                $filesystem->delete($mediaFolder .'/'. $row->get('image_icon'));
-            }
-
-            $row->set('image', '');
-            $row->set('image_small', '');
-            $row->set('image_square', '');
-            $row->set('image_icon', '');
-            $row->store();
+            // Store blank value to the profile images record.
+            $commandUpdateImage = new \Socialcommunity\Profile\Command\UpdateImage($profileImage);
+            $commandUpdateImage->setGateway(new \Socialcommunity\Profile\Command\Gateway\Joomla\UpdateImage(JFactory::getDbo()));
+            $commandUpdateImage->handle();
         }
+    }
+
+    /**
+     * @param ProfileImage $profileImage
+     * @param Filesystem $filesystem
+     * @param string     $mediaFolder
+     *
+     * @throws \League\Flysystem\FileNotFoundException
+     */
+    protected function deleteImage(ProfileImage $profileImage, Filesystem $filesystem, $mediaFolder)
+    {
+        // Delete the profile pictures.
+        if ($profileImage->image and $filesystem->has($mediaFolder . '/' . $profileImage->image)) {
+            $filesystem->delete($mediaFolder . '/' . $profileImage->image);
+        }
+
+        if ($profileImage->image_small and $filesystem->has($mediaFolder . '/' . $profileImage->image_small)) {
+            $filesystem->delete($mediaFolder . '/' . $profileImage->image_small);
+        }
+
+        if ($profileImage->image_square and $filesystem->has($mediaFolder . '/' . $profileImage->image_square)) {
+            $filesystem->delete($mediaFolder . '/' . $profileImage->image_square);
+        }
+
+        if ($profileImage->image_icon and $filesystem->has($mediaFolder . '/' . $profileImage->image_icon)) {
+            $filesystem->delete($mediaFolder . '/' . $profileImage->image_icon);
+        }
+    }
+
+    /**
+     * Remove the temporary images if a user upload or crop a picture,
+     * but he does not store it or reload the page.
+     *
+     * @param JApplicationSite $app
+     *
+     * @throws \Exception
+     */
+    public function removeTemporaryImage($app)
+    {
+        // Remove old image if it exists.
+        $oldImage = (string)$app->getUserState(Socialcommunity\Constants::TEMPORARY_IMAGE_CONTEXT);
+        if ($oldImage !== '') {
+            $params           = JComponentHelper::getParams('com_socialcommunity');
+            $filesystemHelper = new Prism\Filesystem\Helper($params);
+
+            $temporaryFolder = $filesystemHelper->getTemporaryMediaFolder(JPATH_ROOT);
+            $oldImage = JPath::clean($temporaryFolder .'/'. basename($oldImage), '/');
+            if (JFile::exists($oldImage)) {
+                JFile::delete($oldImage);
+            }
+        }
+
+        // Set the name of the image in the session.
+        $app->setUserState(Socialcommunity\Constants::TEMPORARY_IMAGE_CONTEXT, null);
     }
 }

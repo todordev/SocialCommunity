@@ -1,6 +1,6 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
  * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
@@ -11,15 +11,15 @@
 defined('_JEXEC') or die;
 
 /**
- * SocialCommunity countries controller class.
+ * Socialcommunity countries controller class.
  *
- * @package        SocialCommunity
+ * @package        Socialcommunity
  * @subpackage     Components
  * @since          1.6
  */
-class SocialCommunityControllerCountries extends Prism\Controller\Admin
+class SocialcommunityControllerCountries extends Prism\Controller\Admin
 {
-    public function getModel($name = 'Country', $prefix = 'SocialCommunityModel', $config = array('ignore_request' => true))
+    public function getModel($name = 'Country', $prefix = 'SocialcommunityModel', $config = array('ignore_request' => true))
     {
         $model = parent::getModel($name, $prefix, $config);
 

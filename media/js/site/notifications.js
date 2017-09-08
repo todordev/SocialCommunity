@@ -4,10 +4,10 @@ jQuery(document).ready(function() {
 
 		event.preventDefault();
 		
-		var id 		  =  jQuery(this).data("element-id");
-		var elementId = "#js-sc-note-element"+id;
+		let id 		  = jQuery(this).data("element-id");
+        let elementId = "#js-sc-note-element"+id;
 
-		var fields = {
+        let fields = {
 			id: id,
 			format: "raw"
 		};
@@ -20,16 +20,14 @@ jQuery(document).ready(function() {
 		}).done(function(response) {
 
             if (!response.success){
-                PrismUIHelper.displayMessageFailure(response.title, response.text);
+                Prism.message.show(response.message);
             } else {
                 jQuery(elementId).fadeOut('slow', function () {
                     jQuery(this).remove();
                 });
 
-                PrismUIHelper.displayMessageSuccess(response.title, response.text);
+                Prism.message.show(response.message);
             }
-
 		});
-		
 	});
 });

@@ -1,30 +1,34 @@
 <?php
 /**
- * @package      SocialCommunity
+ * @package      Socialcommunity
  * @subpackage   Components
  * @author       Todor Iliev
- * @copyright    Copyright (C) 2016 Todor Iliev <todor@itprism.com>. All rights reserved.
+ * @copyright    Copyright (C) 2017 Todor Iliev <todor@itprism.com>. All rights reserved.
  * @license      GNU General Public License version 3 or later; see LICENSE.txt
  */
+
+use Prism\Database\Condition\Condition;
+use Prism\Database\Condition\Conditions;
+use Prism\Database\Request\Request;
 
 // no direct access
 defined('_JEXEC') or die;
 
-class SocialCommunityModelContact extends JModelAdmin
+class SocialcommunityModelContact extends JModelAdmin
 {
     protected $item;
 
     /**
      * Returns a reference to the a Table object, always creating it.
      *
-     * @param   string $type    The table type to instantiate
+     * @param   string $type   The table type to instantiate
      * @param   string $prefix A prefix for the table class name. Optional.
      * @param   array  $config Configuration array for model. Optional.
      *
-     * @return  SocialCommunityTableProfile  A database object
+     * @return  SocialcommunityTableProfile|bool  A database object
      * @since   1.6
      */
-    public function getTable($type = 'Profile', $prefix = 'SocialCommunityTable', $config = array())
+    public function getTable($type = 'Profile', $prefix = 'SocialcommunityTable', $config = array())
     {
         return JTable::getInstance($type, $prefix, $config);
     }
@@ -44,7 +48,6 @@ class SocialCommunityModelContact extends JModelAdmin
         // Load the parameters.
         $params = $app->getParams($this->option);
         $this->setState('params', $params);
-
     }
 
     /**
@@ -56,7 +59,7 @@ class SocialCommunityModelContact extends JModelAdmin
      * @param    array   $data     An optional array of data for the form to interrogate.
      * @param    boolean $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return    JForm    A JForm object on success, false on failure
+     * @return    JForm|bool    A JForm object on success, false on failure
      * @since    1.6
      */
     public function getForm($data = array(), $loadData = true)
@@ -75,6 +78,7 @@ class SocialCommunityModelContact extends JModelAdmin
      *
      * @return    mixed    The data for the form.
      * @since    1.6
+     * @throws \Exception
      */
     protected function loadFormData()
     {
@@ -84,24 +88,43 @@ class SocialCommunityModelContact extends JModelAdmin
         $data = $app->getUserState($this->option . '.profile.contact', array());
 
         if (!$data) {
-
             $userId = (int)JFactory::getUser()->get('id');
             $data   = $this->getItem($userId);
 
             if (!empty($data['location_id'])) {
-                $location = new Socialcommunity\Location\Location(JFactory::getDbo());
-                $location->load(array('id' => $data['location_id']));
+                // Prepare conditions.
+                $conditionLocationId = new Condition(['column' => 'id', 'value' => $data['location_id'], 'operator' => '=', 'table' => 'a']);
+                $conditions          = new Conditions();
+                $conditions->addCondition($conditionLocationId);
 
-                $locationName = $location->getName(Socialcommunity\Constants::INCLUDE_COUNTRY_CODE);
+                // Prepare database request.
+                $databaseRequest = new Request();
+                $databaseRequest->setConditions($conditions);
+
+                $mapper     = new Socialcommunity\Location\Mapper(new \Socialcommunity\Location\Gateway\JoomlaGateway(JFactory::getDbo()));
+                $repository = new Socialcommunity\Location\Repository($mapper);
+                $location   = $repository->fetch($databaseRequest);
+
+                $locationName = $location->getName() . ' [' . $location->getCountryCode() . ']';
                 if ($locationName) {
                     $data['location_preview'] = $locationName;
                 }
             }
 
-            $secretKey       = $app->get('secret');
-            
-            $data['phone']   = ($data['phone'] !== null) ? Defuse\Crypto\Crypto::decrypt($data['phone'], $secretKey) : null;
-            $data['address'] = ($data['address'] !== null) ? Defuse\Crypto\Crypto::decrypt($data['address'], $secretKey) : null;
+            // Decrypt phone and address.
+            if (count($data) > 0 and $data['secret_key']) {
+                $password = $app->get('secret') . $userId;
+                $cryptor  = new \Socialcommunity\Profile\Contact\Cryptor($data['secret_key'], $password);
+
+                $contact = new \Socialcommunity\Profile\Contact\Contact();
+                $contact->setPhone($data['phone']);
+                $contact->setAddress($data['address']);
+
+                $contact = $cryptor->decrypt($contact);
+
+                $data['phone']   = $contact->getPhone();
+                $data['address'] = $contact->getAddress();
+            }
         }
 
         return $data;
@@ -110,67 +133,31 @@ class SocialCommunityModelContact extends JModelAdmin
     /**
      * Method to get an object.
      *
-     * @param    int  $pk  The id of the object to get.
+     * @param    int $pk The id of the object to get.
      *
-     * @return    mixed    Object on success, false on failure.
+     * @return  mixed    Object on success, false on failure.
+     * @throws \RuntimeException
      */
     public function getItem($pk = null)
     {
         $pk = (int)$pk;
 
         if ($this->item === null and $pk > 0) {
-
             $db    = $this->getDbo();
             $query = $db->getQuery(true);
             $query
-                ->select('a.phone, a.address, a.location_id, a.country_id, a.website, a.phone, a.address')
+                ->select(
+                    'a.location_id, a.country_code, a.website, ' .
+                    'b.phone, b.address, b.secret_key'
+                )
                 ->from($db->quoteName('#__itpsc_profiles', 'a'))
+                ->leftJoin($db->quoteName('#__itpsc_profilecontacts', 'b') . ' ON a.user_id = b.user_id')
                 ->where('a.user_id = ' . (int)$pk);
 
             $db->setQuery($query, 0, 1);
-            $this->item    = (array)$db->loadAssoc();
+            $this->item = (array)$db->loadAssoc();
         }
 
         return $this->item;
-    }
-
-    /**
-     * Method to save the form data.
-     *
-     * @param    array    $data    The form data.
-     *
-     * @return    mixed        The record id on success, null on failure.
-     * @since    1.6
-     */
-    public function save($data)
-    {
-        $userId     = Joomla\Utilities\ArrayHelper::getValue($data, 'user_id', 0, 'int');
-        $phone      = JString::trim(Joomla\Utilities\ArrayHelper::getValue($data, 'phone'));
-        $address    = JString::trim(Joomla\Utilities\ArrayHelper::getValue($data, 'address'));
-        $website    = JString::trim(Joomla\Utilities\ArrayHelper::getValue($data, 'website'));
-        $countryId  = Joomla\Utilities\ArrayHelper::getValue($data, 'country_id', 0, 'int');
-        $locationId = Joomla\Utilities\ArrayHelper::getValue($data, 'location_id', 0, 'int');
-
-        $secretKey  = JFactory::getApplication()->get('secret');
-        $db         = $this->getDbo();
-
-        $phone   = (!$phone)   ? 'NULL' : $db->quote(Defuse\Crypto\Crypto::encrypt($phone, $secretKey));
-        $address = (!$address) ? 'NULL' : $db->quote(Defuse\Crypto\Crypto::encrypt($address, $secretKey));
-        $website = (!$website) ? 'NULL' : $db->quote($website);
-
-        $query = $db->getQuery(true);
-        $query
-            ->update($db->quoteName('#__itpsc_profiles'))
-            ->set($db->quoteName('location_id') . '=' . (int)$locationId)
-            ->set($db->quoteName('country_id') . '=' . (int)$countryId)
-            ->set($db->quoteName('website') . '=' . $website)
-            ->set($db->quoteName('phone') . ' = ' . $phone)
-            ->set($db->quoteName('address') . ' = ' . $address)
-            ->where($db->quoteName('user_id') . ' = ' . (int)$userId);
-
-        $db->setQuery($query);
-        $db->execute();
-
-        return $db->insertid();
     }
 }
